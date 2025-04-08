@@ -1,0 +1,28 @@
+type Mutation {
+    requestEmailLogin(email: String!): Boolean!
+        @field(
+            resolver: "App\\GraphQL\\Mutations\\AuthMutation@requestEmailLogin"
+        )
+
+    verifyEmailLogin(token: String!): AuthPayload!
+        @field(
+            resolver: "App\\GraphQL\\Mutations\\AuthMutation@verifyEmailLogin"
+        )
+
+    logout: LogoutResult!
+        @field(resolver: "App\\GraphQL\\Mutations\\AuthMutation@logout")
+
+    changeName(updatedName: String!): User!
+        @field(resolver: "App\\GraphQL\\Mutations\\AuthMutation@changeName")
+
+    logout: LogoutResult!
+        @field(resolver: "App\\GraphQL\\Mutations\\AuthMutation@logout")
+}
+
+type AuthPayload {
+    user: User!
+}
+
+type LogoutResult {
+    success: Boolean!
+}

@@ -9,6 +9,43 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import {
+  ApolloClient,
+  ApolloProvider,
+  createHttpLink,
+  InMemoryCache,
+} from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import { Toaster } from "./components/ui/sonner";
+
+const getCSRFToken = () => {
+  const match = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("XSRF-TOKEN="));
+  return match ? decodeURIComponent(match.split("=")[1]) : "";
+};
+
+const authLink = setContext((_, { headers }) => {
+  const csrfToken = getCSRFToken();
+
+  return {
+    headers: {
+      ...headers,
+      "X-XSRF-TOKEN": csrfToken,
+    },
+  };
+});
+
+const httpLink = createHttpLink({
+  uri: "http://localhost:8000/graphql",
+  credentials: "include",
+});
+
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache(),
+  credentials: "include",
+});
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -36,13 +73,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
         <ScrollRestoration />
         <Scripts />
+        <Toaster />
       </body>
     </html>
   );
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <ApolloProvider client={client}>
+      <Outlet />
+    </ApolloProvider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
