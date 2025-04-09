@@ -28,9 +28,9 @@ const LOGOUT_MUTATION = gql`
 `;
 
 export default function ProfilePage() {
-  const { viewer: viewerFromOutletContext } = useOutletContext<{
-    viewer: any;
-  }>();
+  // const { viewer: viewerFromOutletContext = null } = useOutletContext<{
+  //   viewer: any;
+  // }>();
 
   const navigate = useNavigate();
   const { data } = useQuery(
@@ -53,7 +53,7 @@ export default function ProfilePage() {
     }
   );
 
-  const viewer = data?.viewer ?? viewerFromOutletContext;
+  const viewer = data?.viewer ?? null;
 
   const [changeNameMutation] = useMutation(CHANGE_NAME_MUTATION);
   const [changeNameValue, setChangeNameValue] = useState("");
@@ -78,7 +78,9 @@ export default function ProfilePage() {
   return (
     <div>
       <h1>Profile Page</h1>
-      <div className="font-semibold text-xl">Your name: {viewer.user.name}</div>
+      <div className="font-semibold text-xl">
+        Your name: {viewer?.user?.name}
+      </div>
       <div>{JSON.stringify(viewer, null, 2)}</div>
       <form onSubmit={handleChangeName}>
         <label htmlFor="name">Name:</label>

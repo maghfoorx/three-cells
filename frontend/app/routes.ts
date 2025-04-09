@@ -7,7 +7,10 @@ import {
 
 export default [
   index("pages/home/index.tsx"),
-  route("/login", "pages/login/index.tsx"),
+
+  layout("layouts/LoggedOutLayout.tsx", [
+    route("/login", "pages/login/index.tsx"),
+  ]),
 
   layout("layouts/ProtectedLayout.tsx", [
     route("/profile", "pages/profile/index.tsx"),
