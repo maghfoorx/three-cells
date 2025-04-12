@@ -20,7 +20,7 @@ export default function Home() {
       <header className="my-4 mx-auto w-full text-sm not-has-[nav]:hidden lg:max-w-6xl">
         <nav className="flex items-center justify-between gap-4">
           <Link to={"/"}>
-            <AppLogoIcon className="h-10 w-10" />
+            <AppLogoIcon className="h-10 w-10 rounded-md" />
           </Link>
           <div />
         </nav>
@@ -50,29 +50,34 @@ const Section = ({
 const HeroSection = () => {
   return (
     <Section>
-      <Card className="px-4 py-10 md:px-16">
-        <div className="flex flex-col items-center justify-between gap-8">
-          <div className="flex flex-col gap-5 text-center">
-            <h1 className="text-5xl font-black md:text-6xl">
-              Your best days on repeat
-            </h1>
-            <div>Discover the patterns behind your most productive days</div>
-            <div className="mx-auto">
-              <Link to="/profile">
-                <Button className="" size={"lg"}>
-                  Start tracking
-                </Button>
-              </Link>
+      <div className="flex flex-col items-center justify-between gap-8">
+        <div className="flex flex-col gap-5 text-center">
+          <h1 className="text-5xl font-bold md:text-6xl leading-tight">
+            Track less. <br />{" "}
+            <span className="underline italic font-black">Achieve</span> more.
+          </h1>
+          <div>
+            <div>Discover your best life with just three questions a day.</div>
+            <div>
+              A 30 second daily habit to help you understand what makes your
+              best days so great.
             </div>
           </div>
-          <div className="space-y-3">
-            <div className="text-center font-semibold">
-              Three simple questions
-            </div>
-            <ThreeCellDailyFormShell />
+          <div className="mx-auto">
+            <Link to="/profile">
+              <Button className="" size={"lg"}>
+                Start tracking
+              </Button>
+            </Link>
           </div>
         </div>
-      </Card>
+        <div className="space-y-3">
+          <div className="text-center font-semibold">
+            Three simple questions
+          </div>
+          <ThreeCellDailyFormShell />
+        </div>
+      </div>
     </Section>
   );
 };
