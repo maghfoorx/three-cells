@@ -2,6 +2,7 @@ import { gql, useQuery } from "@apollo/client";
 import { type PropsWithChildren } from "react";
 import { Link, Outlet, useNavigate } from "react-router";
 import AppLogoIcon from "~/components/AppLogoIcon";
+import FullscreenSpinner from "~/components/FullscreenSpinner";
 
 interface AuthLayoutProps {
   name?: string;
@@ -31,7 +32,7 @@ export default function AuthSimpleLayout({
   }
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <FullscreenSpinner />;
   }
 
   return (

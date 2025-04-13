@@ -4,6 +4,7 @@ import { useEffect, type ReactNode } from "react";
 import { Outlet, useNavigate } from "react-router";
 import type { BreadcrumbItem } from "~/types";
 import { ROOT_APP_QUERY } from "~/lib/globalQueries";
+import FullscreenSpinner from "~/components/FullscreenSpinner";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -13,8 +14,6 @@ interface AppLayoutProps {
 export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
   const navigate = useNavigate();
   const { data, loading } = useQuery(ROOT_APP_QUERY);
-
-  console.log(data, "data");
 
   const navigateToLogin = () => {
     navigate("/login");
@@ -27,7 +26,7 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
   }, [loading, data]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <FullscreenSpinner />;
   }
 
   return (
