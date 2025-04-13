@@ -123,7 +123,11 @@ export default function ThreeCellDailyForm() {
     if (data?.threeCellForDate) {
       form.reset({
         ...data.threeCellForDate,
-        date_for: format(data.threeCellForDate.date_for, "yyyy-MM-dd"),
+        date_for: parse(
+          data.threeCellForDate.date_for,
+          "yyyy-MM-dd",
+          new Date()
+        ),
       });
     } else {
       form.reset({
