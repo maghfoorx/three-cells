@@ -11,6 +11,10 @@ final readonly class ThreeCellQuery
     {
         $user = Auth::user();
 
+        if (!$user) {
+            return null;
+        }
+
         return ThreeCell::where("user_id", $user->id)
             ->where("date_for", $args["date"])
             ->first();
@@ -21,6 +25,10 @@ final readonly class ThreeCellQuery
         array $args
     ): \Illuminate\Support\Collection {
         $user = Auth::user();
+
+        if (!$user) {
+            return collect();
+        }
 
         return ThreeCell::where("user_id", $user->id)
             ->orderBy("date_for", "desc") // or 'created_at', depending on your sorting preference
