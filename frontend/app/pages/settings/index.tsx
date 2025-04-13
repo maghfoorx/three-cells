@@ -1,13 +1,9 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import axios from "axios";
 import { useState } from "react";
-import { redirect, useNavigate, useOutletContext } from "react-router";
+import { useNavigate } from "react-router";
 import { Button } from "~/components/ui/button";
+import { LOGOUT_MUTATION_QUERY } from "~/lib/globalQueries";
 import { showErrorToast } from "~/lib/showErrorToast";
-
-export function HydrateFallback() {
-  return <div>Loading...</div>;
-}
 
 const CHANGE_NAME_MUTATION = gql`
   mutation ChangeName($updatedName: String!) {
@@ -19,19 +15,7 @@ const CHANGE_NAME_MUTATION = gql`
   }
 `;
 
-const LOGOUT_MUTATION = gql`
-  mutation Logout {
-    logout {
-      success
-    }
-  }
-`;
-
-export default function ProfilePage() {
-  // const { viewer: viewerFromOutletContext = null } = useOutletContext<{
-  //   viewer: any;
-  // }>();
-
+export default function SettingsPage() {
   const navigate = useNavigate();
   const { data } = useQuery(
     gql`
@@ -64,19 +48,8 @@ export default function ProfilePage() {
     await changeNameMutation({ variables: { updatedName: changeNameValue } });
   };
 
-  const [logoutMutation] = useMutation(LOGOUT_MUTATION);
-
-  const handleLogout = async () => {
-    const { data, errors } = await logoutMutation();
-    if (data?.logout?.success) {
-      navigate("/");
-    } else {
-      showErrorToast("Something went wrong. Please try again later.");
-    }
-  };
-
   return (
-    <div>
+    <div className="flex h-full flex-1 flex-col gap-4 rounded-xl rounded-t-none p-4">
       <h1>Profile Page</h1>
       <div className="font-semibold text-xl">
         Your name: {viewer?.user?.name}
@@ -96,11 +69,6 @@ export default function ProfilePage() {
           Update Name
         </button>
       </form>
-      <div>
-        <Button variant={"destructive"} onClick={handleLogout}>
-          Log out
-        </Button>
-      </div>
     </div>
   );
 }

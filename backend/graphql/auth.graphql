@@ -25,4 +25,5 @@ type AuthPayload {
 
 type LogoutResult {
     success: Boolean!
+    user: User
 }

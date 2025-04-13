@@ -94,6 +94,7 @@ final readonly class AuthMutation
 
         return [
             "success" => true,
+            "user" => Auth::user(),
         ];
     }
 

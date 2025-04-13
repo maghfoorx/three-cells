@@ -64,7 +64,7 @@ const HeroSection = () => {
             </div>
           </div>
           <div className="mx-auto">
-            <Link to="/profile">
+            <Link to="/track">
               <Button className="" size={"lg"}>
                 Start tracking
               </Button>

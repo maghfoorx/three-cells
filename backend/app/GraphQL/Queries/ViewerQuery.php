@@ -15,6 +15,7 @@ final readonly class ViewerQuery
     public function resolve()
     {
         return [
+            "id" => session()->getId(),
             "user" => Auth::user(),
             "isAuthenticated" => Auth::check(),
         ];

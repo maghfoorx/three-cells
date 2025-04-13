@@ -49,6 +49,7 @@ type User {
 }
 
 type Viewer {
+    id: ID!
     user: User
     isAuthenticated: Boolean!
 }

@@ -30,6 +30,6 @@ class GoogleController extends Controller
 
         Auth::login($user);
 
-        return redirect(env("FRONTEND_URL") . "/profile");
+        return redirect(env("FRONTEND_URL") . "/track");
     }
 }
