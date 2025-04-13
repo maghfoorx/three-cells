@@ -5,10 +5,18 @@ import { Outlet, useNavigate } from "react-router";
 import type { BreadcrumbItem } from "~/types";
 import { ROOT_APP_QUERY } from "~/lib/globalQueries";
 import FullscreenSpinner from "~/components/FullscreenSpinner";
+import type { Route } from "../../pages/track/+types";
 
 interface AppLayoutProps {
   children: ReactNode;
   breadcrumbs?: BreadcrumbItem[];
+}
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Three Cells" },
+    { name: "description", content: "Three Cells description" },
+  ];
 }
 
 export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {

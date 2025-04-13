@@ -1,4 +1,4 @@
-type Mutation {
+extend type Mutation {
     requestEmailLogin(email: String!): Boolean!
         @field(
             resolver: "App\\GraphQL\\Mutations\\AuthMutation@requestEmailLogin"

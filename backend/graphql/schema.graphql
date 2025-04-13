@@ -25,6 +25,19 @@ type Query {
 
     viewer: Viewer!
         @field(resolver: "App\\GraphQL\\Queries\\ViewerQuery@resolve")
+
+    threeCellForDate(date: String!): ThreeCell
+        @field(resolver: "App\\GraphQL\\Queries\\ThreeCellQuery@resolve")
+
+    allThreeCellEntries: [ThreeCell!]!
+        @field(
+            resolver: "App\\GraphQL\\Queries\\ThreeCellQuery@allThreeCellEntries"
+        )
+}
+
+type Mutation {
+    submitThreeCellEntry(input: ThreeCellInput!): ThreeCell
+        @field(resolver: "App\\GraphQL\\Mutations\\ThreeCellMutation@submit")
 }
 
 "Account of a person who utilizes this application."
@@ -52,4 +65,22 @@ type Viewer {
     id: ID!
     user: User
     isAuthenticated: Boolean!
+}
+
+type ThreeCell {
+    id: ID!
+    user_id: ID!
+    summary: String
+    focused_hours: Float!
+    score: Int!
+    date_for: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+input ThreeCellInput {
+    summary: String
+    focused_hours: Float!
+    score: Int!
+    date_for: String!
 }
