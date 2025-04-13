@@ -17,7 +17,7 @@ export function meta({}: Route.MetaArgs) {
 export default function Home() {
   return (
     <>
-      <header className="my-4 mx-auto w-full text-sm not-has-[nav]:hidden lg:max-w-6xl">
+      <header className="my-4 mx-auto w-full text-sm not-has-[nav]:hidden lg:max-w-6xl px-4">
         <nav className="flex items-center justify-between gap-4">
           <Link to={"/"}>
             <AppLogoIcon className="h-10 w-10 rounded-md" />
@@ -25,10 +25,9 @@ export default function Home() {
           <div />
         </nav>
       </header>
-      <main className="w-full flex-1">
+      <main className="w-full flex-1 px-4">
         <HeroSection />
       </main>
-      <div className="hidden h-14.5 lg:block"></div>
     </>
   );
 }
