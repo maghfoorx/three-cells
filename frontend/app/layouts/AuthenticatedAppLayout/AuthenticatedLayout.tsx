@@ -27,7 +27,7 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
   }
 
   if (!loading && data?.viewer?.user == null) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
   }
 
   return (
