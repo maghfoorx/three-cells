@@ -152,7 +152,7 @@ export default function ThreeCellDailyForm() {
   `;
 
   const [submitThreeCellEntry] = useMutation(SUBMIT_ENTRY, {
-    refetchQueries: ["GetAllSubmittedDays"],
+    refetchQueries: ["GetAllSubmittedDays", "AllThreeCellEntries"],
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -163,7 +163,6 @@ export default function ThreeCellDailyForm() {
         score: values.score,
         date_for: format(values.date_for, "yyyy-MM-dd"),
       };
-
       const { data } = await submitThreeCellEntry({ variables: { input } });
 
       console.log("Submitted:", data);

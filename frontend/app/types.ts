@@ -35,3 +35,14 @@ export interface ThreeCellDailyFormType {
   focused_hours: string;
   score: string;
 }
+
+export type ThreeCellModel = {
+  id: string;
+  user_id: string;
+  date_for: string;
+  summary: string;
+  focused_hours: string;
+  score: string;
+};
+
+export type ThreeCellLog = Omit<ThreeCellModel, "id" | "user_id">;
