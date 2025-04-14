@@ -3,9 +3,6 @@ import type { Route } from "./+types/index";
 import GoogleLogo from "./components/GoogleLogo";
 import axios from "axios";
 import { showErrorToast } from "~/lib/showErrorToast";
-import { getCookieValue } from "~/lib/getCookieValue";
-import { redirect, useNavigate } from "react-router";
-import { gql, useQuery } from "@apollo/client";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -13,53 +10,6 @@ export function meta({}: Route.MetaArgs) {
     { name: "description", content: "Get started with Three Cells" },
   ];
 }
-
-// export async function loader({ request }: { request: Request }) {
-//   const query = `
-//       query {
-//         viewer {
-//           user {
-//             id
-//           }
-//         }
-//       }
-//     `;
-
-//   const rawCookie = request.headers.get("cookie");
-//   const xsrfToken = getCookieValue(rawCookie, "XSRF-TOKEN");
-
-//   try {
-//     const response = await axios.post(
-//       "http://localhost:8000/graphql",
-//       { query },
-//       {
-//         headers: {
-//           cookie: rawCookie,
-//           "X-XSRF-TOKEN": xsrfToken,
-//           "Content-Type": "application/json",
-//         },
-//         withCredentials: true,
-//       }
-//     );
-
-//     const user = response.data?.data?.viewer?.user ?? null;
-
-//     // if the user is not logged in, then just reset the session and XSRF token and redirect to login page
-//     if (user != null) {
-//       return redirect("/profile");
-//     }
-
-//     return {
-//       viewer: response.data.data.viewer,
-//     };
-//   } catch (error: any) {
-//     // For any error just redirect to login page with reset session and XSRF token
-//     if (error?.response != null) {
-//       // console.log(error.response, "error");
-//       console.log("error occured in login page loader.");
-//     }
-//   }
-// }
 
 export default function LoginPage() {
   const handleGoogleLogin = async () => {
