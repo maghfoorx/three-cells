@@ -344,11 +344,12 @@ const CalendarComponent = ({ initialDate }: { initialDate: Date }) => {
   const initialDateISO = format(initialDate, "yyyy-MM-dd");
 
   const filteredDays = allSubmittedDays.filter(
-    (day) => format(new Date(day.date_for), "yyyy-MM-dd") !== initialDateISO
+    (day: any) =>
+      format(new Date(day.date_for), "yyyy-MM-dd") !== initialDateISO
   );
 
   // Then create modifiers with filteredDays
-  const scoreModifiers = filteredDays.reduce((acc, day) => {
+  const scoreModifiers = filteredDays.reduce((acc: any, day: any) => {
     const [year, month, dayStr] = day.date_for.split("-");
     const date = new Date(
       parseInt(year),
