@@ -29,6 +29,8 @@ import {
 import { Calendar } from "~/components/ui/calendar";
 import { useEffect } from "react";
 import { Skeleton } from "~/components/ui/skeleton";
+import { showSuccessToast } from "~/lib/showSuccessToast";
+import { showErrorToast } from "~/lib/showErrorToast";
 
 // Add validation schema
 const formSchema = z.object({
@@ -157,6 +159,14 @@ export default function ThreeCellDailyForm() {
 
   const [submitThreeCellEntry] = useMutation(SUBMIT_ENTRY, {
     refetchQueries: ["GetAllSubmittedDays", "AllThreeCellEntries"],
+    onCompleted: () => {
+      showSuccessToast("Successfully updated your daily entry. Keep it up!🚀");
+    },
+    onError: () => {
+      showErrorToast(
+        "Something went wrong with submitting your entry 😓. Please try again later."
+      );
+    },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -167,10 +177,8 @@ export default function ThreeCellDailyForm() {
         score: values.score,
         date_for: format(values.date_for, "yyyy-MM-dd"),
       };
-      const { data } = await submitThreeCellEntry({ variables: { input } });
 
-      console.log("Submitted:", data);
-      // navigate(`/track/${input.date_for}`);
+      await submitThreeCellEntry({ variables: { input } });
     } catch (error) {
       console.error("Submission failed:", error);
     }

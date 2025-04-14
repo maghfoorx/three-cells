@@ -44,31 +44,13 @@ export default function SettingsPage() {
 
   const handleChangeName = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(changeNameValue, "isNameInput");
     await changeNameMutation({ variables: { updatedName: changeNameValue } });
   };
 
   return (
     <div className="flex h-full flex-1 flex-col gap-4 rounded-xl rounded-t-none p-4">
-      <h1>Profile Page</h1>
-      <div className="font-semibold text-xl">
-        Your name: {viewer?.user?.name}
-      </div>
-      <div>{JSON.stringify(viewer, null, 2)}</div>
-      <form onSubmit={handleChangeName}>
-        <label htmlFor="name">Name:</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          className="border"
-          value={changeNameValue}
-          onChange={(event) => setChangeNameValue(event.target.value)}
-        />
-        <button type="submit" className="bg-orange-200">
-          Update Name
-        </button>
-      </form>
+      <h1>Settings</h1>
+      <div>Nothing to show here yet</div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import { type PropsWithChildren } from "react";
-import { Link, Outlet, useNavigate } from "react-router";
+import { Link, Navigate, Outlet } from "react-router";
 import AppLogoIcon from "~/components/AppLogoIcon";
 import FullscreenSpinner from "~/components/FullscreenSpinner";
 
@@ -25,14 +25,13 @@ export default function AuthSimpleLayout({
   title,
   description,
 }: PropsWithChildren<AuthLayoutProps>) {
-  const navigate = useNavigate();
   const { data, loading } = useQuery(VIEWER_QUERY);
-  if (data?.viewer?.user != null) {
-    return navigate("/profile");
-  }
-
   if (loading) {
     return <FullscreenSpinner />;
+  }
+
+  if (!loading && data?.viewer?.user != null) {
+    return <Navigate to="/track" replace />;
   }
 
   return (
