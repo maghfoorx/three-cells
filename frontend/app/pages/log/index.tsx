@@ -1,10 +1,9 @@
-import ThreeCellLogTable from "./ThreeCellLogTable";
+import ThreeCellLogView from "./ThreeCellLogView";
 
 export default function TrackLogPage() {
   return (
-    <div className="flex h-full flex-1 flex-col gap-4 rounded-xl rounded-t-none p-4">
-      <h1>Track log page</h1>
-      <ThreeCellLogTable />
+    <div className="flex flex-col h-full flex-1 gap-4 rounded-xl rounded-t-none p-4">
+      <ThreeCellLogView />
     </div>
   );
 }
