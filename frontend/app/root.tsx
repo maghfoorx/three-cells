@@ -64,6 +64,34 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+export const meta: Route.MetaFunction = () => [
+  { title: "Three Cells" },
+  {
+    name: "description",
+    content: "Discover your best life with just three questions a day.",
+  },
+  {
+    property: "og:image",
+    content: `${import.meta.env.VITE_FRONTEND_URL}/og-image.png`,
+  },
+  {
+    property: "og:image:width",
+    content: "1200",
+  },
+  {
+    property: "og:image:height",
+    content: "630",
+  },
+  {
+    property: "og:image:type",
+    content: "image/png",
+  },
+  {
+    property: "og:image:alt",
+    content: "Three Cells",
+  },
+];
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">

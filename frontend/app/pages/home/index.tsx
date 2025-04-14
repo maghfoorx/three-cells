@@ -1,20 +1,10 @@
 import { Button } from "~/components/ui/button";
 import type { Route } from "./+types/index";
-import { useState } from "react";
 import { Link } from "react-router";
-import AppLogoIcon from "~/components/AppLogoIcon";
 import { cn } from "~/lib/utils";
-import { Card } from "~/components/ui/card";
 import { ThreeCellDailyFormShell } from "./components/ThreeCellDailyFormShell";
 import LoggedOutHeader from "~/components/LoggedOutHeader";
 import LoggedOutFooter from "~/components/LoggedOutFooter";
-
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "Three Cells" },
-    { name: "description", content: "Three Cells description" },
-  ];
-}
 
 export default function Home() {
   return (
