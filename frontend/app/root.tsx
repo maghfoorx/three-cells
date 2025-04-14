@@ -90,6 +90,38 @@ export const meta: Route.MetaFunction = () => [
     property: "og:image:alt",
     content: "Three Cells",
   },
+  {
+    property: "twitter:card",
+    content: "summary_large_image",
+  },
+  {
+    property: "twitter:title",
+    content: "Three Cells",
+  },
+  {
+    property: "twitter:description",
+    content: "Discover your best life with just three questions a day.",
+  },
+  {
+    property: "twitter:image",
+    content: `${import.meta.env.VITE_FRONTEND_URL}/og-image.png`,
+  },
+  {
+    property: "twitter:image:alt",
+    content: "Three Cells",
+  },
+  {
+    property: "twitter:image:width",
+    content: "1200",
+  },
+  {
+    property: "twitter:image:height",
+    content: "630",
+  },
+  {
+    property: "keywords",
+    content: "Simplex method, productivity, best life",
+  },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
