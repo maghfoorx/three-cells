@@ -64,8 +64,8 @@ export function meta({}: Route.MetaArgs) {
 export default function LoginPage() {
   const handleGoogleLogin = async () => {
     try {
-      await axios.get("http://localhost:8000/sanctum/csrf-cookie");
-      window.location.href = "http://localhost:8000/auth/google";
+      await axios.get(`${import.meta.env.VITE_API_URL}/sanctum/csrf-cookie`);
+      window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
     } catch (error) {
       showErrorToast();
       console.error(error);
