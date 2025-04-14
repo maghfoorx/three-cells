@@ -18,4 +18,9 @@ export default [
     route("/log", "pages/log/index.tsx"),
     route("/settings", "pages/settings/index.tsx"),
   ]),
+
+  layout("layouts/LegalPagesLayout.tsx", [
+    route("/privacy", "pages/privacy/index.tsx"),
+    route("/terms", "pages/terms/index.tsx"),
+  ]),
 ] satisfies RouteConfig;

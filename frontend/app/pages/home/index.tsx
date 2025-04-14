@@ -6,6 +6,8 @@ import AppLogoIcon from "~/components/AppLogoIcon";
 import { cn } from "~/lib/utils";
 import { Card } from "~/components/ui/card";
 import { ThreeCellDailyFormShell } from "./components/ThreeCellDailyFormShell";
+import LoggedOutHeader from "~/components/LoggedOutHeader";
+import LoggedOutFooter from "~/components/LoggedOutFooter";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -16,19 +18,11 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   return (
-    <>
-      <header className="my-4 mx-auto w-full text-sm not-has-[nav]:hidden lg:max-w-6xl px-4">
-        <nav className="flex items-center justify-between gap-4">
-          <Link to={"/"}>
-            <AppLogoIcon className="h-10 w-10 rounded-md" />
-          </Link>
-          <div />
-        </nav>
-      </header>
-      <main className="w-full flex-1 px-4">
-        <HeroSection />
-      </main>
-    </>
+    <main className="flex flex-col gap-4 items-center w-full flex-1 px-4">
+      <LoggedOutHeader />
+      <HeroSection />
+      <LoggedOutFooter />
+    </main>
   );
 }
 
