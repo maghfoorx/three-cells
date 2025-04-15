@@ -64,65 +64,7 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export const meta: Route.MetaFunction = () => [
-  { title: "Three Cells" },
-  {
-    name: "description",
-    content: "Discover your best life with just three questions a day.",
-  },
-  {
-    property: "og:image",
-    content: `${import.meta.env.VITE_FRONTEND_URL}/og-image.png`,
-  },
-  {
-    property: "og:image:width",
-    content: "1200",
-  },
-  {
-    property: "og:image:height",
-    content: "630",
-  },
-  {
-    property: "og:image:type",
-    content: "image/png",
-  },
-  {
-    property: "og:image:alt",
-    content: "Three Cells",
-  },
-  {
-    property: "twitter:card",
-    content: "summary_large_image",
-  },
-  {
-    property: "twitter:title",
-    content: "Three Cells",
-  },
-  {
-    property: "twitter:description",
-    content: "Discover your best life with just three questions a day.",
-  },
-  {
-    property: "twitter:image",
-    content: `${import.meta.env.VITE_FRONTEND_URL}/og-image.png`,
-  },
-  {
-    property: "twitter:image:alt",
-    content: "Three Cells",
-  },
-  {
-    property: "twitter:image:width",
-    content: "1200",
-  },
-  {
-    property: "twitter:image:height",
-    content: "630",
-  },
-  {
-    property: "keywords",
-    content: "Simplex method, productivity, best life",
-  },
-];
+export const meta: Route.MetaFunction = () => [];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -135,6 +77,50 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        {/* Static Meta Tags for SEO and Social */}
+        <title>Three Cells</title>
+        <meta
+          name="description"
+          content="Discover your best life with just three questions a day."
+        />
+        <meta
+          name="keywords"
+          content="Simplex method, productivity, best life"
+        />
+
+        {/* Open Graph */}
+        <meta property="og:title" content="Three Cells" />
+        <meta
+          property="og:description"
+          content="Discover your best life with just three questions a day."
+        />
+        <meta
+          property="og:image"
+          content="https://three-cells.com/og-image.png"
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:alt" content="Three Cells" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta property="twitter:domain" content="three-cells.com" />
+        <meta name="twitter:title" content="Three Cells" />
+        <meta
+          name="twitter:description"
+          content="Discover your best life with just three questions a day."
+        />
+        <meta
+          name="twitter:image"
+          content="https://three-cells.com/og-image.png"
+        />
+        <meta name="twitter:image:alt" content="Three Cells" />
+        <meta name="twitter:image:width" content="1200" />
+        <meta name="twitter:image:height" content="630" />
+        <meta name="twitter:creator" content="@maghfoorx" />
+
         <Meta />
         <Links />
       </head>
