@@ -249,7 +249,7 @@ const WhyThisToolExistsSection = () => {
           I’ve read books like <em>Atomic Habits</em>,{" "}
           <em>The 7 Habits of Highly Effective People</em>,
           <em>The 4-Hour Workweek</em>, and <em>The Pathless Path</em>. I’ve
-          listened to podcasts by Cal Newport, Ali Abdaal, and Alex Hormozi.
+          listened to podcasts by Cal Newport, Ali Abdaal, and Alex Hormozi.{" "}
           <span className="font-semibold">
             I’ve tested ideas, built routines, and followed dozens of
             productivity systems.
