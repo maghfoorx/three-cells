@@ -8,6 +8,8 @@ import LoggedOutFooter from "~/components/LoggedOutFooter";
 import SimplexGraph from "../../../public/simplex-method-graph.png";
 import SadPicture from "../../../public/sad.webp";
 import HappyPicture from "../../../public/happy.webp";
+import CalNewport from "../../../public/cal-newport.webp";
+import JimCollins from "../../../public/jim-collins.webp";
 
 export default function Home() {
   return (
@@ -15,6 +17,7 @@ export default function Home() {
       <LoggedOutHeader />
       <HeroSection />
       <SimplexMethodSection />
+      <UsedBySuccessfulPeopleSection />
       <AvoidLivingTheLiveYouDontLoveSection />
       <ImagineYourIdealLife />
       <TakeTheFirstStepToday />
@@ -179,6 +182,54 @@ const TakeTheFirstStepToday = () => {
             Get your ideal life
           </Button>
         </Link>
+      </Section>
+    </div>
+  );
+};
+
+const UsedBySuccessfulPeopleSection = () => {
+  return (
+    <div className="bg-lime-100 w-full">
+      <Section className="py-8 flex flex-col items-center gap-10">
+        <h2 className="text-4xl font-bold md:text-5xl leading-tight text-center">
+          Backed by the world's top thinkers
+        </h2>
+
+        <div className="flex flex-col md:flex-row gap-10 md:items-center md:justify-center w-full">
+          <div className="flex flex-col items-center text-center max-w-sm mx-auto">
+            <img
+              src={JimCollins}
+              alt="Jim Collins"
+              className="w-48 h-48 object-cover"
+            />
+            <h3 className="mt-4 text-xl font-semibold">Jim Collins</h3>
+            <p className="text-base mt-2">
+              Jim is the author of <em>Good to Great</em>. He uses this method
+              every single day. He tracks what makes a good day good — and a bad
+              day bad. This helps him stay on track and do his best work.
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center text-center max-w-sm mx-auto">
+            <img
+              src={CalNewport}
+              alt="Cal Newport"
+              className="w-48 h-48 object-cover"
+            />
+            <h3 className="mt-4 text-xl font-semibold">Cal Newport</h3>
+            <p className="text-base mt-2">
+              Cal is the author of <em>Deep Work</em>. He talks a lot about this
+              method. He says it helps you stay focused, do great work, and
+              build your dream life. Many people now use it because of him.
+            </p>
+          </div>
+        </div>
+
+        <p className="text-center text-lg max-w-2xl mt-6">
+          This method is simple. It works. And it’s used by people who are doing
+          amazing things. You can use it too — just answer 3 easy questions each
+          day.
+        </p>
       </Section>
     </div>
   );
