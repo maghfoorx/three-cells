@@ -81,7 +81,7 @@ const SimplexMethodSection = () => {
     <div className="bg-sky-200 w-full">
       <Section className="py-8">
         <h2 className="text-4xl font-bold md:text-5xl leading-tight text-center">
-          Backed by science
+          Science on your side
         </h2>
         <div className="flex flex-col md:flex-row gap-4 md:justify-between md:items-center items-start mt-10">
           <div className="max-w-md mx-auto">
