@@ -112,11 +112,11 @@ const AvoidLivingTheLiveYouDontLoveSection = () => {
         <h2 className="text-4xl font-bold md:text-5xl leading-tight text-center">
           Avoid your worst life
         </h2>
-        <div className="flex flex-col-reverse md:flex-row gap-4 md:justify-between md:items-center items-start mt-10">
+        <div className="flex flex-col md:flex-row gap-4 md:justify-between md:items-center items-start mt-6">
           <img
             src={SadPicture}
             alt=""
-            className="mx-auto mt-4 md:mt-0 rounded-md shadow-md"
+            className="mx-auto rounded-md shadow-md"
             width={600}
           />
           <div className="max-w-md mx-auto">
@@ -144,7 +144,7 @@ const ImagineYourIdealLife = () => {
         <h2 className="text-4xl font-bold md:text-5xl leading-tight text-center">
           Picture a life you love
         </h2>
-        <div className="flex flex-col md:flex-row gap-4 md:justify-between md:items-center items-start mt-10">
+        <div className="flex flex-col-reverse md:flex-row gap-4 md:justify-between md:items-center items-start mt-6">
           <div className="max-w-md mx-auto">
             <ul className="list-disc list-inside space-y-2 text-lg md:text-lg leading-relaxed">
               <li>You wake up each day feeling energized and focused.</li>
@@ -159,7 +159,7 @@ const ImagineYourIdealLife = () => {
           <img
             src={HappyPicture}
             alt=""
-            className="mx-auto mt-4 md:mt-0 rounded-md shadow-md"
+            className="mx-auto rounded-md shadow-md"
             width={600}
           />
         </div>
