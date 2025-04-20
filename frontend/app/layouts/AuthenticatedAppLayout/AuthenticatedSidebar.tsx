@@ -2,7 +2,7 @@ import { NavFooter } from "./NavFooter";
 import { NavMain } from "./NavMain";
 import { NavUser } from "./NavUser";
 import { format } from "date-fns";
-import { Rocket, Table } from "lucide-react";
+import { Rocket, Table, Calendar } from "lucide-react";
 import { Link } from "react-router";
 import {
   Sidebar,
@@ -31,6 +31,11 @@ const mainNavItems: NavItem[] = [
     title: "Log",
     href: `/log`,
     icon: Table,
+  },
+  {
+    title: "Yearly View",
+    href: `/yearly-view`,
+    icon: Calendar,
   },
 ];
 
