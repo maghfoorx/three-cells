@@ -20,6 +20,7 @@ export default function Home() {
       <SimplexMethodSection />
       <AvoidLivingTheLiveYouDontLoveSection />
       <ImagineYourIdealLife />
+      <WhyThisToolExistsSection />
       <TakeTheFirstStepToday />
       <LoggedOutFooter />
     </main>
@@ -229,6 +230,43 @@ const UsedBySuccessfulPeopleSection = () => {
           This method is simple. It works. And it’s used by people who are doing
           amazing things. You can use it too — just answer 3 easy questions each
           day.
+        </p>
+      </Section>
+    </div>
+  );
+};
+
+const WhyThisToolExistsSection = () => {
+  return (
+    <div className="w-full">
+      <Section className="py-12 flex flex-col items-center gap-8">
+        <h2 className="text-4xl font-bold md:text-5xl text-center">
+          Why this tool exists
+        </h2>
+
+        <p className="text-lg max-w-3xl text-center">
+          Over the last 5+ years, I’ve tried many methods to live a better life.
+          I’ve read books like <em>Atomic Habits</em>,{" "}
+          <em>The 7 Habits of Highly Effective People</em>,
+          <em>The 4-Hour Workweek</em>, and <em>The Pathless Path</em>. I’ve
+          listened to podcasts by Cal Newport, Ali Abdaal, and Alex Hormozi.
+          <span className="font-semibold">
+            I’ve tested ideas, built routines, and followed dozens of
+            productivity systems.
+          </span>
+        </p>
+
+        <p className="text-lg max-w-3xl text-center">
+          After all that, I just wanted something simple that actually works.
+          Something I could stick with. Something that helps me build my dream
+          life, step by step. That’s how this tool came to life.
+        </p>
+
+        <p className="text-lg max-w-3xl text-center">
+          It’s not just a tool. It’s what I use every day. It’s built from real
+          experience, not just theory. And I made it to help people like me —
+          who want more focus, more meaning, and a better life with less
+          overwhelm.
         </p>
       </Section>
     </div>
