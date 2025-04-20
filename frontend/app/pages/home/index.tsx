@@ -16,8 +16,8 @@ export default function Home() {
     <main className="flex flex-col items-center w-full flex-1">
       <LoggedOutHeader />
       <HeroSection />
-      <SimplexMethodSection />
       <UsedBySuccessfulPeopleSection />
+      <SimplexMethodSection />
       <AvoidLivingTheLiveYouDontLoveSection />
       <ImagineYourIdealLife />
       <TakeTheFirstStepToday />
