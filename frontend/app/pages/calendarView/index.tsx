@@ -134,14 +134,15 @@ function MonthGrid({ days, scoreMap }: MonthGridProps) {
         const score = scoreMap.get(dateStr);
         const bgColor = score !== undefined ? SCORE_COLORS[score] : undefined;
 
-        const isLightColour = color(bgColor).isLight();
+        const scoreDayTextColour = bgColor != undefined ? "white" : "black";
+
         return (
           <div
             key={day.toISOString()}
             className="text-center p-1 hover:bg-gray-100 rounded cursor-pointer"
             style={{
               backgroundColor: bgColor,
-              color: isLightColour ? "white" : "black",
+              color: scoreDayTextColour,
             }}
             onClick={() => handleDateClicked(day)}
           >
