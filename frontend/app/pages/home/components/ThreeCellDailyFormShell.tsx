@@ -111,7 +111,7 @@ export function ThreeCellDailyFormShell() {
             {/* Day Summary */}
             <div className="flex-1 space-y-1">
               <FormLabelWithInfo
-                label="summary"
+                label="Summary"
                 information={FIELD_EXPLANATIONS.summary}
               />
               <Textarea
