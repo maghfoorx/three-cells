@@ -77,10 +77,10 @@ const HeroSection = () => {
 
 const SimplexMethodSection = () => {
   return (
-    <div className="bg-sky-200 w-full mt-4">
+    <div className="bg-sky-200 w-full">
       <Section className="py-8">
         <h2 className="text-4xl font-bold md:text-5xl leading-tight text-center">
-          Scientifically get your best life
+          Backed by science
         </h2>
         <div className="flex flex-col md:flex-row gap-4 md:justify-between md:items-center items-start mt-10">
           <div className="max-w-md mx-auto">
@@ -189,7 +189,7 @@ const TakeTheFirstStepToday = () => {
 
 const UsedBySuccessfulPeopleSection = () => {
   return (
-    <div className="bg-lime-100 w-full">
+    <div className="bg-lime-100 w-full mt-4">
       <Section className="py-8 flex flex-col items-center gap-10">
         <h2 className="text-4xl font-bold md:text-5xl leading-tight text-center">
           Backed by the world's top thinkers
