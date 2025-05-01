@@ -78,7 +78,7 @@ const HeroSection = () => {
 
 const SimplexMethodSection = () => {
   return (
-    <div className="bg-sky-200 w-full">
+    <div className="w-full">
       <Section className="py-8">
         <h2 className="text-4xl font-bold md:text-5xl leading-tight text-center">
           Science on your side
@@ -107,7 +107,7 @@ const SimplexMethodSection = () => {
 
 const AvoidLivingTheLiveYouDontLoveSection = () => {
   return (
-    <div className="bg-red-200 w-full">
+    <div className="bg-cyan-100 w-full">
       <Section className="py-8">
         <h2 className="text-4xl font-bold md:text-5xl leading-tight text-center">
           Avoid your worst life
@@ -139,7 +139,7 @@ const AvoidLivingTheLiveYouDontLoveSection = () => {
 
 const ImagineYourIdealLife = () => {
   return (
-    <div className="bg-green-200 w-full">
+    <div className="w-full">
       <Section className="py-8">
         <h2 className="text-4xl font-bold md:text-5xl leading-tight text-center">
           Picture a life you love
@@ -173,7 +173,7 @@ const ImagineYourIdealLife = () => {
 
 const TakeTheFirstStepToday = () => {
   return (
-    <div className="bg-sky-200 w-full">
+    <div className="bg-cyan-200 w-full">
       <Section className="py-8 flex flex-col items-center gap-4">
         <h2 className="text-4xl font-bold md:text-5xl leading-tight text-center">
           Take the first step today
@@ -190,7 +190,7 @@ const TakeTheFirstStepToday = () => {
 
 const UsedBySuccessfulPeopleSection = () => {
   return (
-    <div className="bg-lime-100 w-full mt-4">
+    <div className="bg-cyan-100 w-full mt-4">
       <Section className="py-8 flex flex-col items-center gap-10">
         <h2 className="text-4xl font-bold md:text-5xl leading-tight text-center">
           Backed by the world's top thinkers
@@ -238,7 +238,7 @@ const UsedBySuccessfulPeopleSection = () => {
 
 const WhyThisToolExistsSection = () => {
   return (
-    <div className="w-full">
+    <div className="bg-cyan-100 w-full">
       <Section className="py-12 flex flex-col items-center gap-8">
         <h2 className="text-4xl font-bold md:text-5xl text-center">
           Why this tool exists
