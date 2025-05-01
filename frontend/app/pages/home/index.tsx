@@ -173,7 +173,7 @@ const ImagineYourIdealLife = () => {
 
 const TakeTheFirstStepToday = () => {
   return (
-    <div className="bg-cyan-200 w-full">
+    <div className="w-full">
       <Section className="py-8 flex flex-col items-center gap-4">
         <h2 className="text-4xl font-bold md:text-5xl leading-tight text-center">
           Take the first step today
