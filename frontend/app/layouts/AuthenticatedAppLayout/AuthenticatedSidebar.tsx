@@ -2,7 +2,7 @@ import { NavFooter } from "./NavFooter";
 import { NavMain } from "./NavMain";
 import { NavUser } from "./NavUser";
 import { format } from "date-fns";
-import { Rocket, Table, Calendar } from "lucide-react";
+import { Rocket, Table, Calendar, ClipboardList } from "lucide-react";
 import { Link } from "react-router";
 import {
   Sidebar,
@@ -13,29 +13,39 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "~/components/ui/sidebar";
-import type { NavItem } from "~/types";
+import type { NavItem, NavGroup } from "~/types";
 import ApplicationLogo from "~/components/ApplicationLogo";
 
-const mainNavItems: NavItem[] = [
-  // {
-  //     title: 'Dashboard',
-  //     href: '/dashboard',
-  //     icon: LayoutGrid,
-  // },
+const mainNavItems: NavGroup[] = [
   {
-    title: "Track",
-    href: `/track/${format(new Date(), "yyyy-MM-dd")}`,
-    icon: Rocket,
+    label: "Tasks",
+    items: [
+      {
+        title: "Task list",
+        href: "/tasks",
+        icon: ClipboardList,
+      },
+    ],
   },
   {
-    title: "Log",
-    href: `/log`,
-    icon: Table,
-  },
-  {
-    title: "Yearly View",
-    href: `/yearly-view`,
-    icon: Calendar,
+    label: "Ideal life",
+    items: [
+      {
+        title: "Track",
+        href: `/track/${format(new Date(), "yyyy-MM-dd")}`,
+        icon: Rocket,
+      },
+      {
+        title: "Log",
+        href: `/log`,
+        icon: Table,
+      },
+      {
+        title: "Yearly View",
+        href: `/yearly-view`,
+        icon: Calendar,
+      },
+    ],
   },
 ];
 
@@ -68,7 +78,7 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        <NavMain items={mainNavItems} />
+        <NavMain groups={mainNavItems} />
       </SidebarContent>
 
       <SidebarFooter>

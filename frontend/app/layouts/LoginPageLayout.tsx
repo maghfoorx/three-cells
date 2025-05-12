@@ -31,7 +31,7 @@ export default function AuthSimpleLayout({
   }
 
   if (!loading && data?.viewer?.user != null) {
-    return <Navigate to="/track" replace />;
+    return <Navigate to="/tasks" replace />;
   }
 
   return (

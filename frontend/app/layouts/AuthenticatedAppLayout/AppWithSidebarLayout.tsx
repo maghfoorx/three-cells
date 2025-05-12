@@ -1,4 +1,4 @@
-import { useState, type PropsWithChildren } from "react";
+import { useMemo, useState, type PropsWithChildren } from "react";
 import { AppSidebar } from "~/layouts/AuthenticatedAppLayout/AuthenticatedSidebar";
 import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
 import type { BreadcrumbItem } from "~/types";
@@ -79,17 +79,30 @@ function AppContent({
 import { Breadcrumbs } from "../../components/Breadcrumbs";
 import { SidebarTrigger } from "../../components/ui/sidebar";
 import { type BreadcrumbItem as BreadcrumbItemType } from "~/types";
+import CreateNewTaskDialog from "~/pages/tasks/CreateNewTaskDialog";
+import { useLocation } from "react-router";
 
 function AppSidebarHeader({
   breadcrumbs = [],
 }: {
   breadcrumbs?: BreadcrumbItemType[];
 }) {
+  const location = useLocation();
+
+  const routeBasedButtons = useMemo(() => {
+    if (location.pathname === "/tasks") {
+      return <CreateNewTaskDialog />;
+    }
+
+    return null;
+  }, [location.pathname]);
+
   return (
     <header className="border-sidebar-border/50 flex h-16 shrink-0 items-center gap-2 border-b px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between w-full">
         <SidebarTrigger className="-ml-1" />
-        <Breadcrumbs breadcrumbs={breadcrumbs} />
+        {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
+        <div>{routeBasedButtons}</div>
       </div>
     </header>
   );

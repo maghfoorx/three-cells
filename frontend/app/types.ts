@@ -12,6 +12,11 @@ export interface NavItem {
   isActive?: boolean;
 }
 
+export interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
 export interface User {
   id: number;
   name: string;
@@ -45,4 +50,18 @@ export type ThreeCellModel = {
   score: string;
 };
 
-export type ThreeCellLog = Omit<ThreeCellModel, "id" | "user_id">;
+export type ThreeCellLog = Omit<ThreeCellModel, "user_id">;
+
+export type UserTask = {
+  id: string;
+
+  title: string;
+  description: string;
+  is_completed: boolean;
+  completed_at: Date;
+  category: string;
+  category_colour: string;
+
+  created_at: Date;
+  updated_at: Date;
+};

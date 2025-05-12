@@ -1,0 +1,40 @@
+extend type Query {
+    userTasks: [UserTask!]!
+        @field(resolver: "App\\GraphQL\\Queries\\UserTasksQuery@userTasks")
+}
+
+extend type Mutation {
+    createUserTask(input: CreateUserTaskInput!): UserTask!
+        @field(
+            resolver: "App\\GraphQL\\Mutations\\UserTasksMutation@createUserTask"
+        )
+
+    toggleUserTaskCompletion(task_id: ID!): UserTask!
+        @field(
+            resolver: "App\\GraphQL\\Mutations\\UserTasksMutation@toggleUserTaskCompletion"
+        )
+
+    deleteUserTask(task_id: ID!): UserTask
+        @field(
+            resolver: "App\\GraphQL\\Mutations\\UserTasksMutation@deleteUserTask"
+        )
+}
+
+input CreateUserTaskInput {
+    title: String!
+    description: String
+    category_id: String
+}
+
+type UserTask {
+    id: ID!
+    title: String!
+    description: String
+    is_completed: Boolean
+    completed_at: DateTime
+    category: String
+    category_colour: String
+
+    created_at: DateTime!
+    updated_at: DateTime
+}

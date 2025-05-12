@@ -7,5 +7,6 @@ export function showSuccessToast(message?: string) {
       color: "white",
     },
     position: "top-right",
+    duration: 700,
   });
 }

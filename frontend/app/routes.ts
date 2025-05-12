@@ -13,11 +13,15 @@ export default [
   ]),
 
   layout("layouts/AuthenticatedAppLayout/AuthenticatedLayout.tsx", [
+    // three cells pages
     route("/track", "pages/track/RedirectToTrackToday.tsx"),
     route("/track/:trackDate", "pages/track/index.tsx"),
     route("/log", "pages/log/index.tsx"),
     route("/settings", "pages/settings/index.tsx"),
     route("/yearly-view", "pages/calendarView/index.tsx"),
+
+    // tasks pages
+    route("/tasks", "pages/tasks/index.tsx"),
   ]),
 
   layout("layouts/LegalPagesLayout.tsx", [
