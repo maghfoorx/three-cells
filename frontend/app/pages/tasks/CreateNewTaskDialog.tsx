@@ -26,6 +26,7 @@ import { gql, useMutation } from "@apollo/client";
 import { showErrorToast } from "~/lib/showErrorToast";
 import { showSuccessToast } from "~/lib/showSuccessToast";
 import { Textarea } from "~/components/ui/textarea";
+import { cn } from "~/lib/utils";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -57,15 +58,18 @@ export default function CreateNewTaskDialog() {
     },
   });
 
-  const [createNewTask] = useMutation(CREATE_NEW_TASK_MUTATION, {
-    refetchQueries: ["AllUserTasks"],
-    onError: () => {
-      showErrorToast();
-    },
-    onCompleted: () => {
-      showSuccessToast();
-    },
-  });
+  const [createNewTask, { loading: createNewTaskSubmitting }] = useMutation(
+    CREATE_NEW_TASK_MUTATION,
+    {
+      refetchQueries: ["AllUserTasks"],
+      onError: () => {
+        showErrorToast();
+      },
+      onCompleted: () => {
+        showSuccessToast();
+      },
+    }
+  );
 
   const handleCreateNewTask = async (data: FormSchema) => {
     try {
@@ -162,7 +166,11 @@ export default function CreateNewTaskDialog() {
                 </FormItem>
               )}
             /> */}
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className={cn("w-full")}
+              disabled={createNewTaskSubmitting}
+            >
               Add task
             </Button>
           </form>
