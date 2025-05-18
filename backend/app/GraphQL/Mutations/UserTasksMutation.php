@@ -54,4 +54,20 @@ final readonly class UserTasksMutation
 
         return $deletedTask;
     }
+
+    public function updateTaskTitle(null|string $root, array $args): UserTask
+    {
+        $user = Auth::user();
+        $taskId = $args["taskId"];
+        $updatedTitle = $args["title"];
+
+        $task = UserTask::where("id", $taskId)
+            ->where("user_id", $user->id)
+            ->firstOrFail();
+
+        $task->title = $updatedTitle;
+        $task->save();
+
+        return $task;
+    }
 }

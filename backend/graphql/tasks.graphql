@@ -18,6 +18,11 @@ extend type Mutation {
         @field(
             resolver: "App\\GraphQL\\Mutations\\UserTasksMutation@deleteUserTask"
         )
+
+    updateTaskTitle(taskId: ID!, title: String!): UserTask
+        @field(
+            resolver: "App\\GraphQL\\Mutations\\UserTasksMutation@updateTaskTitle"
+        )
 }
 
 input CreateUserTaskInput {

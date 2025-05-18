@@ -1,4 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
+import styled from "styled-components";
+import { EditableText, Classes } from "@blueprintjs/core";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -32,6 +34,21 @@ const DELETE_TASK_MUTATION = gql`
   }
 `;
 
+const UPDATE_TASK_TITLE_MUTATION = gql`
+  mutation UpdateTaskTitle($taskId: ID!, $updatedTitle: String!) {
+    updateTaskTitle(taskId: $taskId, title: $updatedTitle) {
+      id
+      title
+    }
+  }
+`;
+
+const StyledEditableText = styled(EditableText)<{ $completed: boolean }>`
+  & .${Classes.EDITABLE_TEXT_CONTENT} {
+    ${({ $completed }) => $completed && "text-decoration: line-through;"}
+  }
+`;
+
 function UserTaskTileTrigger({
   userTask,
   toggleTaskCompleition,
@@ -41,6 +58,7 @@ function UserTaskTileTrigger({
     variables: { taskId: string };
   }) => Promise<void>;
 }) {
+  const [taskTitle, setTaskTitle] = useState(userTask.title);
   const handleCheckboxClicked = async (e: React.MouseEvent) => {
     e.stopPropagation();
     await toggleTaskCompleition({
@@ -48,10 +66,34 @@ function UserTaskTileTrigger({
     });
   };
 
+  const [updateTaskTitle] = useMutation(UPDATE_TASK_TITLE_MUTATION, {
+    onError: () => showErrorToast("Failed to update task title."),
+    onCompleted: () => showSuccessToast("Successfully updated task title."),
+  });
+
+  const handleTaskTitleEditConfirmed = async (value: string) => {
+    if (value.trim().length < 1) {
+      showErrorToast("Title cannot be empty");
+      setTaskTitle(userTask.title);
+      return;
+    }
+
+    if (value === userTask.title) {
+      return;
+    }
+
+    await updateTaskTitle({
+      variables: {
+        taskId: userTask.id,
+        updatedTitle: value,
+      },
+    });
+  };
+
   return (
     <div
       className={cn(
-        "flex flex-start space-x-2 p-3 rounded-sm shadow-md bg-sky-300 cursor-pointer w-full",
+        "flex items-start space-x-2 p-3 rounded-sm shadow-md bg-sky-300 cursor-pointer w-full",
         {
           "opacity-60 line-through": userTask.is_completed,
         }
@@ -61,9 +103,18 @@ function UserTaskTileTrigger({
         checked={userTask.is_completed}
         onClick={handleCheckboxClicked}
       />
-
-      <div className="flex flex-col">
-        <div className="text-sm font-medium">{userTask.title}</div>
+      <div
+        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <StyledEditableText
+          value={taskTitle}
+          onCancel={() => setTaskTitle(userTask.title)}
+          onChange={(value) => setTaskTitle(value)}
+          onConfirm={handleTaskTitleEditConfirmed}
+          disabled={userTask.is_completed}
+          $completed={userTask.is_completed}
+        />
         {userTask.description && (
           <div className="text-xs text-muted-foreground mt-1">
             {userTask.description}

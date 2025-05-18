@@ -3,6 +3,7 @@ import FullscreenSpinner from "~/components/FullscreenSpinner";
 import CreateNewTaskDialog from "./CreateNewTaskDialog";
 import type { UserTask } from "~/types";
 import UserTaskTile from "./UserTaskTile";
+import { EditableText } from "@blueprintjs/core";
 
 const ALL_USER_TASKS_QUERY = gql`
   query AllUserTasks {
