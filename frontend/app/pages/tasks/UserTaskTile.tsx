@@ -1,6 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
 import styled from "styled-components";
 import { EditableText, Classes } from "@blueprintjs/core";
+import { ClipboardCheck, Trash } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -185,12 +186,20 @@ const UserTaskTile = ({ userTask }: { userTask: UserTask }) => {
             <DialogTitle>{userTask.title}</DialogTitle>
           </DialogHeader>
           {userTask.description && <div>{userTask.description}</div>}
-          <div className="flex flex-row gap-1">
-            <Button onClick={handleToggleCompleitionButtonClicked}>
-              {userTask?.is_completed ? "Back to draft" : "Complete"}
+          <div className="flex flex-row justify-end gap-1">
+            <Button
+              size={"sm"}
+              variant={"destructive"}
+              onClick={handleDeleteButtonClicked}
+            >
+              <Trash /> <span>Delete</span>
             </Button>
-            <Button variant={"destructive"} onClick={handleDeleteButtonClicked}>
-              Delete
+
+            <Button size={"sm"} onClick={handleToggleCompleitionButtonClicked}>
+              <ClipboardCheck />{" "}
+              <span>
+                {userTask?.is_completed ? "Back to draft" : "Complete"}
+              </span>
             </Button>
           </div>
         </DialogContent>
