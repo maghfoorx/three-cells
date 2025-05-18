@@ -171,7 +171,7 @@ export default function CreateNewTaskDialog() {
               className={cn("w-full")}
               disabled={createNewTaskSubmitting}
             >
-              Add task
+              <ClipboardPlus /> Add task
             </Button>
           </form>
         </Form>
