@@ -16,6 +16,10 @@ import {
 import type { NavItem, NavGroup } from "~/types";
 import ApplicationLogo from "~/components/ApplicationLogo";
 
+const getHrefForTrackPage = () => {
+  return `/track/${format(new Date(), "yyyy-MM-dd")}`;
+};
+
 const mainNavItems: NavGroup[] = [
   {
     label: "Tasks",
@@ -32,7 +36,7 @@ const mainNavItems: NavGroup[] = [
     items: [
       {
         title: "Track",
-        href: `/track/${format(new Date(), "yyyy-MM-dd")}`,
+        href: getHrefForTrackPage(),
         icon: Rocket,
       },
       {
