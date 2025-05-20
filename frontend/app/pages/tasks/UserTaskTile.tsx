@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "convex/react";
 import styled from "styled-components";
 import { EditableText, Classes } from "@blueprintjs/core";
 import { ClipboardCheck, Trash } from "lucide-react";
@@ -15,34 +15,11 @@ import {
 import { showErrorToast } from "~/lib/showErrorToast";
 import { showSuccessToast } from "~/lib/showSuccessToast";
 import { cn } from "~/lib/utils";
-import type { UserTask } from "~/types";
+import { api } from "convex/_generated/api";
+import schema from "convex/schema";
+import type { DataModelFromSchemaDefinition } from "convex/server";
 
-const TOGGLE_TASK_COMPLETION_MUTATION = gql`
-  mutation ToggleTaskCompletion($taskId: ID!) {
-    toggleUserTaskCompletion(task_id: $taskId) {
-      id
-      is_completed
-      completed_at
-    }
-  }
-`;
-
-const DELETE_TASK_MUTATION = gql`
-  mutation DeleteTask($taskId: ID!) {
-    deleteUserTask(task_id: $taskId) {
-      id
-    }
-  }
-`;
-
-const UPDATE_TASK_TITLE_MUTATION = gql`
-  mutation UpdateTaskTitle($taskId: ID!, $updatedTitle: String!) {
-    updateTaskTitle(taskId: $taskId, title: $updatedTitle) {
-      id
-      title
-    }
-  }
-`;
+export type DataModel = DataModelFromSchemaDefinition<typeof schema>;
 
 const StyledEditableText = styled(EditableText)<{ $completed: boolean }>`
   & .${Classes.EDITABLE_TEXT_CONTENT} {
@@ -52,25 +29,18 @@ const StyledEditableText = styled(EditableText)<{ $completed: boolean }>`
 
 function UserTaskTileTrigger({
   userTask,
-  toggleTaskCompleition,
 }: {
-  userTask: UserTask;
-  toggleTaskCompleition: (options: {
-    variables: { taskId: string };
-  }) => Promise<void>;
+  userTask: DataModel["user_tasks"]["document"];
 }) {
+  const toggleTaskCompletion = useMutation(api.tasks.toggleUserTaskCompletion);
+
   const [taskTitle, setTaskTitle] = useState(userTask.title);
   const handleCheckboxClicked = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    await toggleTaskCompleition({
-      variables: { taskId: userTask.id },
-    });
+    await toggleTaskCompletion({ taskId: userTask._id });
   };
 
-  const [updateTaskTitle] = useMutation(UPDATE_TASK_TITLE_MUTATION, {
-    onError: () => showErrorToast("Failed to update task title."),
-    onCompleted: () => showSuccessToast("Successfully updated task title."),
-  });
+  const updateTaskTitle = useMutation(api.tasks.updateTaskTitle);
 
   const handleTaskTitleEditConfirmed = async (value: string) => {
     if (value.trim().length < 1) {
@@ -84,10 +54,8 @@ function UserTaskTileTrigger({
     }
 
     await updateTaskTitle({
-      variables: {
-        taskId: userTask.id,
-        updatedTitle: value,
-      },
+      taskId: userTask._id,
+      title: value,
     });
   };
 
@@ -126,48 +94,26 @@ function UserTaskTileTrigger({
   );
 }
 
-const UserTaskTile = ({ userTask }: { userTask: UserTask }) => {
+const UserTaskTile = ({
+  userTask,
+}: {
+  userTask: DataModel["user_tasks"]["document"];
+}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const [deleteUserTask] = useMutation(DELETE_TASK_MUTATION, {
-    update(cache, { data }) {
-      if (data?.deleteUserTask) {
-        cache.evict({
-          id: cache.identify({
-            __typename: "UserTask",
-            id: data.deleteUserTask.id,
-          }),
-        });
-        cache.gc();
-      }
-    },
-    onError: () => {
-      showErrorToast();
-    },
-    onCompleted: () => {
-      showSuccessToast("Successfully deleted the task.");
-    },
-  });
+  const deleteUserTask = useMutation(api.tasks.deleteUserTask);
 
   const handleDeleteButtonClicked = async () => {
     await deleteUserTask({
-      variables: {
-        taskId: userTask.id,
-      },
+      taskId: userTask._id,
     });
     setDialogOpen(false);
   };
 
-  const [toggleTaskCompleition] = useMutation(TOGGLE_TASK_COMPLETION_MUTATION, {
-    onError: () => {
-      showErrorToast();
-    },
-  });
+  const toggleTaskCompletion = useMutation(api.tasks.toggleUserTaskCompletion);
 
   const handleToggleCompleitionButtonClicked = async () => {
-    await toggleTaskCompleition({
-      variables: { taskId: userTask.id },
-    });
+    await toggleTaskCompletion({ taskId: userTask._id });
   };
 
   return (
@@ -175,10 +121,7 @@ const UserTaskTile = ({ userTask }: { userTask: UserTask }) => {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogTrigger asChild>
           <div onClick={() => setDialogOpen(true)}>
-            <UserTaskTileTrigger
-              userTask={userTask}
-              toggleTaskCompleition={toggleTaskCompleition as any}
-            />
+            <UserTaskTileTrigger userTask={userTask} />
           </div>
         </DialogTrigger>
         <DialogContent>

@@ -22,11 +22,12 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { gql, useMutation } from "@apollo/client";
 import { showErrorToast } from "~/lib/showErrorToast";
 import { showSuccessToast } from "~/lib/showSuccessToast";
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
+import { useMutation } from "convex/react";
+import { api } from "convex/_generated/api";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -36,51 +37,25 @@ const formSchema = z.object({
 
 type FormSchema = z.output<typeof formSchema>;
 
-const CREATE_NEW_TASK_MUTATION = gql`
-  mutation CreateNewTask($input: CreateUserTaskInput!) {
-    createUserTask(input: $input) {
-      id
-      title
-      description
-      category
-    }
-  }
-`;
-
 export default function CreateNewTaskDialog() {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      description: "",
-      category_id: "",
+      description: undefined,
+      category_id: undefined,
     },
   });
 
-  const [createNewTask, { loading: createNewTaskSubmitting }] = useMutation(
-    CREATE_NEW_TASK_MUTATION,
-    {
-      refetchQueries: ["AllUserTasks"],
-      onError: () => {
-        showErrorToast();
-      },
-      onCompleted: () => {
-        showSuccessToast();
-      },
-    }
-  );
+  const createNewTask = useMutation(api.tasks.createUserTask);
 
   const handleCreateNewTask = async (data: FormSchema) => {
     try {
       await createNewTask({
-        variables: {
-          input: {
-            title: data.title,
-            description: data.description,
-            category_id: data.category_id,
-          },
-        },
+        title: data.title,
+        description: data.description,
+        category_id: data.category_id as any,
       });
 
       form.reset();
@@ -169,7 +144,7 @@ export default function CreateNewTaskDialog() {
             <Button
               type="submit"
               className={cn("w-full")}
-              disabled={createNewTaskSubmitting}
+              disabled={form.formState.isSubmitting}
             >
               <ClipboardPlus /> Add task
             </Button>

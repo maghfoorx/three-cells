@@ -1,7 +1,8 @@
 import { useForm } from "react-hook-form";
 import color from "color";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useQuery as useApolloQuery } from "@apollo/client";
+import { useQuery, useMutation } from "convex/react";
 import { z } from "zod";
 import {
   Form,
@@ -31,6 +32,7 @@ import { useEffect } from "react";
 import { Skeleton } from "~/components/ui/skeleton";
 import { showSuccessToast } from "~/lib/showSuccessToast";
 import { showErrorToast } from "~/lib/showErrorToast";
+import { api } from "convex/_generated/api";
 
 // Add validation schema
 const formSchema = z.object({
@@ -107,8 +109,8 @@ export default function ThreeCellDailyForm() {
   const dateFor = params.trackDate as string;
   const parsedDate = parse(dateFor, "yyyy-MM-dd", new Date());
 
-  const { data, loading, refetch } = useQuery(GET_ENTRY, {
-    variables: { date: dateFor },
+  const data = useQuery(api.threeCells.threeCellForDate, {
+    date: dateFor,
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -122,14 +124,16 @@ export default function ThreeCellDailyForm() {
   });
 
   useEffect(() => {
-    if (data?.threeCellForDate) {
+    if (data != null) {
+      const threeCellForDate = {
+        summary: data.summary,
+        focused_hours: data.focusedHours,
+        score: data.score,
+        date_for: parse(data.dateFor, "yyyy-MM-dd", new Date()),
+      };
+
       form.reset({
-        ...data.threeCellForDate,
-        date_for: parse(
-          data.threeCellForDate.date_for,
-          "yyyy-MM-dd",
-          new Date()
-        ),
+        ...threeCellForDate,
       });
     } else {
       form.reset({
@@ -141,33 +145,7 @@ export default function ThreeCellDailyForm() {
     }
   }, [data]);
 
-  useEffect(() => {
-    refetch({ date: dateFor });
-  }, [dateFor]);
-
-  const SUBMIT_ENTRY = gql`
-    mutation submitThreeCellEntry($input: ThreeCellInput!) {
-      submitThreeCellEntry(input: $input) {
-        id
-        summary
-        focused_hours
-        score
-        date_for
-      }
-    }
-  `;
-
-  const [submitThreeCellEntry] = useMutation(SUBMIT_ENTRY, {
-    refetchQueries: ["GetAllSubmittedDays", "AllThreeCellEntries"],
-    onCompleted: () => {
-      showSuccessToast("Successfully updated your daily entry. Keep it up!🚀");
-    },
-    onError: () => {
-      showErrorToast(
-        "Something went wrong with submitting your entry 😓. Please try again later."
-      );
-    },
-  });
+  const submitThreeCellEntry = useMutation(api.threeCells.submitThreeCellEntry);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -178,7 +156,7 @@ export default function ThreeCellDailyForm() {
         date_for: format(values.date_for, "yyyy-MM-dd"),
       };
 
-      await submitThreeCellEntry({ variables: { input } });
+      await submitThreeCellEntry({ input });
     } catch (error) {
       console.error("Submission failed:", error);
     }
@@ -212,7 +190,7 @@ export default function ThreeCellDailyForm() {
                     information={FIELD_EXPLANATIONS.summary}
                   />
                   <FormControl>
-                    {loading ? (
+                    {data === undefined ? (
                       <Skeleton className="h-20 w-full bg-sky-100" />
                     ) : (
                       <Textarea
@@ -238,7 +216,7 @@ export default function ThreeCellDailyForm() {
                     information={FIELD_EXPLANATIONS.focused_hours}
                   />
                   <FormControl>
-                    {loading ? (
+                    {data === undefined ? (
                       <Skeleton className="h-9 w-full bg-sky-100" />
                     ) : (
                       <Input
@@ -338,19 +316,18 @@ const GET_ALL_SUBMITTED_DAYS = gql`
 const CalendarComponent = ({ initialDate }: { initialDate: Date }) => {
   const navigate = useNavigate();
   const today = new Date();
-  const { data } = useQuery(GET_ALL_SUBMITTED_DAYS);
-  const allSubmittedDays = data?.allThreeCellEntries || [];
+
+  const allSubmittedDays = useQuery(api.threeCells.allThreeCellEntries) ?? [];
 
   const initialDateISO = format(initialDate, "yyyy-MM-dd");
 
-  const filteredDays = allSubmittedDays.filter(
-    (day: any) =>
-      format(new Date(day.date_for), "yyyy-MM-dd") !== initialDateISO
-  );
+  const filteredDays = allSubmittedDays.filter((day) => {
+    return format(new Date(day.dateFor), "yyyy-MM-dd") !== initialDateISO;
+  });
 
   // Then create modifiers with filteredDays
   const scoreModifiers = filteredDays.reduce((acc: any, day: any) => {
-    const [year, month, dayStr] = day.date_for.split("-");
+    const [year, month, dayStr] = day.dateFor.split("-");
     const date = new Date(
       parseInt(year),
       parseInt(month) - 1,

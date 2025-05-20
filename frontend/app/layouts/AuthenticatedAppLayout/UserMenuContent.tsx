@@ -6,34 +6,18 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { UserInfo } from "~/components/UserInfo";
 import { useMobileNavigation } from "~/lib/hooks/useMobileNavigation";
-import { type User } from "~/types";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { LogOut, Settings } from "lucide-react";
-import { useApolloClient, useMutation } from "@apollo/client";
-import { LOGOUT_MUTATION_QUERY } from "~/lib/globalQueries";
-import { showErrorToast } from "~/lib/showErrorToast";
+import type { DataModel } from "convex/_generated/dataModel";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 interface UserMenuContentProps {
-  user: User;
+  user: DataModel["users"]["document"];
 }
 
 export function UserMenuContent({ user }: UserMenuContentProps) {
   const cleanup = useMobileNavigation();
-  const navigate = useNavigate();
-  const client = useApolloClient();
-
-  const [logoutMutation] = useMutation(LOGOUT_MUTATION_QUERY);
-
-  const handleLogout = async () => {
-    const { data, errors } = await logoutMutation();
-    if (data?.logout?.success) {
-      cleanup();
-      client.resetStore();
-      navigate("/");
-    } else {
-      showErrorToast("Something went wrong. Please try again later.");
-    }
-  };
+  const { signOut } = useAuthActions();
 
   return (
     <>
@@ -52,7 +36,11 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
         </DropdownMenuItem>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
-      <DropdownMenuItem asChild variant="destructive" onClick={handleLogout}>
+      <DropdownMenuItem
+        asChild
+        variant="destructive"
+        onClick={() => void signOut()}
+      >
         <div>
           <LogOut className="mr-2 text-white hover:text-black" /> Log out
         </div>

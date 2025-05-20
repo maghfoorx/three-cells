@@ -6,46 +6,14 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { ConvexReactClient } from "convex/react";
+import { ConvexAuthProvider } from "@convex-dev/auth/react";
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import {
-  ApolloClient,
-  ApolloProvider,
-  createHttpLink,
-  InMemoryCache,
-} from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
 import { Toaster } from "./components/ui/sonner";
 
-const getCSRFToken = () => {
-  const match = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("XSRF-TOKEN="));
-  return match ? decodeURIComponent(match.split("=")[1]) : "";
-};
-
-const authLink = setContext((_, { headers }) => {
-  const csrfToken = getCSRFToken();
-
-  return {
-    headers: {
-      ...headers,
-      "X-XSRF-TOKEN": csrfToken,
-    },
-  };
-});
-
-const httpLink = createHttpLink({
-  uri: `${import.meta.env.VITE_API_URL}/graphql`,
-  credentials: "include",
-});
-
-const client = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
-  credentials: "include",
-});
+const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -136,9 +104,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <ApolloProvider client={client}>
+    <ConvexAuthProvider client={convex}>
       <Outlet />
-    </ApolloProvider>
+    </ConvexAuthProvider>
   );
 }
 

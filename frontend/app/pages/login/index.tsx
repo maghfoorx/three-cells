@@ -1,8 +1,7 @@
 import { Button } from "~/components/ui/button";
+import { useAuthActions } from "@convex-dev/auth/react";
 import type { Route } from "./+types/index";
 import GoogleLogo from "./components/GoogleLogo";
-import axios from "axios";
-import { showErrorToast } from "~/lib/showErrorToast";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -12,20 +11,13 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function LoginPage() {
-  const handleGoogleLogin = async () => {
-    try {
-      await axios.get(`${import.meta.env.VITE_API_URL}/sanctum/csrf-cookie`);
-      window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
-    } catch (error) {
-      showErrorToast();
-      console.error(error);
-    }
-  };
+  const { signIn } = useAuthActions();
+
   return (
     <main className="flex flex-col gap-2 items-center">
       <div className="flex w-full flex-col gap-4">
         <Button
-          onClick={handleGoogleLogin}
+          onClick={() => void signIn("google")}
           variant="outline"
           className="w-full gap-2"
           size={"lg"}

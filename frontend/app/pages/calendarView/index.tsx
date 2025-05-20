@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef } from "react";
+import { useQuery } from "convex/react";
 import color from "color";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
-import { gql, useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { SCORE_COLORS } from "~/types";
 import { useNavigate } from "react-router";
 import { Skeleton } from "~/components/ui/skeleton";
+import { api } from "convex/_generated/api";
 
 const ALL_THREE_CELL_ENTRIES = gql`
   query AllThreeCellEntriesForCalendarView {
@@ -17,17 +19,17 @@ const ALL_THREE_CELL_ENTRIES = gql`
 `;
 
 export default function CalendarViewPage() {
-  const { data, loading } = useQuery(ALL_THREE_CELL_ENTRIES);
+  const allThreeCellEntries = useQuery(api.threeCells.allThreeCellEntries);
 
   const scoreMap = useMemo(() => {
     const map = new Map<string, number>();
-    if (data?.allThreeCellEntries) {
-      data.allThreeCellEntries.forEach((entry: any) => {
-        map.set(entry.date_for, entry.score);
+    if (allThreeCellEntries) {
+      allThreeCellEntries.forEach((entry: any) => {
+        map.set(entry.dateFor, entry.score);
       });
     }
     return map;
-  }, [data]);
+  }, [allThreeCellEntries]);
   const currentYear = new Date().getFullYear();
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -57,7 +59,7 @@ export default function CalendarViewPage() {
           ref={scrollRef}
           className="flex-1 absolute h-full w-full overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {loading
+          {allThreeCellEntries === undefined
             ? // Show ShadCN skeletons while loading data
               Array.from({ length: 12 }).map((_, index) => (
                 <div key={index} className="border rounded-lg p-4">

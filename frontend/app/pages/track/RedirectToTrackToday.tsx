@@ -1,16 +1,9 @@
-import { useEffect } from "react";
 import { format } from "date-fns";
-import { useNavigate } from "react-router";
+import { Navigate } from "react-router";
 
 const RedirectToToday = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const formattedDate = format(new Date(), "yyyy-MM-dd");
-    navigate(`/track/${formattedDate}`, { replace: true });
-  }, [navigate]);
-
-  return null;
+  const today = format(new Date(), "yyyy-MM-dd");
+  return <Navigate to={`/track/${today}`} />;
 };
 
 export default RedirectToToday;
