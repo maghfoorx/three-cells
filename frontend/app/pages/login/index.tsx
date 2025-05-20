@@ -17,7 +17,7 @@ export default function LoginPage() {
     <main className="flex flex-col gap-2 items-center">
       <div className="flex w-full flex-col gap-4">
         <Button
-          onClick={() => void signIn("google")}
+          onClick={() => void signIn("google", { redirectTo: "/tasks" })}
           variant="outline"
           className="w-full gap-2"
           size={"lg"}
