@@ -63,6 +63,31 @@ export default function CreateNewTaskDialog() {
     } catch (error) {}
   };
 
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // handle form submission
+      if (
+        event.key === "Enter" &&
+        event.shiftKey &&
+        (event.metaKey || event.ctrlKey)
+      ) {
+        event.preventDefault();
+        form.handleSubmit(handleCreateNewTask)();
+      }
+
+      // open a new not
+      if (event.key === "N" && event.shiftKey) {
+        event.preventDefault();
+        if (dialogOpen === false) {
+          setDialogOpen(true);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const handleOpenChange = (open: boolean) => {
     setDialogOpen(open);
     form.reset();
@@ -75,9 +100,14 @@ export default function CreateNewTaskDialog() {
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Create a new task</DialogTitle>
-        </DialogHeader>
+        <div className="space-y-1">
+          <DialogHeader>
+            <DialogTitle>New task</DialogTitle>
+          </DialogHeader>
+          <DialogDescription>
+            Use this form to create a new task
+          </DialogDescription>
+        </div>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleCreateNewTask)}
