@@ -12,6 +12,7 @@ import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import type { Route } from "./+types/root";
 import "./app.css";
 import { Toaster } from "./components/ui/sonner";
+import PromptClientToRefresh from "./components/PromptClientToRefresh";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
@@ -105,6 +106,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <ConvexAuthProvider client={convex}>
+      <PromptClientToRefresh />
       <Outlet />
     </ConvexAuthProvider>
   );
