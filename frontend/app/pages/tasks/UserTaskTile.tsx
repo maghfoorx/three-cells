@@ -2,7 +2,7 @@ import { useMutation } from "convex/react";
 import styled from "styled-components";
 import { EditableText, Classes } from "@blueprintjs/core";
 import { ClipboardCheck, Trash } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import {
@@ -35,6 +35,11 @@ function UserTaskTileTrigger({
   const toggleTaskCompletion = useMutation(api.tasks.toggleUserTaskCompletion);
 
   const [taskTitle, setTaskTitle] = useState(userTask.title);
+
+  useEffect(() => {
+    setTaskTitle(userTask.title);
+  }, [userTask]);
+
   const handleCheckboxClicked = async (e: React.MouseEvent) => {
     e.stopPropagation();
     await toggleTaskCompletion({ taskId: userTask._id });
