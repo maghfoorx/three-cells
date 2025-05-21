@@ -28,6 +28,12 @@ import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import { useMutation } from "convex/react";
 import { api } from "convex/_generated/api";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -95,9 +101,40 @@ export default function CreateNewTaskDialog() {
   return (
     <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant={"outline"} onClick={() => setDialogOpen(true)}>
-          <ClipboardPlus />
-        </Button>
+        <>
+          <div className="hidden lg:block">
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    onClick={() => setDialogOpen(true)}
+                  >
+                    <ClipboardPlus />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="left" className="rounded-sm">
+                  <div className="flex flex-row gap-2 items-center">
+                    <div>New task</div>
+                    <kbd className="rounded-sm bg-background px-2 py-1 font-sans text-xs text-black">
+                      Shift
+                    </kbd>
+                    <kbd className="rounded-sm bg-background px-2 py-1 font-sans text-xs text-black">
+                      N
+                    </kbd>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <Button
+            variant={"outline"}
+            onClick={() => setDialogOpen(true)}
+            className="lg:hidden"
+          >
+            <ClipboardPlus />
+          </Button>
+        </>
       </DialogTrigger>
       <DialogContent>
         <div className="space-y-1">
