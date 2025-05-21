@@ -10,11 +10,15 @@ export const getAllUserTasks = query({
       throw new ConvexError("You must be logged in to view tasks.");
     }
 
-    return await ctx.db
+    const tasks = await ctx.db
       .query("user_tasks")
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .order("desc")
       .collect();
+
+    return tasks.sort(
+      (a, b) => Number(a.is_completed) - Number(b.is_completed)
+    );
   },
 });
 
