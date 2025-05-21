@@ -6,8 +6,6 @@ export const getGitShaValue = query({
   handler: async (ctx) => {
     const gitShaValue = process.env.GIT_SHA;
 
-    console.log(process.env.GIT_SHA, "GIT_SHA VALUE");
-
     return gitShaValue;
   },
 });
