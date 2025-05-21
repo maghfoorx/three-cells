@@ -3,11 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "GIT_SHA=$(git rev-parse --short HEAD) react-router build",
-    "dev": "GIT_SHA=$(git rev-parse --short HEAD) react-router dev",
+    "build": "react-router build",
+    "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "start:vite": "vite preview --outDir build/client",
     "typecheck": "react-router typegen && tsc",
+    "convex:deploy": "convex deploy && npm run convex:generate-gitsha-env",
     "convex:generate-gitsha-env": "convex env set GIT_SHA $(git rev-parse --short HEAD)"
   },
   "dependencies": {
