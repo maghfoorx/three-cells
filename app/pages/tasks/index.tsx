@@ -3,9 +3,22 @@ import FullscreenSpinner from "~/components/FullscreenSpinner";
 import UserTaskTile from "./UserTaskTile";
 import { api } from "convex/_generated/api";
 import { motion, AnimatePresence } from "framer-motion";
+import { useMemo } from "react";
 
 export default function TasksPage() {
   const userTasks = useQuery(api.tasks.getAllUserTasks);
+
+  const recentCompletedTaskIds = useMemo(() => {
+    if (!userTasks) return new Set();
+
+    const completedTasks = userTasks
+      .filter((task) => task.is_completed && task.completed_at)
+      .sort((a, b) => (b.completed_at ?? 0) - (a.completed_at ?? 0))
+      .slice(0, 2)
+      .map((task) => task._id);
+
+    return new Set(completedTasks);
+  }, [userTasks]);
 
   if (userTasks === undefined) {
     return <FullscreenSpinner />;
@@ -25,7 +38,10 @@ export default function TasksPage() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                <UserTaskTile userTask={task} />
+                <UserTaskTile
+                  userTask={task}
+                  recentlyCompleted={recentCompletedTaskIds.has(task._id)}
+                />
               </motion.div>
             ))}
           </AnimatePresence>

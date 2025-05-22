@@ -29,8 +29,10 @@ const StyledEditableText = styled(EditableText)<{ $completed: boolean }>`
 
 function UserTaskTileTrigger({
   userTask,
+  recentlyCompleted,
 }: {
   userTask: DataModel["user_tasks"]["document"];
+  recentlyCompleted: boolean;
 }) {
   const toggleTaskCompletion = useMutation(api.tasks.toggleUserTaskCompletion);
 
@@ -69,6 +71,8 @@ function UserTaskTileTrigger({
       className={cn(
         "flex items-start space-x-2 p-3 rounded-sm shadow-md bg-sky-300 cursor-pointer w-full",
         {
+          "bg-sky-300": !recentlyCompleted,
+          "bg-green-200": recentlyCompleted,
           "opacity-60 line-through": userTask.is_completed,
         }
       )}
@@ -101,8 +105,10 @@ function UserTaskTileTrigger({
 
 const UserTaskTile = ({
   userTask,
+  recentlyCompleted,
 }: {
   userTask: DataModel["user_tasks"]["document"];
+  recentlyCompleted: boolean;
 }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -126,7 +132,10 @@ const UserTaskTile = ({
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogTrigger asChild>
           <div onClick={() => setDialogOpen(true)}>
-            <UserTaskTileTrigger userTask={userTask} />
+            <UserTaskTileTrigger
+              userTask={userTask}
+              recentlyCompleted={recentlyCompleted}
+            />
           </div>
         </DialogTrigger>
         <DialogContent>
