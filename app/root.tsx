@@ -49,6 +49,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
         {/* Static Meta Tags for SEO and Social */}
         <title>Three Cells</title>
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
         <meta
           name="description"
           content="Discover your best life with just three questions a day."
