@@ -69,7 +69,7 @@ function UserTaskTileTrigger({
   return (
     <div
       className={cn(
-        "flex items-start space-x-2 p-3 rounded-sm shadow-md bg-sky-300 cursor-pointer w-full",
+        "flex flex-col gap-2 p-3 rounded-sm shadow-md bg-sky-300 cursor-pointer",
         {
           "bg-sky-300": !recentlyCompleted,
           "bg-green-200": recentlyCompleted,
@@ -78,6 +78,7 @@ function UserTaskTileTrigger({
       )}
     >
       <Checkbox
+        className="border-gray-600"
         checked={userTask.is_completed}
         onClick={handleCheckboxClicked}
       />
@@ -87,6 +88,7 @@ function UserTaskTileTrigger({
       >
         <StyledEditableText
           value={taskTitle}
+          multiline
           onCancel={() => setTaskTitle(userTask.title)}
           onChange={(value) => setTaskTitle(value)}
           onConfirm={handleTaskTitleEditConfirmed}
