@@ -1,7 +1,7 @@
 import { useMutation } from "convex/react";
 import styled from "styled-components";
 import { EditableText, Classes } from "@blueprintjs/core";
-import { ClipboardCheck, Trash } from "lucide-react";
+import { ClipboardCheck, Loader, Loader2, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -18,6 +18,7 @@ import { cn } from "~/lib/utils";
 import { api } from "convex/_generated/api";
 import schema from "convex/schema";
 import type { DataModelFromSchemaDefinition } from "convex/server";
+import { AnimatePresence, motion } from "framer-motion";
 
 export type DataModel = DataModelFromSchemaDefinition<typeof schema>;
 
@@ -37,6 +38,7 @@ function UserTaskTileTrigger({
   const toggleTaskCompletion = useMutation(api.tasks.toggleUserTaskCompletion);
 
   const [taskTitle, setTaskTitle] = useState(userTask.title);
+  const [isTogglingTask, setIsTogglingTask] = useState(false);
 
   useEffect(() => {
     setTaskTitle(userTask.title);
@@ -44,7 +46,12 @@ function UserTaskTileTrigger({
 
   const handleCheckboxClicked = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    await toggleTaskCompletion({ taskId: userTask._id });
+    setIsTogglingTask(true);
+    try {
+      await toggleTaskCompletion({ taskId: userTask._id });
+    } finally {
+      setIsTogglingTask(false);
+    }
   };
 
   const updateTaskTitle = useMutation(api.tasks.updateTaskTitle);
@@ -77,11 +84,26 @@ function UserTaskTileTrigger({
         }
       )}
     >
-      <Checkbox
-        className="border-gray-600"
-        checked={userTask.is_completed}
-        onClick={handleCheckboxClicked}
-      />
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={isTogglingTask ? "spinner" : "checkbox"}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          transition={{ duration: 0.1 }}
+          className="h-5 w-5"
+        >
+          {isTogglingTask ? (
+            <Loader2 className="animate-spin text-gray-700" size={16} />
+          ) : (
+            <Checkbox
+              className="border-gray-600"
+              checked={userTask.is_completed}
+              onClick={handleCheckboxClicked}
+            />
+          )}
+        </motion.div>
+      </AnimatePresence>
       <div
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}

@@ -101,6 +101,7 @@ export default function SubmissionsCalendarHeatmap({
   const [isInitialRender, setIsInitialRender] = useState(true);
 
   const [dateRange, setDateRange] = React.useState(() => ({
+    // start: startDate || addMonths(endDate, -12),
     start: startDate || addMonths(endDate, -12),
     end: endDate,
   }));
@@ -118,117 +119,15 @@ export default function SubmissionsCalendarHeatmap({
     return map;
   }, [allSubmissions]);
 
-  // Generate all dates in the range
-  const allDates = useMemo(() => {
-    return eachDayOfInterval(dateRange.start, dateRange.end);
-  }, [dateRange]);
+  const { allDates, weekGroups } = useMemo(
+    () => generateDateWeeks(dateRange),
+    [dateRange]
+  );
 
-  // Group dates by weeks starting from Sunday
-  const weekGroups = useMemo(() => {
-    if (allDates.length === 0) return [];
-
-    const weeks: (Date | null)[][] = [];
-    const dateMap = new Map<string, Date>();
-
-    // Create a map for quick date lookup
-    allDates.forEach((date) => {
-      const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-      dateMap.set(key, date);
-    });
-
-    // Get the first date and find the start of its week
-    const firstDate = allDates[0];
-    const lastDate = allDates[allDates.length - 1];
-    const firstWeekStart = startOfWeek(firstDate);
-
-    // Find the last week end
-    const lastWeekEnd = addDays(startOfWeek(lastDate), 6);
-
-    let current = new Date(firstWeekStart);
-
-    while (current <= lastWeekEnd) {
-      const week: (Date | null)[] = [];
-
-      // Fill each day of the week
-      for (let i = 0; i < 7; i++) {
-        const dayDate = addDays(current, i);
-        const key = `${dayDate.getFullYear()}-${dayDate.getMonth()}-${dayDate.getDate()}`;
-
-        // Only include the date if it's within our range
-        if (dayDate >= firstDate && dayDate <= lastDate && dateMap.has(key)) {
-          week.push(dateMap.get(key)!);
-        } else {
-          week.push(null);
-        }
-      }
-
-      weeks.push(week);
-      current = addDays(current, 7); // Move to next week
-    }
-
-    return weeks;
-  }, [allDates]);
-
-  // Calculate month labels with proper positioning
-  const monthLabels = useMemo(() => {
-    const labels: { month: string; weekIndex: number; width: number }[] = [];
-    let currentMonth = -1;
-    let monthStartWeek = 0;
-
-    weekGroups.forEach((week, weekIndex) => {
-      const firstValidDay = week.find((day) => day !== null);
-      if (firstValidDay) {
-        const monthNum = firstValidDay.getMonth();
-
-        if (monthNum !== currentMonth) {
-          // If we have a previous month, calculate its width
-          if (currentMonth !== -1) {
-            labels[labels.length - 1].width = weekIndex - monthStartWeek;
-          }
-
-          // Add new month
-          labels.push({
-            month: formatDate(firstValidDay, "MMM"),
-            weekIndex,
-            width: 1, // Will be updated when next month starts or at the end
-          });
-          currentMonth = monthNum;
-          monthStartWeek = weekIndex;
-        }
-      }
-    });
-
-    // Set width for the last month
-    if (labels.length > 0) {
-      labels[labels.length - 1].width = weekGroups.length - monthStartWeek;
-    }
-
-    return labels;
-  }, [weekGroups]);
-
-  // Get intensity level for a date (0-4 scale like GitHub)
-  const getIntensityLevel = (date: Date): number => {
-    const dateKey = formatDate(date, "yyyy-MM-dd");
-    const submissions = submissionsByDate.get(dateKey) || [];
-
-    if (submissions.length === 0) return 0;
-    if (submissions.length === 1) return 1;
-    if (submissions.length === 2) return 2;
-    if (submissions.length === 3) return 3;
-    return 4; // 4 or more submissions
-  };
-
-  // Get intensity color class
-  const getIntensityColor = (level: number): string => {
-    const colors = [
-      "bg-gray-100 hover:bg-gray-200", // 0 - no submissions
-      "bg-green-200 hover:bg-green-300", // 1 submission
-      "bg-green-400 hover:bg-green-500", // 2 submissions
-      "bg-green-600 hover:bg-green-700", // 3 submissions
-      "bg-green-800 hover:bg-green-900", // 4+ submissions
-    ];
-    return colors[level] || colors[0];
-  };
+  const monthLabels = useMemo(
+    () => calculateMonthLabels(weekGroups, formatDate),
+    [weekGroups]
+  );
 
   // Navigate date range
   const navigatePrevious = () => {
@@ -369,6 +268,7 @@ export default function SubmissionsCalendarHeatmap({
                   {weekGroups.map((week, weekIndex) => (
                     <div key={weekIndex} className="flex flex-col gap-1">
                       {week.map((date, dayIndex) => {
+                        const [hovered, setHovered] = useState(false);
                         if (!date) {
                           return (
                             <div
@@ -378,7 +278,10 @@ export default function SubmissionsCalendarHeatmap({
                           );
                         }
 
-                        const intensity = getIntensityLevel(date);
+                        const intensity = getIntensityLevel(
+                          date,
+                          submissionsByDate
+                        );
                         const submissions =
                           submissionsByDate.get(
                             formatDate(date, "yyyy-MM-dd")
@@ -391,26 +294,16 @@ export default function SubmissionsCalendarHeatmap({
                         // );
 
                         return (
-                          <Tooltip key={date.toISOString()}>
-                            <TooltipTrigger>
-                              <div
-                                className={`h-4 w-4 cursor-pointer transition-colors border border-gray-200 rounded-[2px]`}
-                                style={{
-                                  background:
-                                    intensity > 0 ? habit?.colour : "#EEEE",
-                                }}
-                              />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <div>
-                                {`${formatDate(date, "MMM d, yyyy")} - ${
-                                  submissions.length
-                                } submission${
-                                  submissions.length !== 1 ? "s" : ""
-                                }`}
-                              </div>
-                            </TooltipContent>
-                          </Tooltip>
+                          <div
+                            className="h-4 w-4 cursor-pointer transition-colors border border-gray-200 rounded-[2px]"
+                            style={{
+                              background:
+                                intensity > 0 ? habit?.colour : "#EEEE",
+                            }}
+                            title={`${formatDate(date, "MMM d, yyyy")} - ${
+                              submissions.length
+                            } submission${submissions.length !== 1 ? "s" : ""}`}
+                          />
                         );
                       })}
                     </div>
@@ -458,4 +351,101 @@ export default function SubmissionsCalendarHeatmap({
       </div>
     </div>
   );
+}
+
+// Get intensity level for a date (0-4 scale like GitHub)
+const getIntensityLevel = (date: Date, submissionsByDate: any): number => {
+  const dateKey = formatDate(date, "yyyy-MM-dd");
+  const submissions = submissionsByDate.get(dateKey) || [];
+
+  if (submissions.length === 0) return 0;
+  if (submissions.length === 1) return 1;
+  if (submissions.length === 2) return 2;
+  if (submissions.length === 3) return 3;
+  return 4; // 4 or more submissions
+};
+
+// Get intensity color class
+const getIntensityColor = (level: number): string => {
+  const colors = [
+    "bg-gray-100 hover:bg-gray-200", // 0 - no submissions
+    "bg-green-200 hover:bg-green-300", // 1 submission
+    "bg-green-400 hover:bg-green-500", // 2 submissions
+    "bg-green-600 hover:bg-green-700", // 3 submissions
+    "bg-green-800 hover:bg-green-900", // 4+ submissions
+  ];
+  return colors[level] || colors[0];
+};
+
+// utils/calendar.ts
+
+export function generateDateWeeks(dateRange: { start: Date; end: Date }) {
+  const allDates = eachDayOfInterval(dateRange.start, dateRange.end);
+
+  const dateMap = new Map<string, Date>();
+  const getKey = (date: Date) =>
+    `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+  allDates.forEach((date) => dateMap.set(getKey(date), date));
+
+  const firstDate = allDates[0];
+  const lastDate = allDates[allDates.length - 1];
+  const firstWeekStart = startOfWeek(firstDate);
+  const lastWeekEnd = addDays(startOfWeek(lastDate), 6);
+
+  let current = new Date(firstWeekStart);
+  const weeks: (Date | null)[][] = [];
+
+  while (current <= lastWeekEnd) {
+    const week: (Date | null)[] = [];
+
+    for (let i = 0; i < 7; i++) {
+      const dayDate = addDays(current, i);
+      const key = getKey(dayDate);
+      week.push(
+        dayDate >= firstDate && dayDate <= lastDate && dateMap.has(key)
+          ? dateMap.get(key)!
+          : null
+      );
+    }
+
+    weeks.push(week);
+    current = addDays(current, 7);
+  }
+
+  return { allDates, weekGroups: weeks };
+}
+
+export function calculateMonthLabels(
+  weekGroups: (Date | null)[][],
+  formatDate: (date: Date, fmt: string) => string
+) {
+  const labels: { month: string; weekIndex: number; width: number }[] = [];
+  let currentMonth = -1;
+  let monthStartWeek = 0;
+
+  weekGroups.forEach((week, weekIndex) => {
+    const firstValidDay = week.find((day) => day !== null);
+    if (firstValidDay) {
+      const monthNum = firstValidDay.getMonth();
+      if (monthNum !== currentMonth) {
+        if (currentMonth !== -1) {
+          labels[labels.length - 1].width = weekIndex - monthStartWeek;
+        }
+
+        labels.push({
+          month: formatDate(firstValidDay, "MMM"),
+          weekIndex,
+          width: 1,
+        });
+        currentMonth = monthNum;
+        monthStartWeek = weekIndex;
+      }
+    }
+  });
+
+  if (labels.length > 0) {
+    labels[labels.length - 1].width = weekGroups.length - monthStartWeek;
+  }
+
+  return labels;
 }
