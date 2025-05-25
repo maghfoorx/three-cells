@@ -22,6 +22,10 @@ export default [
 
     // tasks pages
     route("/tasks", "pages/tasks/index.tsx"),
+
+    // habits pages
+    route("/habits", "pages/habits/index.tsx"),
+    route("/habits/:habitId", "pages/singleHabitPage/index.tsx"),
   ]),
 
   layout("layouts/LegalPagesLayout.tsx", [

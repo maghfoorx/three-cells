@@ -2,7 +2,13 @@ import { NavFooter } from "./NavFooter";
 import { NavMain } from "./NavMain";
 import { NavUser } from "./NavUser";
 import { format } from "date-fns";
-import { Rocket, Table, Calendar, ClipboardList } from "lucide-react";
+import {
+  Rocket,
+  Table,
+  Calendar,
+  ClipboardList,
+  ChartNoAxesCombined,
+} from "lucide-react";
 import { Link } from "react-router";
 import {
   Sidebar,
@@ -25,7 +31,7 @@ const mainNavItems: NavGroup[] = [
     label: "Tasks",
     items: [
       {
-        title: "Task list",
+        title: "Tasks",
         href: "/tasks",
         icon: ClipboardList,
       },
@@ -48,6 +54,16 @@ const mainNavItems: NavGroup[] = [
         title: "Yearly View",
         href: `/yearly-view`,
         icon: Calendar,
+      },
+    ],
+  },
+  {
+    label: "Habits",
+    items: [
+      {
+        title: "Habits",
+        href: "/habits",
+        icon: ChartNoAxesCombined,
       },
     ],
   },

@@ -103,29 +103,24 @@ export default function CreateNewTaskDialog() {
       <DialogTrigger asChild>
         <>
           <div className="hidden lg:block">
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    onClick={() => setDialogOpen(true)}
-                  >
-                    <ClipboardPlus />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="left" className="rounded-sm">
-                  <div className="flex flex-row gap-2 items-center">
-                    <div>New task</div>
-                    <kbd className="rounded-sm bg-background px-2 py-1 font-sans text-xs text-black">
-                      Shift
-                    </kbd>
-                    <kbd className="rounded-sm bg-background px-2 py-1 font-sans text-xs text-black">
-                      N
-                    </kbd>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant={"outline"} onClick={() => setDialogOpen(true)}>
+                  <ClipboardPlus />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="rounded-sm">
+                <div className="flex flex-row gap-2 items-center">
+                  <div>New task</div>
+                  <kbd className="rounded-sm bg-background px-2 py-1 font-sans text-xs text-black">
+                    Shift
+                  </kbd>
+                  <kbd className="rounded-sm bg-background px-2 py-1 font-sans text-xs text-black">
+                    N
+                  </kbd>
+                </div>
+              </TooltipContent>
+            </Tooltip>
           </div>
           <Button
             variant={"outline"}

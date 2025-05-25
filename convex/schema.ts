@@ -36,6 +36,80 @@ const schema = defineSchema({
   })
     .index("by_userId_date_for", ["userId", "dateFor"])
     .index("by_userId", ["userId"]),
+
+  userHabits: defineTable({
+    userId: v.id("users"),
+
+    name: v.string(),
+    description: v.optional(v.string()),
+    colour: v.string(), // hex format
+
+    habitQuestion: v.string(),
+
+    // "yes_no", "number", "timer", "custom", etc.
+    type: v.union(
+      v.literal("yes_no"),
+      v.literal("number"),
+      v.literal("custom")
+    ),
+
+    // flexible recurrence rules
+    frequency: v.object({
+      mode: v.union(
+        v.literal("daily"),
+        v.literal("interval"),
+        v.literal("weekly"),
+        v.literal("monthly"),
+        v.literal("custom")
+      ),
+
+      interval: v.optional(v.number()), // e.g. every N days (interval)
+      timesPerPeriod: v.optional(v.number()), // e.g. 3x/week or 5x/month
+      daysOfWeek: v.optional(
+        v.array(
+          v.union(
+            v.literal("mon"),
+            v.literal("tue"),
+            v.literal("wed"),
+            v.literal("thu"),
+            v.literal("fri"),
+            v.literal("sat"),
+            v.literal("sun")
+          )
+        )
+      ),
+      startDate: v.optional(v.number()), // ISO date (for calculating next occurrences)
+    }),
+
+    updatedAt: v.optional(v.number()),
+  }).index("by_user", ["userId"]),
+
+  userHabitSubmissions: defineTable({
+    userId: v.id("users"),
+
+    habitId: v.id("userHabits"),
+
+    submittedAt: v.number(),
+
+    dateFor: v.string(),
+
+    // The actual submission data
+    // For yes_no: true or false
+    // For number: a numeric value (e.g., 20 pushups)
+    // For custom: any custom input (could be text or number depending on your use case)
+    value: v.union(
+      v.boolean(), // for yes_no
+      v.number(), // for number
+      v.string() // for custom
+    ),
+
+    note: v.optional(v.string()), // optional notes per submission (e.g., "felt tired", "extra session")
+
+    // Track updates
+    updatedAt: v.optional(v.number()),
+  })
+    .index("by_user_and_habit", ["userId", "habitId"])
+    .index("by_user_and_habit_and_date", ["userId", "habitId", "dateFor"]),
 });
 
 export default schema;

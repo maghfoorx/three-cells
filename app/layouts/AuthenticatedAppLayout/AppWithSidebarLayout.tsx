@@ -80,7 +80,10 @@ import { Breadcrumbs } from "../../components/Breadcrumbs";
 import { SidebarTrigger } from "../../components/ui/sidebar";
 import { type BreadcrumbItem as BreadcrumbItemType } from "~/types";
 import CreateNewTaskDialog from "~/pages/tasks/CreateNewTaskDialog";
-import { useLocation } from "react-router";
+import { Link, useLocation, useParams } from "react-router";
+import CreateNewHabitDialog from "~/pages/habits/CreateNewHabitDialog";
+import { Button } from "~/components/ui/button";
+import { ArrowLeft, SquareArrowLeft } from "lucide-react";
 
 function AppSidebarHeader({
   breadcrumbs = [],
@@ -88,21 +91,39 @@ function AppSidebarHeader({
   breadcrumbs?: BreadcrumbItemType[];
 }) {
   const location = useLocation();
+  const params = useParams();
 
-  const routeBasedButtons = useMemo(() => {
+  const routeBasedActions = useMemo(() => {
     if (location.pathname === "/tasks") {
       return <CreateNewTaskDialog />;
+    }
+
+    if (location.pathname === "/habits") {
+      return <CreateNewHabitDialog />;
     }
 
     return null;
   }, [location.pathname]);
 
+  const routeBasedNavigationButtons = useMemo(() => {
+    if (params?.habitId != null) {
+      return (
+        <Link to={"/habits"} className="text-xs flex flew-row items-center">
+          <ArrowLeft size={14} /> <span>Habits</span>
+        </Link>
+      );
+    }
+  }, [location.pathname]);
+
   return (
     <header className="border-sidebar-border/50 flex h-16 shrink-0 items-center gap-2 border-b px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4">
       <div className="flex items-center justify-between w-full">
-        <SidebarTrigger className="-ml-1" />
-        {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
-        <div>{routeBasedButtons}</div>
+        <div className="flex gap-2 items-center">
+          <SidebarTrigger className="-ml-1" />
+          {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
+          {routeBasedNavigationButtons}
+        </div>
+        <div>{routeBasedActions}</div>
       </div>
     </header>
   );

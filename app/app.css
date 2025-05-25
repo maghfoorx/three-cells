@@ -142,7 +142,11 @@ body {
 }
 
 a {
-  @apply text-black hover:text-black;
+  @apply text-black;
+}
+
+a:hover {
+  @apply text-black;
 }
 
 button,
