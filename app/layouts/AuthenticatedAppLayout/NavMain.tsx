@@ -23,7 +23,7 @@ export function NavMain({ groups = [] }: { groups: NavGroup[] }) {
                   asChild
                   isActive={item.href === location.pathname}
                 >
-                  <Link to={item.href}>
+                  <Link to={item.href} viewTransition>
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
                   </Link>

@@ -108,7 +108,11 @@ function AppSidebarHeader({
   const routeBasedNavigationButtons = useMemo(() => {
     if (params?.habitId != null) {
       return (
-        <Link to={"/habits"} className="text-xs flex flew-row items-center">
+        <Link
+          to={"/habits"}
+          viewTransition
+          className="text-xs flex flew-row items-center"
+        >
           <ArrowLeft size={14} /> <span>Habits</span>
         </Link>
       );

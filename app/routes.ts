@@ -4,6 +4,9 @@ import {
   layout,
   route,
 } from "@react-router/dev/routes";
+import { lazy } from "react";
+
+const SingleHabitPageLazy = lazy(() => import("./pages/singleHabitPage/index"));
 
 export default [
   index("pages/home/index.tsx"),

@@ -67,6 +67,7 @@ export function UserHabitCard({
       <div className="flex justify-between items-center">
         <Link
           to={`/habits/${habit._id}`}
+          viewTransition
           className="text-sm font-medium text-gray-800 flex items-center gap-2"
         >
           <span
