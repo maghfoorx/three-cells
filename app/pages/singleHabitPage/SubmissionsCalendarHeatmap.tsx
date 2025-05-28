@@ -9,6 +9,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { format, isAfter } from "date-fns";
+import {
+  useBulkManageHabitSubmissions,
+  useCalendarSquareToast,
+} from "./useCalendarSquareToast";
 
 type Submission = DataModel["userHabitSubmissions"]["document"];
 
@@ -97,7 +102,14 @@ export default function SubmissionsCalendarHeatmap({
   className = "",
 }: SubmissionsCalendarHeatmapProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const { isMobile } = useScreenSize();
+
+  const { onMouseEnter, onMouseLeave } = useCalendarSquareToast();
+  const { selectedDates, toggleDate, togglingSubmission } =
+    useBulkManageHabitSubmissions({
+      habit,
+    });
+
+  // const { isMobile } = useScreenSize();
   const [isInitialRender, setIsInitialRender] = useState(true);
 
   const [dateRange, setDateRange] = React.useState(() => ({
@@ -160,16 +172,10 @@ export default function SubmissionsCalendarHeatmap({
       const container = scrollContainerRef.current!;
       const targetScrollLeft = container.scrollWidth - container.clientWidth;
 
-      if (isInitialRender && isMobile) {
+      if (isInitialRender) {
         // On initial render for mobile, set position immediately without animation
         container.scrollLeft = targetScrollLeft;
         setIsInitialRender(false);
-      } else if (!isMobile) {
-        // On desktop, don't auto-scroll to end - let user see full view
-        // Only scroll to end if this is a date range change (not initial render)
-        if (!isInitialRender) {
-          container.scrollLeft = targetScrollLeft;
-        }
       } else {
         // For subsequent mobile updates, smooth scroll
         container.scrollTo({
@@ -183,12 +189,7 @@ export default function SubmissionsCalendarHeatmap({
     const rafId = requestAnimationFrame(scrollToEnd);
 
     return () => cancelAnimationFrame(rafId);
-  }, [weekGroups, dateRange, isMobile, isInitialRender]);
-
-  // Reset initial render flag when screen size changes
-  useEffect(() => {
-    setIsInitialRender(true);
-  }, [isMobile]);
+  }, [weekGroups, dateRange, isInitialRender]);
 
   const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
 
@@ -233,14 +234,7 @@ export default function SubmissionsCalendarHeatmap({
       {/* Calendar heatmap */}
       <div className="w-full overflow-x-auto" ref={scrollContainerRef}>
         <div className="border rounded-sm p-4 bg-white w-fit">
-          <div
-            className={`${
-              isMobile
-                ? "overflow-x-auto"
-                : "overflow-x-auto md:overflow-x-visible"
-            }`}
-            style={{ scrollbarWidth: "thin" }}
-          >
+          <div className={"overflow-x-auto"} style={{ scrollbarWidth: "thin" }}>
             <div className="min-w-fit">
               {/* Month labels */}
               <div className="flex mb-2 relative" style={{ height: "16px" }}>
@@ -251,7 +245,7 @@ export default function SubmissionsCalendarHeatmap({
                       key={`${label.month}-${label.weekIndex}`}
                       className="text-xs text-gray-600 font-medium absolute"
                       style={{
-                        left: `${label.weekIndex * 20}px`, // 20px = 16px cell width + 4px gap
+                        left: `${label.weekIndex * 24}px`, // 24px = 20px cell width + 4px gap
                         width: `${Math.max(label.width * 16 - 4, 32)}px`, // Minimum width for readability
                       }}
                     >
@@ -268,12 +262,12 @@ export default function SubmissionsCalendarHeatmap({
                   {weekGroups.map((week, weekIndex) => (
                     <div key={weekIndex} className="flex flex-col gap-1">
                       {week.map((date, dayIndex) => {
-                        const [hovered, setHovered] = useState(false);
+                        // if not a date then just render an empty hidden box
                         if (!date) {
                           return (
                             <div
                               key={`${date}-${dayIndex}`}
-                              className="h-4 w-4"
+                              className="h-5 w-5"
                             />
                           );
                         }
@@ -287,23 +281,86 @@ export default function SubmissionsCalendarHeatmap({
                             formatDate(date, "yyyy-MM-dd")
                           ) || [];
 
-                        // return (
-                        //   <div className="h-4 w-4">
-                        //     <LoaderCircle className="animate-spin" />
-                        //   </div>
-                        // );
+                        const isInBulkSelectedDates = selectedDates.find(
+                          (selectedDate) => selectedDate === date
+                        );
+
+                        if (isInBulkSelectedDates && togglingSubmission) {
+                          return (
+                            <div
+                              className="h-5 w-5 flex items-center justify-center"
+                              key={date.getTime()}
+                            >
+                              <LoaderCircle
+                                className="animate-spin"
+                                size={16}
+                              />
+                            </div>
+                          );
+                        }
+
+                        const dateBoxColour =
+                          intensity > 0 ? habit?.colour : "#EEEE";
+
+                        // if the date is sometime in the future render a disabled box you can't click
+                        if (isAfter(date.getTime(), new Date().getTime())) {
+                          return (
+                            <div
+                              key={date.getTime()}
+                              className="h-5 w-5 cursor-pointer transition-colors border border-gray-200 rounded-[2px] text-[10px] flex items-center justify-center hover:opacity-60"
+                              style={{
+                                ...(isInBulkSelectedDates
+                                  ? {}
+                                  : {
+                                      background: "#F5F5F5",
+                                    }),
+                              }}
+                              title={`${formatDate(date, "MMM d, yyyy")} - ${
+                                submissions.length
+                              } submission${
+                                submissions.length !== 1 ? "s" : ""
+                              }`}
+                            >
+                              <span>{format(date, "d")}</span>
+                            </div>
+                          );
+                        }
 
                         return (
                           <div
-                            className="h-4 w-4 cursor-pointer transition-colors border border-gray-200 rounded-[2px]"
+                            key={date.getTime()}
+                            className={cn(
+                              "h-5 w-5 cursor-pointer transition-colors border border-gray-200 rounded-[2px] text-[10px] flex items-center justify-center hover:opacity-60",
+                              {
+                                "bg-primary": isInBulkSelectedDates,
+                              }
+                            )}
                             style={{
-                              background:
-                                intensity > 0 ? habit?.colour : "#EEEE",
+                              ...(isInBulkSelectedDates
+                                ? {}
+                                : {
+                                    background: dateBoxColour,
+                                  }),
                             }}
                             title={`${formatDate(date, "MMM d, yyyy")} - ${
                               submissions.length
                             } submission${submissions.length !== 1 ? "s" : ""}`}
-                          />
+                            onClick={() => {
+                              toggleDate(date);
+                            }}
+                            onMouseEnter={() => {
+                              if (habit != null && selectedDates.length < 1) {
+                                onMouseEnter({
+                                  habit: habit,
+                                  date: date,
+                                  submissions: submissions,
+                                });
+                              }
+                            }}
+                            onMouseLeave={onMouseLeave}
+                          >
+                            <span>{format(date, "d")}</span>
+                          </div>
                         );
                       })}
                     </div>
@@ -315,7 +372,7 @@ export default function SubmissionsCalendarHeatmap({
                   {dayLabels.map((day, index) => (
                     <div
                       key={`${day}-${index}`}
-                      className="h-4 w-4 text-xs text-gray-500 flex items-center justify-center mb-1"
+                      className="h-5 w-5 text-xs text-gray-500 flex items-center justify-center mb-1"
                       style={
                         {
                           // visibility: index % 2 === 1 ? "visible" : "hidden",

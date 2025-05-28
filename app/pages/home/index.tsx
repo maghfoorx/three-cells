@@ -107,7 +107,7 @@ const SimplexMethodSection = () => {
 
 const AvoidLivingTheLiveYouDontLoveSection = () => {
   return (
-    <div className="bg-cyan-100 w-full">
+    <div className="bg-secondary w-full">
       <Section className="py-8">
         <h2 className="text-4xl font-bold md:text-5xl leading-tight text-center">
           Avoid your worst life
@@ -190,7 +190,7 @@ const TakeTheFirstStepToday = () => {
 
 const UsedBySuccessfulPeopleSection = () => {
   return (
-    <div className="bg-cyan-100 w-full mt-4">
+    <div className="bg-secondary w-full mt-4">
       <Section className="py-8 flex flex-col items-center gap-10">
         <h2 className="text-4xl font-bold md:text-5xl leading-tight text-center">
           Backed by the world's top thinkers
@@ -238,7 +238,7 @@ const UsedBySuccessfulPeopleSection = () => {
 
 const WhyThisToolExistsSection = () => {
   return (
-    <div className="bg-cyan-100 w-full">
+    <div className="bg-secondary w-full">
       <Section className="py-12 flex flex-col items-center gap-8">
         <h2 className="text-4xl font-bold md:text-5xl text-center">
           Why this tool exists

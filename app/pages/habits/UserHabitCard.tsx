@@ -12,10 +12,11 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Button } from "~/components/ui/button";
-import { Check, Cross, X } from "lucide-react";
-import { useMemo } from "react";
+import { Check, Cross, Loader2, X } from "lucide-react";
+import { useMemo, useState, useCallback } from "react";
 import { Link } from "react-router";
 import type { DataModel } from "convex/_generated/dataModel";
+import { handleHookMutationError } from "~/lib/handleHookMutationError";
 
 export function UserHabitCard({
   habit,
@@ -38,19 +39,6 @@ export function UserHabitCard({
     start: start.getTime(),
     end: end.getTime(),
   });
-
-  const toggleYesNoHabitSubmission = useMutation(
-    api.habits.toggleYesNoHabitSubmission
-  );
-
-  const toggleSubmission = async (date: Date) => {
-    const formattedDateForSubmission = format(date, "yyyy-MM-dd");
-
-    await toggleYesNoHabitSubmission({
-      habitId: habit._id,
-      dateFor: formattedDateForSubmission,
-    });
-  };
 
   const habitCardColour = useMemo(() => {
     return color(habit.colour).mix(color("white")).hex();
@@ -76,50 +64,80 @@ export function UserHabitCard({
           ></span>
           {habit.name}
         </Link>
-        {/* <span className="text-sm text-muted-foreground">
-          {habit.type === "yes_no" && "✔"}
-        </span> */}
       </div>
 
       <div className="grid grid-cols-7 gap-2">
         {dates.map((date) => {
-          const isChecked = submissions?.some((s) => {
-            return isSameDay(new Date(s.dateFor), date);
-          });
           return (
-            <div
-              key={date.toDateString()}
-              className="flex flex-col items-center"
-            >
-              <span className="text-sm font-semibold uppercase">
-                {format(date, "EEE")} {/* SAT, FRI, etc. */}
-              </span>
-              <span className="text-xs font-thin text-muted-foreground">
-                {format(date, "d")} {/* 24, 25, etc. */}
-              </span>
-              <Button
-                variant={"ghost"}
-                size={"sm"}
-                className="rounded-sm"
-                onClick={() => toggleSubmission(date)}
-              >
-                <motion.div
-                  key={isChecked ? "checked" : "unchecked"} // triggers animation on change
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                >
-                  {isChecked ? (
-                    <Check className="text-green-700 text-xl" />
-                  ) : (
-                    <X className="text-red-700 text-xl" />
-                  )}
-                </motion.div>
-              </Button>
-            </div>
+            <HabitDateButton
+              habitId={habit._id}
+              date={date}
+              submissions={submissions}
+            />
           );
         })}
       </div>
     </motion.div>
+  );
+}
+
+type HabitDateButtonProps = {
+  date: Date;
+  habitId: DataModel["userHabits"]["document"]["_id"];
+  submissions?: DataModel["userHabitSubmissions"]["document"][];
+};
+function HabitDateButton({ date, habitId, submissions }: HabitDateButtonProps) {
+  const [isToggling, setIsToggling] = useState(false);
+
+  const toggleYesNoHabitSubmission = useMutation(
+    api.habits.toggleYesNoHabitSubmission
+  );
+
+  const toggleSubmission = useCallback(async () => {
+    setIsToggling(true);
+    try {
+      const formattedDate = format(date, "yyyy-MM-dd");
+      await toggleYesNoHabitSubmission({ habitId, dateFor: formattedDate });
+    } catch (err) {
+      handleHookMutationError(err);
+    } finally {
+      setIsToggling(false);
+    }
+  }, [date, habitId, toggleYesNoHabitSubmission]);
+
+  const isChecked = submissions?.some((s) =>
+    isSameDay(new Date(s.dateFor), date)
+  );
+
+  return (
+    <div className="flex flex-col items-center">
+      <span className="text-sm font-semibold uppercase">
+        {format(date, "EEE")}
+      </span>
+      <span className="text-xs font-thin text-muted-foreground">
+        {format(date, "d")}
+      </span>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="rounded-sm"
+        onClick={toggleSubmission}
+      >
+        <motion.div
+          key={isChecked ? "checked" : "unchecked"}
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        >
+          {isToggling ? (
+            <Loader2 className="animate-spin text-gray-700" size={24} />
+          ) : isChecked ? (
+            <Check className="text-green-700 text-xl" />
+          ) : (
+            <X className="text-red-700 text-xl" />
+          )}
+        </motion.div>
+      </Button>
+    </div>
   );
 }

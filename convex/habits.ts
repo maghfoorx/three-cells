@@ -141,3 +141,92 @@ export const toggleYesNoHabitSubmission = mutation({
     }
   },
 });
+
+export const bulkCompleteSelectedDates = mutation({
+  args: { habitId: v.id("userHabits"), selectedDates: v.array(v.string()) },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) {
+      throw new ConvexError("You must be logged to make a habit entry");
+    }
+
+    // Fetch existing submissions for these dates
+    const existingSubmissions = await ctx.db
+      .query("userHabitSubmissions")
+      .withIndex("by_user_and_habit", (q) =>
+        q.eq("userId", userId).eq("habitId", args.habitId)
+      )
+      .collect();
+
+    const existingDatesSet = new Set(
+      existingSubmissions.map((submission) => submission.dateFor)
+    );
+
+    const now = Date.now();
+
+    // Filter only dates that don't already have a submission
+    const newDates = args.selectedDates.filter(
+      (date) => !existingDatesSet.has(date)
+    );
+
+    // Insert new submissions for the filtered dates
+    const insertPromises = newDates.map((date) =>
+      ctx.db.insert("userHabitSubmissions", {
+        userId,
+        habitId: args.habitId,
+        dateFor: date,
+        value: true, // Since this is for yes_no habits being "completed"
+        submittedAt: now,
+        updatedAt: now,
+      })
+    );
+
+    await Promise.all(insertPromises);
+
+    return { inserted: newDates.length, skipped: existingDatesSet.size };
+  },
+});
+
+export const bulkUnCompleteSelectedDates = mutation({
+  args: { habitId: v.id("userHabits"), selectedDates: v.array(v.string()) },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) {
+      throw new ConvexError("You must be logged to delete habit entries");
+    }
+
+    // Get all submissions for this habit and user
+    const existingSubmissions = await ctx.db
+      .query("userHabitSubmissions")
+      .withIndex("by_user_and_habit", (q) =>
+        q.eq("userId", userId).eq("habitId", args.habitId)
+      )
+      .collect();
+
+    // Map dateFor -> submission
+    const submissionsByDate: Record<
+      string,
+      (typeof existingSubmissions)[number]
+    > = {};
+    for (const submission of existingSubmissions) {
+      submissionsByDate[submission.dateFor] = submission;
+    }
+
+    // Filter to only those selectedDates that have an existing entry
+    const datesToDelete = args.selectedDates.filter(
+      (date) => submissionsByDate[date]
+    );
+
+    // Delete each one
+    const deletePromises = datesToDelete.map((date) =>
+      ctx.db.delete(submissionsByDate[date]._id)
+    );
+
+    await Promise.all(deletePromises);
+
+    return {
+      deleted: datesToDelete.length,
+      skipped: args.selectedDates.length - datesToDelete.length,
+    };
+  },
+});
