@@ -1,6 +1,17 @@
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { v, ConvexError } from "convex/values";
+import {
+  eachDayOfInterval,
+  endOfMonth,
+  format,
+  isAfter,
+  isBefore,
+  isSameDay,
+  parseISO,
+  startOfMonth,
+  subDays,
+} from "date-fns";
 
 export const getAllUserHabits = query({
   args: {},
@@ -85,25 +96,72 @@ export const getAllSubmissionsForHabit = query({
 });
 
 export const getSubmissionsForHabit = query({
-  args: { habitId: v.id("userHabits"), start: v.number(), end: v.number() },
+  args: {
+    habitId: v.id("userHabits"),
+    start: v.string(),
+    end: v.string(),
+  },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (userId === null) {
-      throw new ConvexError("You must be logged in view habits");
+      throw new ConvexError("You must be logged in to view habits");
     }
 
-    const allSubmissions = await ctx.db
+    const now = new Date();
+    const todayStr = format(now, "yyyy-MM-dd");
+
+    // === Last X Days Submissions ===
+    const lastXDaysSubmissions = await ctx.db
       .query("userHabitSubmissions")
-      .withIndex("by_user_and_habit", (q) =>
-        q.eq("userId", userId).eq("habitId", args.habitId)
+      .withIndex("by_user_and_habit_and_date", (q) =>
+        q
+          .eq("userId", userId)
+          .eq("habitId", args.habitId)
+          .gte("dateFor", args.start)
+          .lte("dateFor", args.end)
       )
       .collect();
 
-    return allSubmissions.filter(
-      (submission) =>
-        new Date(submission.dateFor).getTime() >= args.start &&
-        new Date(submission.dateFor).getTime() <= args.end
+    // === Current Month Submissions ===
+    const monthStart = startOfMonth(now);
+    const monthStartStr = format(monthStart, "yyyy-MM-dd");
+
+    const currentMonthSubmissions = await ctx.db
+      .query("userHabitSubmissions")
+      .withIndex("by_user_and_habit_and_date", (q) =>
+        q
+          .eq("userId", userId)
+          .eq("habitId", args.habitId)
+          .gte("dateFor", monthStartStr)
+          .lte("dateFor", todayStr)
+      )
+      .collect();
+
+    const submittedDates = currentMonthSubmissions.map((s) =>
+      parseISO(s.dateFor)
     );
+
+    const allDaysInMonth = eachDayOfInterval({
+      start: monthStart,
+      end: now,
+    });
+
+    let completedDays = 0;
+    for (const day of allDaysInMonth) {
+      if (submittedDates.some((s) => isSameDay(s, day))) {
+        completedDays++;
+      }
+    }
+
+    const currentMonthPerformancePercentage =
+      (completedDays / allDaysInMonth.length) * 100;
+
+    return {
+      lastXDaysSubmissions: lastXDaysSubmissions,
+      currentMonthPerformancePercentage: Number(
+        currentMonthPerformancePercentage.toFixed(0)
+      ),
+    };
   },
 });
 

@@ -34,10 +34,10 @@ export function UserHabitCard({
     };
   }, []);
 
-  const submissions = useQuery(api.habits.getSubmissionsForHabit, {
+  const submissionsForHabit = useQuery(api.habits.getSubmissionsForHabit, {
     habitId: habit._id,
-    start: start.getTime(),
-    end: end.getTime(),
+    start: format(start, "yyyy-MM-dd"),
+    end: format(end, "yyyy-MM-dd"),
   });
 
   const habitCardColour = useMemo(() => {
@@ -72,11 +72,19 @@ export function UserHabitCard({
             <HabitDateButton
               habitId={habit._id}
               date={date}
-              submissions={submissions}
+              submissions={submissionsForHabit?.lastXDaysSubmissions}
             />
           );
         })}
       </div>
+      {submissionsForHabit?.currentMonthPerformancePercentage != null &&
+        submissionsForHabit?.lastXDaysSubmissions != null && (
+          <div>
+            {submissionsForHabit?.lastXDaysSubmissions?.length}/{dates.length}{" "}
+            days • {submissionsForHabit?.currentMonthPerformancePercentage}%
+            this month
+          </div>
+        )}
     </motion.div>
   );
 }
