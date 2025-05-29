@@ -402,8 +402,8 @@ const TakeTheFirstStepToday = () => {
           Start your productive life today
         </h2>
         <p className="text-xl text-muted-foreground text-center max-w-2xl">
-          Join thousands who've simplified their productivity with journaling,
-          habits, and todos in one beautiful place.
+          Join to simplify productivity with journaling, habits, and todos in
+          one beautiful place.
         </p>
         <Link to="/track">
           <Button className="text-lg px-8 py-6" size={"lg"}>
