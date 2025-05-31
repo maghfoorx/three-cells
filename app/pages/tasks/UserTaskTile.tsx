@@ -116,6 +116,7 @@ function UserTaskTileTrigger({
           onConfirm={handleTaskTitleEditConfirmed}
           disabled={userTask.is_completed}
           $completed={userTask.is_completed}
+          className="mb-1"
         />
         {userTask.description && (
           <div className="text-xs text-muted-foreground mt-1">
