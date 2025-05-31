@@ -17,6 +17,7 @@ import { useMemo, useState, useCallback } from "react";
 import { Link } from "react-router";
 import type { DataModel } from "convex/_generated/dataModel";
 import { handleHookMutationError } from "~/lib/handleHookMutationError";
+import { Skeleton } from "~/components/ui/skeleton";
 
 export function UserHabitCard({
   habit,
@@ -70,6 +71,7 @@ export function UserHabitCard({
         {dates.map((date) => {
           return (
             <HabitDateButton
+              key={date.getTime()}
               habitId={habit._id}
               date={date}
               submissions={submissionsForHabit?.lastXDaysSubmissions}
@@ -94,7 +96,11 @@ type HabitDateButtonProps = {
   habitId: DataModel["userHabits"]["document"]["_id"];
   submissions?: DataModel["userHabitSubmissions"]["document"][];
 };
-function HabitDateButton({ date, habitId, submissions }: HabitDateButtonProps) {
+const HabitDateButton = ({
+  date,
+  habitId,
+  submissions,
+}: HabitDateButtonProps) => {
   const [isToggling, setIsToggling] = useState(false);
 
   const toggleYesNoHabitSubmission = useMutation(
@@ -148,4 +154,27 @@ function HabitDateButton({ date, habitId, submissions }: HabitDateButtonProps) {
       </Button>
     </div>
   );
-}
+};
+
+UserHabitCard.Skeleton = () => {
+  return (
+    <motion.div
+      layout
+      className="rounded-sm border shadow-sm p-4 flex flex-col gap-4"
+    >
+      <Skeleton className="h-6 w-[200px] rounded-sm" />
+      <div className="grid grid-cols-7 gap-2">
+        {Array.from({ length: 7 }).map((_, i) => {
+          return (
+            <div key={i}>
+              <Skeleton className="w-full h-10 rounded-sm" />
+            </div>
+          );
+        })}
+      </div>
+      <Skeleton className="h-6 w-[200px] rounded-sm" />
+    </motion.div>
+  );
+};
+
+export default UserHabitCard;
