@@ -11,6 +11,9 @@ import {
   parseISO,
   startOfMonth,
   subDays,
+  startOfWeek,
+  endOfWeek,
+  differenceInDays,
 } from "date-fns";
 
 export const getAllUserHabits = query({
@@ -60,38 +63,6 @@ export const createNewUserHabit = mutation({
     });
 
     return habitId;
-  },
-});
-
-export const getAllSubmissionsForHabit = query({
-  args: { habitId: v.id("userHabits") },
-  handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (userId === null) {
-      throw new ConvexError("You must be logged in view habits");
-    }
-
-    const habit = await ctx.db
-      .query("userHabits")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
-      .filter((q) => q.eq(q.field("_id"), args.habitId))
-      .unique();
-
-    if (!habit) {
-      throw new ConvexError("No habit found with this id");
-    }
-
-    const allSubmissions = await ctx.db
-      .query("userHabitSubmissions")
-      .withIndex("by_user_and_habit", (q) =>
-        q.eq("userId", userId).eq("habitId", args.habitId)
-      )
-      .collect();
-
-    return {
-      habit,
-      allSubmissions,
-    };
   },
 });
 
@@ -288,3 +259,164 @@ export const bulkUnCompleteSelectedDates = mutation({
     };
   },
 });
+
+// Updated backend query with all calculations moved server-side
+export const getAllSubmissionsForHabit = query({
+  args: { habitId: v.id("userHabits") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) {
+      throw new ConvexError("You must be logged in view habits");
+    }
+
+    const habit = await ctx.db
+      .query("userHabits")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .filter((q) => q.eq(q.field("_id"), args.habitId))
+      .unique();
+
+    if (!habit) {
+      throw new ConvexError("No habit found with this id");
+    }
+
+    const allSubmissions = await ctx.db
+      .query("userHabitSubmissions")
+      .withIndex("by_user_and_habit", (q) =>
+        q.eq("userId", userId).eq("habitId", args.habitId)
+      )
+      .collect();
+
+    // Calculate all statistics on the backend
+    const stats = calculateHabitStatistics(allSubmissions);
+    const recentActivity = getRecentActivity(allSubmissions);
+
+    return {
+      habit,
+      allSubmissions, // Still need this for the calendar heatmap
+      stats,
+      recentActivity,
+    };
+  },
+});
+
+// Helper functions for backend calculations
+function calculateHabitStatistics(submissions: any[]) {
+  const now = new Date();
+
+  // Date ranges
+  const thisWeekStart = startOfWeek(now, { weekStartsOn: 1 });
+  const thisWeekEnd = endOfWeek(now, { weekStartsOn: 1 });
+  const thisMonthStart = startOfMonth(now);
+  const thisMonthEnd = endOfMonth(now);
+  const last30Days = subDays(now, 30);
+
+  const successfulSubmissions = submissions.filter((s) => s.value === true);
+
+  // Filter submissions by time period
+  const thisWeekSubmissions = successfulSubmissions.filter((s) => {
+    const date = new Date(s.dateFor);
+    return date >= thisWeekStart && date <= thisWeekEnd;
+  });
+
+  const thisMonthSubmissions = successfulSubmissions.filter((s) => {
+    const date = new Date(s.dateFor);
+    return date >= thisMonthStart && date <= thisMonthEnd;
+  });
+
+  const last30DaysSubmissions = successfulSubmissions.filter((s) => {
+    const date = new Date(s.dateFor);
+    return date >= last30Days;
+  });
+
+  // Calculate streaks
+  const streaks = calculateStreaks(submissions);
+
+  // Calculate progress percentages
+  const weekProgress = Math.min(
+    Math.round((thisWeekSubmissions.length / 7) * 100),
+    100
+  );
+  const monthProgress = Math.min(
+    Math.round((thisMonthSubmissions.length / 30) * 100),
+    100
+  );
+
+  return {
+    totalCompleted: successfulSubmissions.length,
+    thisWeek: thisWeekSubmissions.length,
+    thisMonth: thisMonthSubmissions.length,
+    last30Days: last30DaysSubmissions.length,
+    currentStreak: streaks.current,
+    longestStreak: streaks.longest,
+    totalDays: submissions.length,
+    progress: {
+      week: weekProgress,
+      month: monthProgress,
+      weekCount: thisWeekSubmissions.length,
+      monthCount: thisMonthSubmissions.length,
+    },
+  };
+}
+
+function calculateStreaks(submissions: any[]) {
+  if (!submissions.length) return { current: 0, longest: 0 };
+
+  // Sort by date and filter successful submissions
+  const sortedSubmissions = [...submissions]
+    .filter((s) => s.value === true)
+    .sort(
+      (a, b) => new Date(a.dateFor).getTime() - new Date(b.dateFor).getTime()
+    );
+
+  if (!sortedSubmissions.length) return { current: 0, longest: 0 };
+
+  let longestStreak = 0;
+  let tempStreak = 1;
+
+  // Calculate longest streak in history
+  for (let i = 1; i < sortedSubmissions.length; i++) {
+    const prevDate = new Date(sortedSubmissions[i - 1].dateFor);
+    const currDate = new Date(sortedSubmissions[i].dateFor);
+    const daysDiff = differenceInDays(currDate, prevDate);
+
+    if (daysDiff === 1) {
+      tempStreak++;
+    } else {
+      longestStreak = Math.max(longestStreak, tempStreak);
+      tempStreak = 1;
+    }
+  }
+  longestStreak = Math.max(longestStreak, tempStreak);
+
+  // Calculate current streak (from today backwards)
+  const today = new Date();
+  let currentStreak = 0;
+  const recentSubmissions = [...sortedSubmissions].reverse();
+
+  for (const submission of recentSubmissions) {
+    const submissionDate = new Date(submission.dateFor);
+    const daysDiff = differenceInDays(today, submissionDate);
+
+    if (daysDiff === currentStreak) {
+      currentStreak++;
+    } else {
+      break;
+    }
+  }
+
+  return { current: currentStreak, longest: longestStreak };
+}
+
+function getRecentActivity(submissions: any[]) {
+  return [...submissions]
+    .sort(
+      (a, b) => new Date(b.dateFor).getTime() - new Date(a.dateFor).getTime()
+    )
+    .slice(0, 7)
+    .map((submission) => ({
+      id: submission._id,
+      dateFor: submission.dateFor,
+      value: submission.value,
+      note: submission.note,
+    }));
+}
