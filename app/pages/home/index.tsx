@@ -2,29 +2,21 @@ import type React from "react";
 import { Button } from "~/components/ui/button";
 import { Link } from "react-router";
 import { cn } from "~/lib/utils";
-import { ThreeCellDailyFormShell } from "./components/ThreeCellDailyFormShell";
 import LoggedOutHeader from "~/components/LoggedOutHeader";
 import LoggedOutFooter from "~/components/LoggedOutFooter";
-import {
-  Check,
-  CheckSquare,
-  Calendar,
-  Target,
-  Users,
-  ArrowRight,
-} from "lucide-react";
+import { Check, CheckSquare, Calendar, Target, ArrowRight } from "lucide-react";
 
 export default function Home() {
   return (
     <main className="flex flex-col items-center w-full flex-1">
       <LoggedOutHeader />
       <HeroSection />
-      <FeaturesOverviewSection />
       <JournalingSection />
       <HabitsSection />
       <TodosSection />
       <UsedBySuccessfulPeopleSection />
       <WhyAllInOneMattersSection />
+      <FeaturesOverviewSection />
       <TakeTheFirstStepToday />
       <LoggedOutFooter />
     </main>
@@ -42,6 +34,37 @@ const Section = ({
     <section className={cn("mx-auto w-full lg:max-w-6xl px-4", className)}>
       {children}
     </section>
+  );
+};
+
+const VideoPlayer = ({
+  src,
+  alt,
+  className = "",
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+}) => {
+  return (
+    <div
+      className={cn("relative rounded-sm overflow-hidden shadow-sm", className)}
+    >
+      <video
+        src={src}
+        className="w-full h-auto"
+        controls={false}
+        autoPlay
+        preload="metadata"
+        muted
+        playsInline
+        aria-label={alt}
+        loop
+      >
+        <source src={src} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
   );
 };
 
@@ -125,7 +148,7 @@ const FeaturesOverviewSection = () => {
 const JournalingSection = () => {
   return (
     <Section className="py-16">
-      <div className="flex flex-col md:flex-row gap-12 items-center">
+      <div className="flex flex-col lg:flex-row gap-12 items-center">
         <div className="flex-1">
           <h2 className="text-4xl font-bold mb-6">
             Discover patterns in your best days
@@ -152,11 +175,12 @@ const JournalingSection = () => {
           </div>
         </div>
         <div className="flex-1">
-          <div className="flex flex-col items-center p-6 rounded-lg">
-            <div className="text-center font-semibold mb-2">
-              Three simple questions
-            </div>
-            <ThreeCellDailyFormShell />
+          <div className="space-y-6">
+            <VideoPlayer
+              src="/demo-videos/three-cells.mp4"
+              alt="Three cells daily journaling demo showing how to track what went well, what could be better, and what you learned"
+              className="max-w-lg mx-auto"
+            />
           </div>
         </div>
       </div>
@@ -168,37 +192,14 @@ const HabitsSection = () => {
   return (
     <div className="bg-secondary w-full">
       <Section className="py-16">
-        <div className="flex flex-col md:flex-row gap-12 items-center">
+        <div className="flex flex-col-reverse lg:flex-row gap-12 items-center">
           <div className="flex-1">
-            <div className="bg-background p-6 rounded-lg shadow-sm">
-              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-blue-500"></span>
-                Morning Routine
-              </h3>
-              <div className="grid grid-cols-7 gap-2 mb-4">
-                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
-                  (day, i) => (
-                    <div key={day} className="flex flex-col items-center">
-                      <span className="text-sm font-semibold uppercase">
-                        {day}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {i + 1}
-                      </span>
-                      <div className="mt-1">
-                        {i < 5 ? (
-                          <Check className="text-green-700 h-6 w-6" />
-                        ) : (
-                          <div className="w-6 h-6 border-2 border-gray-300 rounded"></div>
-                        )}
-                      </div>
-                    </div>
-                  )
-                )}
-              </div>
-              <div className="text-sm text-muted-foreground">
-                5/7 days this week • 89% this month
-              </div>
+            <div className="space-y-6">
+              <VideoPlayer
+                src="/demo-videos/habits.mp4"
+                alt="Habit tracking demo showing daily checkboxes, progress visualization, and yearly heatmaps"
+                className="max-w-lg mx-auto"
+              />
             </div>
           </div>
           <div className="flex-1">
@@ -237,7 +238,7 @@ const HabitsSection = () => {
 const TodosSection = () => {
   return (
     <Section className="py-16">
-      <div className="flex flex-col md:flex-row gap-12 items-center">
+      <div className="flex flex-col lg:flex-row gap-12 items-center">
         <div className="flex-1">
           <h2 className="text-4xl font-bold mb-6">
             Tasks that don't overwhelm
@@ -268,28 +269,12 @@ const TodosSection = () => {
           </div>
         </div>
         <div className="flex-1">
-          <div className="space-y-3">
-            <div className="flex items-start gap-3 p-3 rounded-sm shadow-md bg-sky-300">
-              <div className="w-5 h-5 border-2 border-gray-600 rounded mt-0.5"></div>
-              <div className="flex-1">
-                <div className="font-medium">Review quarterly goals</div>
-                <div className="text-sm text-muted-foreground">
-                  Check progress on Q4 objectives
-                </div>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 p-3 rounded-sm shadow-md bg-green-200 opacity-60">
-              <Check className="w-5 h-5 text-gray-600 mt-0.5" />
-              <div className="flex-1 line-through">
-                <div className="font-medium">Finish project proposal</div>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 p-3 rounded-sm shadow-md bg-sky-300">
-              <div className="w-5 h-5 border-2 border-gray-600 rounded mt-0.5"></div>
-              <div className="flex-1">
-                <div className="font-medium">Call mom</div>
-              </div>
-            </div>
+          <div className="space-y-6">
+            <VideoPlayer
+              src="/demo-videos/tasks.mp4"
+              alt="Task management demo showing inline editing, task completion, and clean interface"
+              className="max-w-lg mx-auto"
+            />
           </div>
         </div>
       </div>
@@ -396,7 +381,7 @@ const WhyAllInOneMattersSection = () => {
 
 const TakeTheFirstStepToday = () => {
   return (
-    <div className="bg-secondary w-full">
+    <div className="w-full">
       <Section className="py-16 flex flex-col items-center gap-6">
         <h2 className="text-4xl font-bold md:text-5xl leading-tight text-center">
           Start your productive life today
