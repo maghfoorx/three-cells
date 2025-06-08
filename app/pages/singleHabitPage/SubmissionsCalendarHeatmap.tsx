@@ -222,11 +222,12 @@ export default function SubmissionsCalendarHeatmap({
           >
             Today
           </Button>
-        </div>
-        <div>
-          <div className="text-xs text-gray-600 bg-secondary px-2 py-1 rounded-sm w-fit">
-            {formatDate(dateRange.start, "MMM yyyy")} -{" "}
-            {formatDate(dateRange.end, "MMM yyyy")}
+
+          <div>
+            <div className="text-xs text-gray-600 bg-secondary px-2 py-1 rounded-sm w-fit">
+              {formatDate(dateRange.start, "MMM yyyy")} -{" "}
+              {formatDate(dateRange.end, "MMM yyyy")}
+            </div>
           </div>
         </div>
       </div>
@@ -234,7 +235,7 @@ export default function SubmissionsCalendarHeatmap({
       {/* Calendar heatmap */}
       <div className="w-full overflow-x-auto" ref={scrollContainerRef}>
         <div className="border rounded-sm p-4 bg-white w-fit">
-          <div className={"overflow-x-auto"} style={{ scrollbarWidth: "thin" }}>
+          <div>
             <div className="min-w-fit">
               {/* Month labels */}
               <div className="flex mb-2 relative" style={{ height: "16px" }}>
