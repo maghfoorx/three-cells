@@ -1,16 +1,23 @@
 import type { LucideIcon } from "lucide-react";
+import type { ReactElement } from "react";
 
 export interface BreadcrumbItem {
   title: string;
   href: string;
 }
 
-export interface NavItem {
-  title: string;
-  href: string;
-  icon?: LucideIcon | null;
-  isActive?: boolean;
-}
+export type NavItem =
+  | {
+      title: string;
+      href: string;
+      icon?: LucideIcon | null;
+      isActive?: boolean;
+      customComponent?: never; // disallow
+    }
+  | {
+      customComponent: ReactElement;
+      href: string;
+    };
 
 export interface NavGroup {
   label: string;

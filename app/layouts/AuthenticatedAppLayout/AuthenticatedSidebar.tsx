@@ -9,7 +9,7 @@ import {
   ClipboardList,
   ChartNoAxesCombined,
 } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import {
   Sidebar,
   SidebarContent,
@@ -22,8 +22,26 @@ import {
 import type { NavItem, NavGroup } from "~/types";
 import ApplicationLogo from "~/components/ApplicationLogo";
 
-const getHrefForTrackPage = () => {
-  return `/track/${format(new Date(), "yyyy-MM-dd")}`;
+const DynamicTrackLink = () => {
+  const location = useLocation();
+  const today = format(new Date(), "yyyy-MM-dd");
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        asChild
+        isActive={`/track/${today}` === location.pathname}
+      >
+        <Link
+          to={`/track/${today}`}
+          viewTransition
+          className="flex flex-row gap-2"
+        >
+          <Rocket size={16} />
+          <span>Track</span>
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
 };
 
 const mainNavItems: NavGroup[] = [
@@ -41,9 +59,8 @@ const mainNavItems: NavGroup[] = [
     label: "Ideal life",
     items: [
       {
-        title: "Track",
-        href: getHrefForTrackPage(),
-        icon: Rocket,
+        customComponent: <DynamicTrackLink />,
+        href: "/track",
       },
       {
         title: "Log",

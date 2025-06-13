@@ -17,19 +17,26 @@ export function NavMain({ groups = [] }: { groups: NavGroup[] }) {
         <div key={group.label}>
           <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
           <SidebarMenu>
-            {group.items.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={item.href === location.pathname}
-                >
-                  <Link to={item.href} viewTransition>
-                    {item.icon && <item.icon />}
-                    <span>{item.title}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+            {group.items.map((item) => {
+              if ("customComponent" in item) {
+                return <>{item.customComponent}</>;
+              }
+              if ("href" in item) {
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={item.href === location.pathname}
+                    >
+                      <Link to={item.href} viewTransition>
+                        {item.icon && <item.icon />}
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              }
+            })}
           </SidebarMenu>
         </div>
       ))}
