@@ -34,14 +34,14 @@ export function NavFooter({
     >
       <SidebarGroupContent>
         {hasLifeTimeAccess && (
-          <div className="bg-white rounded-sm shadow-sm px-4 py-2">
+          <div className="bg-linear-30 from-white to-blue-300 rounded-md px-4 py-2">
             <div className="font-semibold flex flex-row gap-1 items-center">
               <Check size={16} /> <span>Lifetime Access</span>
             </div>
             <div>You have full access to all features of three cells</div>
           </div>
         )}
-        <SidebarMenu>
+        <SidebarMenu className="mt-2">
           {items.map((item) => {
             if ("title" in item) {
               return (

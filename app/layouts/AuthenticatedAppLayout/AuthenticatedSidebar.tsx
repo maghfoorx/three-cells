@@ -8,6 +8,7 @@ import {
   Calendar,
   ClipboardList,
   ChartNoAxesCombined,
+  Contact,
 } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import {
@@ -97,6 +98,11 @@ const footerNavItems: NavItem[] = [
   //     href: 'https://laravel.com/docs/starter-kits',
   //     icon: BookOpen,
   // },
+  {
+    title: "Email contact",
+    href: "mailto:hello@three-cells.com",
+    icon: Contact,
+  },
 ];
 
 export function AppSidebar() {
