@@ -42,7 +42,7 @@ export default function TraditionalApproachCard() {
               <span className="text-gray-500 text-base">Per month</span>
             </div>
             <div className="text-gray-400 text-left text-xl">
-              Multiple subscriptions. Constant switching.
+              Many subscriptions. Always switching.
             </div>
           </div>
 
