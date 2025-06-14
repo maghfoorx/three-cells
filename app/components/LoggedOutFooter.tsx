@@ -9,6 +9,7 @@ export default function LoggedOutFooter() {
       <Link to="/terms" className="hover:underline">
         Terms of service
       </Link>
+      <a href="mailto:hello@three-cells.com">Contact us via email</a>
     </footer>
   );
 }
