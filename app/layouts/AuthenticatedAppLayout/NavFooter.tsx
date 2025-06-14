@@ -8,6 +8,9 @@ import {
 import { type NavItem } from "~/types";
 import { type ComponentPropsWithoutRef } from "react";
 import { Icon } from "~/components/Icon";
+import { api } from "convex/_generated/api";
+import { useQuery } from "convex/react";
+import { Check } from "lucide-react";
 
 export function NavFooter({
   items,
@@ -16,12 +19,28 @@ export function NavFooter({
 }: ComponentPropsWithoutRef<typeof SidebarGroup> & {
   items: NavItem[];
 }) {
+  const viewer = useQuery(api.auth.viewer);
+
+  const hasLifeTimeAccess =
+    (viewer != null &&
+      viewer.hasActivePurchase != null &&
+      viewer.hasActivePurchase) ??
+    false;
+
   return (
     <SidebarGroup
       {...props}
       className={`group-data-[collapsible=icon]:p-0 ${className || ""}`}
     >
       <SidebarGroupContent>
+        {hasLifeTimeAccess && (
+          <div className="bg-white rounded-sm shadow-sm px-4 py-2">
+            <div className="font-semibold flex flex-row gap-1 items-center">
+              <Check size={16} /> <span>Lifetime Access</span>
+            </div>
+            <div>You have full access to all features of three cells</div>
+          </div>
+        )}
         <SidebarMenu>
           {items.map((item) => {
             if ("title" in item) {

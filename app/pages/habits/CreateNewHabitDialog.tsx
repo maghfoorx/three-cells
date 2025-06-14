@@ -24,7 +24,7 @@ import { Input } from "~/components/ui/input";
 import { cn } from "~/lib/utils";
 import { useMemo, useState } from "react";
 import { api } from "convex/_generated/api";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { ConvexError } from "convex/values";
 import { handleHookMutationError } from "~/lib/handleHookMutationError";
 
@@ -47,6 +47,14 @@ export default function CreateNewHabitDialog() {
       colour: getRandomColourForNewHabit(),
     },
   });
+
+  const viewer = useQuery(api.auth.viewer);
+
+  const hasLifeTimeAccess =
+    (viewer != null &&
+      viewer.hasActivePurchase != null &&
+      viewer.hasActivePurchase) ??
+    false;
 
   const handleDialogOpenChange = (open: boolean) => {
     setDialogOpen(open);
@@ -79,7 +87,7 @@ export default function CreateNewHabitDialog() {
   return (
     <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
       <DialogTrigger asChild>
-        <Button variant={"outline"}>
+        <Button variant={"outline"} disabled={!hasLifeTimeAccess}>
           <CircleFadingPlus />
         </Button>
       </DialogTrigger>

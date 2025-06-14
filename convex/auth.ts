@@ -13,6 +13,19 @@ export const viewer = query({
 
     if (!userId) return null;
 
-    return ctx.db.get(userId);
+    const user = await ctx.db.get(userId);
+
+    const purchases = await ctx.db
+      .query("userPurchases")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+
+    const activePurchase = purchases.find((p) => p.isActive);
+
+    return {
+      ...user,
+      hasActivePurchase: !!activePurchase,
+      activePurchase,
+    };
   },
 });

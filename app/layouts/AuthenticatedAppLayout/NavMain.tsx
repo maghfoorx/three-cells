@@ -7,6 +7,7 @@ import {
 } from "~/components/ui/sidebar";
 import { type NavGroup } from "~/types";
 import { Link, useLocation } from "react-router";
+import React from "react";
 
 export function NavMain({ groups = [] }: { groups: NavGroup[] }) {
   const location = useLocation();
@@ -17,9 +18,13 @@ export function NavMain({ groups = [] }: { groups: NavGroup[] }) {
         <div key={group.label}>
           <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
           <SidebarMenu>
-            {group.items.map((item) => {
+            {group.items.map((item, index) => {
               if ("customComponent" in item) {
-                return <>{item.customComponent}</>;
+                return (
+                  <React.Fragment key={`custom-${group.label}-${index}`}>
+                    {item.customComponent}
+                  </React.Fragment>
+                );
               }
               if ("href" in item) {
                 return (

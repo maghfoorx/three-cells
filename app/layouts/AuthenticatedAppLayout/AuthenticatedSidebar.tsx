@@ -26,7 +26,7 @@ const DynamicTrackLink = () => {
   const location = useLocation();
   const today = format(new Date(), "yyyy-MM-dd");
   return (
-    <SidebarMenuItem>
+    <SidebarMenuItem key={today}>
       <SidebarMenuButton
         asChild
         isActive={`/track/${today}` === location.pathname}

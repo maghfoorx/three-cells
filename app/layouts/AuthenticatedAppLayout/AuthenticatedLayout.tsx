@@ -17,7 +17,11 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
+export default function AuthenticatedLayout({
+  children,
+  breadcrumbs,
+  ...props
+}: AppLayoutProps) {
   return (
     <>
       <Authenticated>
@@ -30,4 +34,4 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
       </Unauthenticated>
     </>
   );
-};
+}

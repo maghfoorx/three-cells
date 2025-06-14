@@ -46,8 +46,7 @@ export function UserHabitCard({
   }, [habit.colour]);
 
   return (
-    <motion.div
-      layout
+    <div
       className="rounded-sm border shadow-sm p-4 flex flex-col gap-4"
       style={{
         backgroundColor: habitCardColour,
@@ -87,7 +86,7 @@ export function UserHabitCard({
             this month
           </div>
         )}
-    </motion.div>
+    </div>
   );
 }
 

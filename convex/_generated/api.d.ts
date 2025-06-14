@@ -12,7 +12,9 @@ import type * as auth from "../auth.js";
 import type * as gitSha from "../gitSha.js";
 import type * as habits from "../habits.js";
 import type * as http from "../http.js";
+import type * as internal_payments from "../internal/payments.js";
 import type * as migrations from "../migrations.js";
+import type * as stripe from "../stripe.js";
 import type * as tasks from "../tasks.js";
 import type * as threeCells from "../threeCells.js";
 
@@ -35,7 +37,9 @@ declare const fullApi: ApiFromModules<{
   gitSha: typeof gitSha;
   habits: typeof habits;
   http: typeof http;
+  "internal/payments": typeof internal_payments;
   migrations: typeof migrations;
+  stripe: typeof stripe;
   tasks: typeof tasks;
   threeCells: typeof threeCells;
 }>;

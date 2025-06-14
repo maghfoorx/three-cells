@@ -26,7 +26,7 @@ import { showErrorToast } from "~/lib/showErrorToast";
 import { showSuccessToast } from "~/lib/showSuccessToast";
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import {
   Tooltip,
@@ -53,6 +53,14 @@ export default function CreateNewTaskDialog() {
       category_id: undefined,
     },
   });
+
+  const viewer = useQuery(api.auth.viewer);
+
+  const hasLifeTimeAccess =
+    (viewer != null &&
+      viewer.hasActivePurchase != null &&
+      viewer.hasActivePurchase) ??
+    false;
 
   const createNewTask = useMutation(api.tasks.createUserTask);
 
@@ -105,7 +113,11 @@ export default function CreateNewTaskDialog() {
           <div className="hidden lg:block">
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant={"outline"} onClick={() => setDialogOpen(true)}>
+                <Button
+                  variant={"outline"}
+                  onClick={() => setDialogOpen(true)}
+                  disabled={!hasLifeTimeAccess}
+                >
                   <ClipboardPlus />
                 </Button>
               </TooltipTrigger>

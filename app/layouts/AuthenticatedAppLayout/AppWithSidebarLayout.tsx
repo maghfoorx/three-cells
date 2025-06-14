@@ -2,11 +2,41 @@ import { useMemo, useState, type PropsWithChildren } from "react";
 import { AppSidebar } from "~/layouts/AuthenticatedAppLayout/AuthenticatedSidebar";
 import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
 import type { BreadcrumbItem } from "~/types";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 export default function AppSidebarLayout({
   children,
   breadcrumbs = [],
 }: PropsWithChildren<{ breadcrumbs?: BreadcrumbItem[] }>) {
+  const viewer = useQuery(api.auth.viewer);
+
+  if (viewer === undefined) {
+    return <FullscreenSpinner />;
+  }
+
+  if (viewer === null) {
+    return <Navigate to={"/login"} />;
+  }
+
+  // if user unsubscribed then show something else.
+  if (!viewer.hasActivePurchase) {
+    return (
+      <AppShell variant="sidebar">
+        <AppSidebar />
+        <AppContent variant="sidebar">
+          <AppSidebarHeader breadcrumbs={breadcrumbs} />
+          <div className="flex flex-col items-center justify-center gap-6 p-8 text-center">
+            <h1 className="text-3xl text-gray-900">
+              Your best life just <span className="font-semibold">one</span>{" "}
+              step <span className="italic">away</span>
+            </h1>
+            <BuyThreeCellsCard />
+          </div>
+        </AppContent>
+      </AppShell>
+    );
+  }
+
   return (
     <AppShell variant="sidebar">
       <AppSidebar />
@@ -80,10 +110,15 @@ import { Breadcrumbs } from "../../components/Breadcrumbs";
 import { SidebarTrigger } from "../../components/ui/sidebar";
 import { type BreadcrumbItem as BreadcrumbItemType } from "~/types";
 import CreateNewTaskDialog from "~/pages/tasks/CreateNewTaskDialog";
-import { Link, useLocation, useParams } from "react-router";
+import { Link, Navigate, useLocation, useParams } from "react-router";
 import CreateNewHabitDialog from "~/pages/habits/CreateNewHabitDialog";
 import { Button } from "~/components/ui/button";
 import { ArrowLeft, SquareArrowLeft } from "lucide-react";
+import { useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
+import FullscreenSpinner from "~/components/FullscreenSpinner";
+import BuyThreeCellsButton from "~/components/BuyThreeCellsButton";
+import BuyThreeCellsCard from "~/components/PriceCard";
 
 function AppSidebarHeader({
   breadcrumbs = [],

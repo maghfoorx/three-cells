@@ -110,6 +110,32 @@ const schema = defineSchema({
   })
     .index("by_user_and_habit", ["userId", "habitId"])
     .index("by_user_and_habit_and_date", ["userId", "habitId", "dateFor"]),
+
+  userPurchases: defineTable({
+    userId: v.id("users"),
+
+    // What they bought (e.g. "lifetime", "ai_monthly", "ai_yearly")
+    product: v.string(),
+
+    // How it's billed (e.g. "one_time", "subscription")
+    billingType: v.union(v.literal("one_time"), v.literal("subscription")),
+
+    // Where the payment happened (optional)
+    provider: v.optional(v.string()), // e.g., "stripe", "paddle"
+    providerId: v.optional(v.string()), // e.g., payment intent ID or subscription ID
+
+    // When it was purchased
+    purchasedAt: v.number(),
+
+    // Used only for subscriptions
+    expiresAt: v.optional(v.number()), // null for lifetime
+
+    // Indicates if the purchase is currently active
+    isActive: v.boolean(),
+
+    // Useful for updates
+    updatedAt: v.optional(v.number()),
+  }).index("by_user", ["userId"]),
 });
 
 export default schema;

@@ -7,13 +7,11 @@ import LoggedOutHeader from "~/components/LoggedOutHeader";
 import LoggedOutFooter from "~/components/LoggedOutFooter";
 import {
   Check,
-  Sparkles,
   CheckSquare,
   Calendar,
   Target,
   ArrowRight,
   Users,
-  Clock,
   Star,
 } from "lucide-react";
 import BuyThreeCellsCard from "~/components/PriceCard";
@@ -136,7 +134,7 @@ const HeroSection = () => {
 
 const TikTokBridgeSection = () => {
   return (
-    <div className="bg-gradient-to-r from-purple-100 to-pink-100 w-full">
+    <div className="bg-gradient-to-r from-orange-100 to-orange-200 w-full">
       <Section className="py-12">
         <div className="text-center">
           <h2 className="text-3xl font-bold mb-4">
@@ -170,7 +168,7 @@ const SocialProofSection = () => {
           <img
             src={"/cal-newport.webp"}
             alt="Cal Newport"
-            className="w-32 h-32 object-cover rounded-full mb-4 border-4 border-blue-200"
+            className="w-32 h-32 object-cover rounded-full mb-4 border-4 border-gray-200"
           />
           <h3 className="text-xl font-semibold">Cal Newport</h3>
           <p className="text-sm text-blue-600 font-medium mb-2">
@@ -219,14 +217,14 @@ const VideoShowcaseSection = () => {
           {/* Journaling Demo */}
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="flex-1">
-              <div className="bg-blue-50 p-2 rounded-lg w-fit mb-4">
-                <Calendar className="h-8 w-8 text-blue-600" />
+              <div className="bg-gray-50 p-2 rounded-lg w-fit mb-4">
+                <Calendar className="h-8 w-8 text-gray-600" />
               </div>
               <h3 className="text-3xl font-bold mb-4">
                 Daily Journaling: Find Your Success Pattern
               </h3>
               <div className="space-y-4 text-lg">
-                <p className="font-medium text-blue-800">
+                <p className="font-medium text-gray-800">
                   Just 3 questions. 2 minutes daily. Life-changing insights.
                 </p>
                 <ul className="space-y-2">
@@ -295,14 +293,14 @@ const VideoShowcaseSection = () => {
           {/* Tasks Demo */}
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="flex-1">
-              <div className="bg-purple-50 p-2 rounded-lg w-fit mb-4">
-                <CheckSquare className="h-8 w-8 text-purple-600" />
+              <div className="bg-gray-50 p-2 rounded-lg w-fit mb-4">
+                <CheckSquare className="h-8 w-8 text-gray-600" />
               </div>
               <h3 className="text-3xl font-bold mb-4">
                 Task Management: Focus Without Overwhelm
               </h3>
               <div className="space-y-4 text-lg">
-                <p className="font-medium text-purple-800">
+                <p className="font-medium text-gray-800">
                   Clean. Simple. Satisfying. Everything you need, nothing you
                   don't.
                 </p>
@@ -380,9 +378,9 @@ const WhyAllInOneMattersSection = () => {
         </div>
       </div>
 
-      <div className="bg-blue-50 p-8 rounded-xl max-w-4xl mx-auto border border-blue-200">
+      <div className="bg-gray-50 p-8 rounded-xl max-w-4xl mx-auto border border-gray-200">
         <p className="text-lg text-center leading-relaxed">
-          <strong className="text-blue-800">
+          <strong className="text-gray-800">
             After years of trying complex systems and juggling multiple apps, I
             built exactly what I wanted:
           </strong>{" "}
@@ -409,8 +407,8 @@ const FeaturesOverviewSection = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           <div className="flex flex-col items-center text-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-            <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-6">
-              <Calendar className="h-10 w-10 text-blue-600" />
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+              <Calendar className="h-10 w-10 text-gray-600" />
             </div>
             <h3 className="text-2xl font-semibold mb-4">Daily Journaling</h3>
             <p className="text-muted-foreground text-lg">
@@ -431,8 +429,8 @@ const FeaturesOverviewSection = () => {
           </div>
 
           <div className="flex flex-col items-center text-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-            <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mb-6">
-              <CheckSquare className="h-10 w-10 text-purple-600" />
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+              <CheckSquare className="h-10 w-10 text-gray-600" />
             </div>
             <h3 className="text-2xl font-semibold mb-4">Effortless Tasks</h3>
             <p className="text-muted-foreground text-lg">
