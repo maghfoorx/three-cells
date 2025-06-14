@@ -1,11 +1,13 @@
 import type React from "react";
 import { Button } from "~/components/ui/button";
 import { Link } from "react-router";
+
 import { cn } from "~/lib/utils";
 import LoggedOutHeader from "~/components/LoggedOutHeader";
 import LoggedOutFooter from "~/components/LoggedOutFooter";
 import {
   Check,
+  Sparkles,
   CheckSquare,
   Calendar,
   Target,
@@ -14,6 +16,8 @@ import {
   Clock,
   Star,
 } from "lucide-react";
+import BuyThreeCellsCard from "~/components/PriceCard";
+import TraditionalApproachCard from "~/components/TraditionalApproachCard";
 
 export default function Home() {
   return (
@@ -26,6 +30,7 @@ export default function Home() {
       <WhyAllInOneMattersSection />
       <FeaturesOverviewSection />
       <TestimonialsSection />
+      <PricingSection />
       <FinalCTASection />
       <LoggedOutFooter />
     </main>
@@ -111,15 +116,7 @@ const HeroSection = () => {
 
           {/* Strong CTA with Risk Reduction */}
           <div className="mx-auto flex flex-col items-center gap-3">
-            <Link to="/track">
-              <Button
-                className="text-lg px-8 py-5 bg-green-600 hover:bg-green-700"
-                size={"lg"}
-              >
-                Start your productive life today
-                <ArrowRight className="h-5 w-5" />
-              </Button>
-            </Link>
+            <CleanCTAButton />
             {/* <p className="text-sm text-muted-foreground">
               ✅ Free to start • ✅ No credit card required • ✅ 5-minute setup
             </p> */}
@@ -513,8 +510,8 @@ const TestimonialsSection = () => {
 
 const FinalCTASection = () => {
   return (
-    <div className="bg-gradient-to-r from-green-600 to-blue-600 w-full">
-      <Section className="py-20 text-center text-white">
+    <div className="bg-gradient-to-r from-orange-600 to-yellow-600 w-full">
+      <Section className="py-16 text-center text-white">
         <h2 className="text-5xl font-bold mb-6">
           Your productive life starts today
         </h2>
@@ -529,7 +526,7 @@ const FinalCTASection = () => {
         <div className="flex flex-col items-center gap-6">
           <Link to="/track">
             <Button
-              className="text-xl px-12 py-6 bg-white text-green-600 hover:bg-gray-100 font-bold"
+              className="text-xl px-12 py-6 bg-white text-black hover:bg-gray-100 font-semibold"
               size={"lg"}
             >
               Get started for free
@@ -552,3 +549,76 @@ const FinalCTASection = () => {
     </div>
   );
 };
+
+const PricingSection = () => {
+  return (
+    <Section className="w-full max-w-6xl mx-auto px-4 py-10">
+      {/* Header */}
+      <div className="text-center mb-12">
+        <h2 className="text-3xl font-bold mb-1">Choose your path</h2>
+        <p className="text-gray-600 text-lg">
+          Keep juggling apps or simplify your life with Three Cells
+        </p>
+      </div>
+
+      {/* Cards comparison */}
+      <div className="grid md:grid-cols-2 gap-8 items-start">
+        {/* Bad option - Traditional scattered approach */}
+        <div className="order-2 md:order-1">
+          <div className="text-center mb-6">
+            <h3 className="text-xl font-semibold text-gray-600 mb-2">
+              😫 The Scattered Way
+            </h3>
+            <p className="text-gray-500 text-sm">
+              What you're probably doing now
+            </p>
+          </div>
+          <TraditionalApproachCard />
+        </div>
+
+        {/* Good option - Three Cells */}
+        <div className="order-1 md:order-2">
+          <div className="text-center mb-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              ✨ The Three Cells Way
+            </h3>
+            <p className="text-gray-600 text-sm">
+              Everything unified in one beautiful app
+            </p>
+          </div>
+          <BuyThreeCellsCard login={true} />
+        </div>
+      </div>
+
+      {/* Bottom comparison text */}
+      <div className="mt-12 text-center">
+        <p className="text-gray-600 text-lg">
+          Stop switching between apps. Start building the life you want.
+        </p>
+      </div>
+    </Section>
+  );
+};
+
+function CleanCTAButton() {
+  return (
+    <Link to="/track">
+      <Button
+        className="
+          text-lg px-8 py-5
+          bg-gradient-to-r from-orange-500 to-orange-600
+          hover:from-orange-600 hover:to-orange-700
+          text-white font-semibold
+          rounded-lg
+          shadow-md hover:shadow-lg
+          transition-all duration-200
+          group
+        "
+        size="lg"
+      >
+        Start your productive life today
+        <ArrowRight className="ml-3 h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
+      </Button>
+    </Link>
+  );
+}
