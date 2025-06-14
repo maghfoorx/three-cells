@@ -2,7 +2,6 @@ import { useMemo, useState, type PropsWithChildren } from "react";
 import { AppSidebar } from "~/layouts/AuthenticatedAppLayout/AuthenticatedSidebar";
 import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
 import type { BreadcrumbItem } from "~/types";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 export default function AppSidebarLayout({
   children,
