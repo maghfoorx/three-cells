@@ -236,17 +236,17 @@ export default function Homepage() {
           <View className="flex gap-4">
             <TouchableOpacity
               onPress={handleGoogleLogin}
-              className="w-full bg-white border-2 border-gray-200 rounded-sm py-4 px-6 flex-row items-center gap-2 justify-center shadow-sm"
+              className="w-full bg-primary-foreground border-2 border-gray-200 rounded-sm py-4 px-6 flex-row items-center gap-2 justify-center shadow-sm"
               activeOpacity={0.8}
             >
               <GoogleIcon size={20} />
-              <Text className="text-gray-800 font-semibold text-lg">
+              <Text className="font-semibold text-lg">
                 Continue with Google
               </Text>
             </TouchableOpacity>
 
             {/* Apple Login Button */}
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={handleAppleLogin}
               className="w-full bg-black rounded-sm py-4 px-6 flex-row items-center gap-2 justify-center"
               activeOpacity={0.8}
@@ -255,7 +255,7 @@ export default function Homepage() {
               <Text className="text-white font-semibold text-lg">
                 Continue with Apple
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
           {/* Terms Text */}
           <Text className="text-center text-gray-500 text-sm mt-6 leading-relaxed">
