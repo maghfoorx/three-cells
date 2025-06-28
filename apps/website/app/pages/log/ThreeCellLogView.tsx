@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { useQuery } from "convex/react";
 import { Label } from "~/components/ui/label";
 import { format } from "date-fns";
@@ -10,18 +9,6 @@ import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import FullscreenSpinner from "~/components/FullscreenSpinner";
 import { api } from "@packages/backend/convex/_generated/api";
 import type { DataModel } from "@packages/backend/convex/_generated/dataModel";
-
-const ALL_THREE_CELL_ENTRIES = gql`
-  query AllThreeCellEntries {
-    allThreeCellEntries {
-      id
-      date_for
-      score
-      summary
-      focused_hours
-    }
-  }
-`;
 
 type SortOption = "latest" | "score" | "focused_hours";
 

@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form";
 import color from "color";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { gql, useQuery as useApolloQuery } from "@apollo/client";
 import { useQuery, useMutation } from "convex/react";
 import { z } from "zod";
 import {
@@ -91,18 +90,6 @@ const SCORE_OPTIONS = [
   { value: 1, emoji: "😊", color: "bg-lime-400 hover:bg-lime-500" },
   { value: 2, emoji: "😁", color: "bg-green-500 hover:bg-green-600" },
 ];
-
-const GET_ENTRY = gql`
-  query GetEntry($date: String!) {
-    threeCellForDate(date: $date) {
-      id
-      summary
-      focused_hours
-      score
-      date_for
-    }
-  }
-`;
 
 export default function ThreeCellDailyForm() {
   const params = useParams();
@@ -302,16 +289,6 @@ const FormLabelWithInfo = ({ id, label, information }: any) => {
     </div>
   );
 };
-
-const GET_ALL_SUBMITTED_DAYS = gql`
-  query GetAllSubmittedDays {
-    allThreeCellEntries {
-      id
-      date_for
-      score
-    }
-  }
-`;
 
 const CalendarComponent = ({ initialDate }: { initialDate: Date }) => {
   const navigate = useNavigate();

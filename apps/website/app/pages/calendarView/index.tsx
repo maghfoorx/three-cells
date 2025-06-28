@@ -2,21 +2,10 @@ import { useEffect, useMemo, useRef } from "react";
 import { useQuery } from "convex/react";
 import color from "color";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
-import { gql } from "@apollo/client";
 import { SCORE_COLORS } from "~/types";
 import { useNavigate } from "react-router";
 import { Skeleton } from "~/components/ui/skeleton";
 import { api } from "@packages/backend/convex/_generated/api";
-
-const ALL_THREE_CELL_ENTRIES = gql`
-  query AllThreeCellEntriesForCalendarView {
-    allThreeCellEntries {
-      id
-      date_for
-      score
-    }
-  }
-`;
 
 export default function CalendarViewPage() {
   const allThreeCellEntries = useQuery(api.threeCells.allThreeCellEntries);
