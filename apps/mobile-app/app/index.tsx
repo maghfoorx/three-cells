@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { api } from "@packages/backend/convex/_generated/api";
 import { Image } from "expo-image";
 import { AntDesign, Feather, FontAwesome } from "@expo/vector-icons";
 import {
@@ -13,6 +14,10 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import GoogleIcon from "@/components/GoogleIcon";
+import { useConvexAuth, useQuery } from "convex/react";
+import { useAuthActions } from "@convex-dev/auth/react";
+import SignInWithGoogle from "@/components/SignInWithGoogle";
+import SignOutButton from "@/components/SignOutButton";
 
 const { width, height } = Dimensions.get("window");
 
@@ -63,16 +68,22 @@ const FEATURES = [
 ];
 
 export default function Homepage() {
+  const { isAuthenticated } = useConvexAuth();
+  const user = useQuery(api.auth.viewer);
+
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const logoScale = useRef(new Animated.Value(0.8)).current;
   const taglineOpacity = useRef(new Animated.Value(0)).current;
   const taglineTranslateY = useRef(new Animated.Value(30)).current;
   const buttonsOpacity = useRef(new Animated.Value(0)).current;
   const buttonsTranslateY = useRef(new Animated.Value(40)).current;
-  const featureAnimations = FEATURES.map(() => ({
-    opacity: new Animated.Value(0),
-    translateY: new Animated.Value(20),
-  }));
+
+  const featureAnimations = useRef(
+    FEATURES.map(() => ({
+      opacity: new Animated.Value(0),
+      translateY: new Animated.Value(20),
+    })),
+  ).current;
 
   useEffect(() => {
     const animateIn = () => {
@@ -111,7 +122,7 @@ export default function Homepage() {
             Animated.parallel([
               Animated.timing(opacity, {
                 toValue: 1,
-                duration: 500,
+                duration: 300,
                 delay: index * 100,
                 useNativeDriver: true,
               }),
@@ -147,10 +158,7 @@ export default function Homepage() {
     animateIn();
   }, []);
 
-  const handleGoogleLogin = () => {
-    // Implement Google login logic
-    console.log("Google login pressed");
-  };
+  useEffect(() => {}, [isAuthenticated]);
 
   const handleAppleLogin = () => {
     // Implement Apple login logic
@@ -192,13 +200,13 @@ export default function Homepage() {
           }}
           className="items-center"
         >
-          <Text className="text-4xl font-bold text-gray-900 text-center leading-tight">
+          <Text className="text-5xl font-bold text-gray-900 text-center leading-tight">
             Habits, journaling and tasks in one place
           </Text>
         </Animated.View>
 
         {/* Feature Cards */}
-        <Animated.View className="flex-1 flex-col gap-4 w-full mt-6">
+        <View className="flex-1 flex-col gap-4 w-full mt-6">
           {FEATURES.map((feature, index) => (
             <Animated.View
               key={feature.id}
@@ -222,7 +230,7 @@ export default function Homepage() {
               </Text>
             </Animated.View>
           ))}
-        </Animated.View>
+        </View>
 
         {/* Login Buttons */}
         <Animated.View
@@ -234,17 +242,12 @@ export default function Homepage() {
         >
           {/* Google Login Button */}
           <View className="flex gap-4">
-            <TouchableOpacity
-              onPress={handleGoogleLogin}
-              className="w-full bg-primary-foreground border-2 border-gray-200 rounded-sm py-4 px-6 flex-row items-center gap-2 justify-center shadow-sm"
-              activeOpacity={0.8}
-            >
-              <GoogleIcon size={20} />
-              <Text className="font-semibold text-lg">
-                Continue with Google
-              </Text>
-            </TouchableOpacity>
-
+            <View className="flex gap-4">
+              {!isAuthenticated && <SignInWithGoogle />}
+            </View>
+            {isAuthenticated && <Text>{user?.email}</Text>}
+            {isAuthenticated && <Text>{user?.name}</Text>}
+            {isAuthenticated && <SignOutButton />}
             {/* Apple Login Button */}
             {/* <TouchableOpacity
               onPress={handleAppleLogin}
