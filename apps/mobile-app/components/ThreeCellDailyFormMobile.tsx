@@ -80,7 +80,7 @@ const NumberPickerModal = ({
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View className="flex-1 justify-end bg-black/50">
-        <View className="bg-white rounded-t-3xl p-6">
+        <View className="bg-white rounded-t-sm p-6">
           <View className="flex-row justify-between items-center mb-4">
             <TouchableOpacity onPress={onClose}>
               <Text className="text-blue-500 text-lg font-medium">Cancel</Text>
@@ -102,9 +102,10 @@ const NumberPickerModal = ({
               <TouchableOpacity
                 key={num}
                 onPress={() => onSelect(num)}
-                className={`py-4 px-6 mx-2 rounded-xl mb-2 ${
-                  value === num ? "bg-blue-100" : "bg-gray-50"
-                }`}
+                className={clsx(
+                  "py-4 px-6 mx-2 rounded-sm",
+                  value === num ? "bg-blue-100" : "bg-gray-50",
+                )}
               >
                 <Text
                   className={`text-center text-lg ${
@@ -212,8 +213,8 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
       /> */}
 
           {/* Date Header */}
-          <View className="items-center mb-8">
-            <Text className="text-2xl font-bold text-gray-800 mb-1">
+          <View className="items-center">
+            <Text className="text-2xl font-bold text-gray-800">
               {format(parsedDate, "EEEE, MMM do")}
             </Text>
             <Text className="text-base text-gray-500">
@@ -223,8 +224,8 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
 
           <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
             {/* Mood Selection */}
-            <View className="mb-8">
-              <Text className="text-lg font-semibold text-gray-800 mb-4">
+            <View className="mt-8 flex gap-2">
+              <Text className="text-lg font-semibold text-gray-800">
                 How was your day?
               </Text>
               <Controller
@@ -236,7 +237,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
                       const isSelected = field?.value === mood?.value;
 
                       const moodClasses = clsx(
-                        "flex-1 items-center py-4 px-2 rounded-2xl border-2 min-h-20 justify-center",
+                        "flex-1 items-center py-4 px-2 rounded-sm border-2 min-h-20 justify-center",
                       );
 
                       return (
@@ -260,7 +261,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
                             ],
                           }}
                         >
-                          <Text className="text-xl mb-1">{mood.emoji}</Text>
+                          <Text className="text-xl">{mood.emoji}</Text>
                           <Text
                             className={`text-xs text-center font-medium leading-tight ${
                               field.value === mood.value
@@ -281,8 +282,8 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
             </View>
 
             {/* Focus Hours */}
-            <View className="mb-8">
-              <Text className="text-lg font-semibold text-gray-800 mb-4">
+            <View className="mt-4 flex gap-2">
+              <Text className="text-lg font-semibold text-gray-800">
                 Focus hours
               </Text>
               <Controller
@@ -292,7 +293,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
                   <>
                     <TouchableOpacity
                       onPress={() => setShowNumberPicker(true)}
-                      className="flex-row items-center bg-white/70 rounded-2xl px-4 py-4 border border-gray-100"
+                      className="flex-row items-center bg-white/70 rounded-sm px-4 py-4 border border-gray-100"
                     >
                       <Text className="text-2xl font-bold text-gray-800 min-w-10 text-center">
                         {field.value}
@@ -315,8 +316,8 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
             </View>
 
             {/* Daily Summary */}
-            <View className="mb-8">
-              <Text className="text-lg font-semibold text-gray-800 mb-4">
+            <View className="mt-4 flex gap-2">
+              <Text className="text-lg font-semibold text-gray-800">
                 Daily reflection
               </Text>
               <Controller
@@ -329,7 +330,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
                       placeholder="What happened today? Any wins, challenges, or insights?"
                       value={field.value}
                       onChangeText={field.onChange}
-                      className="bg-white/70 rounded-2xl p-4 text-base text-gray-800 min-h-32 border border-gray-100"
+                      className="bg-white/70 rounded-sm p-4 text-base text-gray-800 min-h-44 border border-gray-100"
                       placeholderTextColor="#9CA3AF"
                       textAlignVertical="top"
                       style={{ lineHeight: 22 }}
@@ -348,9 +349,10 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
             <TouchableOpacity
               onPress={handleSubmit(onSubmit)}
               disabled={isSubmitting}
-              className={`bg-gray-800 rounded-2xl py-4 items-center justify-center mb-8 ${
-                isSubmitting ? "opacity-70" : ""
-              }`}
+              className={clsx(
+                "bg-primary rounded-sm py-4 items-center justify-center mt-6",
+                isSubmitting ? "opacity-70" : "",
+              )}
               style={{
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: 2 },
