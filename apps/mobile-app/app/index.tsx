@@ -18,6 +18,7 @@ import { useConvexAuth, useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import SignInWithGoogle from "@/components/SignInWithGoogle";
 import SignOutButton from "@/components/SignOutButton";
+import { router } from "expo-router";
 
 const { width, height } = Dimensions.get("window");
 
@@ -158,7 +159,11 @@ export default function Homepage() {
     animateIn();
   }, []);
 
-  useEffect(() => {}, [isAuthenticated]);
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/(tabs)/track");
+    }
+  }, [isAuthenticated]);
 
   const handleAppleLogin = () => {
     // Implement Apple login logic
