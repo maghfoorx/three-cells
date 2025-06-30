@@ -24,11 +24,5 @@ export default function TrackPage() {
 
   console.log(parsedDate, "IS_PARSED_DATE");
 
-  return (
-    <SafeAreaView className="flex-1 bg-white">
-      <ScrollView contentContainerStyle={{ padding: 16, flexGrow: 1 }}>
-        <ThreeCellDailyForm date={parsedDate} />
-      </ScrollView>
-    </SafeAreaView>
-  );
+  return <ThreeCellDailyForm date={parsedDate} />;
 }

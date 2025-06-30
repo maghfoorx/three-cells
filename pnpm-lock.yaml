@@ -137,6 +137,9 @@ importers:
       '@types/react':
         specifier: ~19.0.10
         version: 19.0.14
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       eslint:
         specifier: ^9.25.0
         version: 9.29.0(jiti@2.4.2)
