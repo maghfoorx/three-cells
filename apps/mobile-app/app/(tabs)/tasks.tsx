@@ -48,8 +48,8 @@ export default function TasksPage() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="p-4">
-        <View className="flex flex-row items-center justify-between">
+      <View className="p-4 flex-grow">
+        <View className="flex flex-row justify-between">
           <View className="items-left">
             <Text className="text-2xl font-bold text-gray-800">Habits</Text>
           </View>

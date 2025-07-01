@@ -247,195 +247,187 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
         backgroundColor: bgColor,
       }}
     >
-      <ScrollView contentContainerStyle={{ padding: 16, flexGrow: 1 }}>
-        <View className="flex-1">
-          {/* Date Header */}
-          <View className="flex flex-row items-center justify-between">
-            <View className="items-left">
-              <Text className="text-2xl font-bold text-gray-800">
-                {format(parsedDate, "EEEE, MMM do")}
-              </Text>
-              <Text className="text-base text-gray-500">
-                {format(parsedDate, "yyyy")}
-              </Text>
-            </View>
-
-            <View>
-              {/* Burger menu button */}
-              <Pressable
-                onPress={openMenu}
-                className="p-3 rounded-sm"
-                style={{
-                  backgroundColor: "rgba(0, 0, 0, 0.05)",
-                }}
-              >
-                <View className="w-5 h-0.5 bg-gray-700 mb-1 rounded-full"></View>
-                <View className="w-5 h-0.5 bg-gray-700 mb-1 rounded-full"></View>
-                <View className="w-5 h-0.5 bg-gray-700 rounded-full"></View>
-              </Pressable>
-            </View>
+      <View className="p-4 flex-1">
+        {/* Date Header */}
+        <View className="flex flex-row justify-between">
+          <View className="items-left">
+            <Text className="text-2xl font-bold text-gray-800">
+              {format(parsedDate, "EEEE, MMM do")}
+            </Text>
+            <Text className="text-base text-gray-500">
+              {format(parsedDate, "yyyy")}
+            </Text>
           </View>
-          <BurgerMenuModal
-            onClose={() => setShowBuggerMenu(false)}
-            visible={showBuggerMenu}
-          />
-          <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
-            {/* Mood Selection */}
-            <View className="mt-8 flex gap-2">
-              <Text className="text-lg font-semibold text-gray-800">
-                How was your day?
-              </Text>
-              <Controller
-                control={control}
-                name="score"
-                render={({ field }) => (
-                  <View className="flex-row justify-between gap-2">
-                    {MOOD_OPTIONS.map((mood) => {
-                      const isSelected = field?.value === mood?.value;
 
-                      const moodClasses = clsx(
-                        "flex-1 items-center py-4 px-2 rounded-sm border-2 min-h-20 justify-center",
-                      );
-
-                      return (
-                        <TouchableOpacity
-                          key={mood.value}
-                          onPress={() => {
-                            field.onChange(mood.value);
-                          }}
-                          className={moodClasses}
-                          style={{
-                            borderColor:
-                              field.value === mood.value
-                                ? "#D1D5DB"
-                                : "#F3F4F6",
-                            backgroundColor:
-                              field.value === mood.value
-                                ? mood.color
-                                : "#FAFAFA",
-                            transform: [
-                              { scale: field.value === mood.value ? 1.02 : 1 },
-                            ],
-                          }}
-                        >
-                          <Text className="text-xl">{mood.emoji}</Text>
-                          <Text
-                            className={`mt-1 text-xs text-center font-medium leading-tight ${
-                              field.value === mood.value
-                                ? color(mood.color).isLight()
-                                  ? "text-gray-800"
-                                  : "text-gray-100"
-                                : "text-gray-500"
-                            }`}
-                            numberOfLines={1}
-                            adjustsFontSizeToFit
-                          >
-                            {mood.label}
-                          </Text>
-                        </TouchableOpacity>
-                      );
-                    })}
-                  </View>
-                )}
-              />
-            </View>
-
-            {/* Focus Hours */}
-            <View className="mt-4 flex gap-2">
-              <Text className="text-lg font-semibold text-gray-800">
-                Focus hours
-              </Text>
-              <Controller
-                control={control}
-                name="focused_hours"
-                render={({ field }) => (
-                  <>
-                    <TouchableOpacity
-                      onPress={() => setShowNumberPicker(true)}
-                      className="flex-row items-center bg-white/70 rounded-sm px-4 py-4 border border-gray-100"
-                    >
-                      <Text className="text-2xl font-bold text-gray-800 min-w-10 text-center">
-                        {field.value}
-                      </Text>
-                      <Text className="text-base text-gray-600 ml-3 flex-1">
-                        {field.value === 1 ? "hour" : "hours"} of deep work
-                      </Text>
-                      <Text className="text-gray-400">▼</Text>
-                    </TouchableOpacity>
-
-                    <NumberPickerModal
-                      visible={showNumberPicker}
-                      value={field.value}
-                      onSelect={field.onChange}
-                      onClose={() => setShowNumberPicker(false)}
-                    />
-                  </>
-                )}
-              />
-            </View>
-
-            {/* Daily Summary */}
-            <View className="mt-4 flex gap-2">
-              <Text className="text-lg font-semibold text-gray-800">
-                Daily reflection
-              </Text>
-              <Controller
-                control={control}
-                name="summary"
-                render={({ field }) => (
-                  <View>
-                    <TextInput
-                      multiline
-                      placeholder="What happened today? Any wins, challenges, or insights?"
-                      value={field.value}
-                      onChangeText={field.onChange}
-                      className="bg-white/70 rounded-sm p-4 text-base text-gray-800 min-h-44 border border-gray-100"
-                      placeholderTextColor="#9CA3AF"
-                      textAlignVertical="top"
-                      style={{ lineHeight: 22 }}
-                    />
-                    {errors.summary && (
-                      <Text className="text-red-500 text-sm mt-2 ml-1">
-                        {errors.summary.message}
-                      </Text>
-                    )}
-                  </View>
-                )}
-              />
-            </View>
-
-            {/* Submit Button */}
-            <TouchableOpacity
-              onPress={handleSubmit(onSubmit)}
-              disabled={isSubmitting}
-              className={clsx(
-                "bg-primary rounded-sm py-4 items-center justify-center mt-6",
-                isSubmitting ? "opacity-70" : "",
-              )}
+          <View>
+            {/* Burger menu button */}
+            <Pressable
+              onPress={openMenu}
+              className="p-3 border border-gray-300 rounded-sm"
               style={{
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.1,
-                shadowRadius: 8,
-                elevation: 4,
+                backgroundColor: "white",
               }}
             >
-              {isSubmitting ? (
-                <View className="flex-row items-center gap-2">
-                  <ActivityIndicator size="small" color="white" />
-                  <Text className="text-white text-lg font-semibold">
-                    Saving...
-                  </Text>
-                </View>
-              ) : (
-                <Text className="text-white text-lg font-semibold">
-                  Save Entry
-                </Text>
-              )}
-            </TouchableOpacity>
-          </ScrollView>
+              <Feather name="menu" size={18} color="#374151" />
+            </Pressable>
+          </View>
         </View>
-      </ScrollView>
+        <BurgerMenuModal
+          onClose={() => setShowBuggerMenu(false)}
+          visible={showBuggerMenu}
+        />
+        <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+          {/* Mood Selection */}
+          <View className="mt-8 flex gap-2">
+            <Text className="text-lg font-semibold text-gray-800">
+              How was your day?
+            </Text>
+            <Controller
+              control={control}
+              name="score"
+              render={({ field }) => (
+                <View className="flex-row justify-between gap-2">
+                  {MOOD_OPTIONS.map((mood) => {
+                    const isSelected = field?.value === mood?.value;
+
+                    const moodClasses = clsx(
+                      "flex-1 items-center py-4 px-2 rounded-sm border-2 min-h-20 justify-center",
+                    );
+
+                    return (
+                      <TouchableOpacity
+                        key={mood.value}
+                        onPress={() => {
+                          field.onChange(mood.value);
+                        }}
+                        className={moodClasses}
+                        style={{
+                          borderColor:
+                            field.value === mood.value ? "#D1D5DB" : "#F3F4F6",
+                          backgroundColor:
+                            field.value === mood.value ? mood.color : "#FAFAFA",
+                          transform: [
+                            { scale: field.value === mood.value ? 1.02 : 1 },
+                          ],
+                        }}
+                      >
+                        <Text className="text-xl">{mood.emoji}</Text>
+                        <Text
+                          className={`mt-1 text-xs text-center font-medium leading-tight ${
+                            field.value === mood.value
+                              ? color(mood.color).isLight()
+                                ? "text-gray-800"
+                                : "text-gray-100"
+                              : "text-gray-500"
+                          }`}
+                          numberOfLines={1}
+                          adjustsFontSizeToFit
+                        >
+                          {mood.label}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              )}
+            />
+          </View>
+
+          {/* Focus Hours */}
+          <View className="mt-4 flex gap-2">
+            <Text className="text-lg font-semibold text-gray-800">
+              Focus hours
+            </Text>
+            <Controller
+              control={control}
+              name="focused_hours"
+              render={({ field }) => (
+                <>
+                  <TouchableOpacity
+                    onPress={() => setShowNumberPicker(true)}
+                    className="flex-row items-center bg-white/70 rounded-sm px-4 py-4 border border-gray-100"
+                  >
+                    <Text className="text-2xl font-bold text-gray-800 min-w-10 text-center">
+                      {field.value}
+                    </Text>
+                    <Text className="text-base text-gray-600 ml-3 flex-1">
+                      {field.value === 1 ? "hour" : "hours"} of deep work
+                    </Text>
+                    <Text className="text-gray-400">▼</Text>
+                  </TouchableOpacity>
+
+                  <NumberPickerModal
+                    visible={showNumberPicker}
+                    value={field.value}
+                    onSelect={field.onChange}
+                    onClose={() => setShowNumberPicker(false)}
+                  />
+                </>
+              )}
+            />
+          </View>
+
+          {/* Daily Summary */}
+          <View className="mt-4 flex gap-2">
+            <Text className="text-lg font-semibold text-gray-800">
+              Daily reflection
+            </Text>
+            <Controller
+              control={control}
+              name="summary"
+              render={({ field }) => (
+                <View>
+                  <TextInput
+                    multiline
+                    placeholder="What happened today? Any wins, challenges, or insights?"
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    className="bg-white/70 rounded-sm p-4 text-base text-gray-800 min-h-44 border border-gray-100"
+                    placeholderTextColor="#9CA3AF"
+                    textAlignVertical="top"
+                    style={{ lineHeight: 22 }}
+                  />
+                  {errors.summary && (
+                    <Text className="text-red-500 text-sm mt-2 ml-1">
+                      {errors.summary.message}
+                    </Text>
+                  )}
+                </View>
+              )}
+            />
+          </View>
+
+          {/* Submit Button */}
+          <TouchableOpacity
+            onPress={handleSubmit(onSubmit)}
+            disabled={isSubmitting}
+            className={clsx(
+              "bg-primary rounded-sm py-4 items-center justify-center mt-6",
+              isSubmitting ? "opacity-70" : "",
+            )}
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+              elevation: 4,
+            }}
+          >
+            {isSubmitting ? (
+              <View className="flex-row items-center gap-2">
+                <ActivityIndicator size="small" color="white" />
+                <Text className="text-white text-lg font-semibold">
+                  Saving...
+                </Text>
+              </View>
+            ) : (
+              <Text className="text-white text-lg font-semibold">
+                Save Entry
+              </Text>
+            )}
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
