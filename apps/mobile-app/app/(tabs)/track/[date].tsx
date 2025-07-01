@@ -6,8 +6,6 @@ import ThreeCellDailyForm from "@/components/ThreeCellDailyFormMobile";
 export default function TrackPage() {
   const { date } = useLocalSearchParams();
 
-  console.log(date, "TRACK_DATE");
-
   // Handle the date parsing more safely
   let parsedDate: Date;
 
@@ -21,8 +19,6 @@ export default function TrackPage() {
   if (!isValid(parsedDate)) {
     parsedDate = new Date();
   }
-
-  console.log(parsedDate, "IS_PARSED_DATE");
 
   return <ThreeCellDailyForm date={parsedDate} />;
 }

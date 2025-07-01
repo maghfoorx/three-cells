@@ -34,6 +34,9 @@ importers:
       '@react-navigation/native':
         specifier: ^7.1.6
         version: 7.1.14(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      color:
+        specifier: ^5.0.0
+        version: 5.0.0
       convex:
         specifier: ^1.25.0
         version: 1.25.0(react@19.0.0)

@@ -1,4 +1,6 @@
 import { useForm, Controller } from "react-hook-form";
+import color from "color";
+import { useNavigation } from "@react-navigation/native";
 import clsx from "clsx";
 import {
   View,
@@ -10,13 +12,19 @@ import {
   ScrollView,
   Animated,
   SafeAreaView,
+  Pressable,
+  Dimensions,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { useEffect, useState } from "react";
-import { format, parse } from "date-fns";
+import { format } from "date-fns";
+import { useRouter } from "expo-router";
+import { SCORE_COLORS } from "@/utils/types";
+import { Feather } from "@expo/vector-icons";
 
 const formSchema = z.object({
   summary: z.string().min(1, "Summary is required"),
@@ -29,36 +37,31 @@ const MOOD_OPTIONS = [
   {
     value: -2,
     emoji: "😭",
-    color: "#FFB3BA",
-    bgColor: "#FFF5F5",
+    color: SCORE_COLORS["-2"],
     label: "Terrible",
   },
   {
     value: -1,
     emoji: "😞",
-    color: "#FFDFBA",
-    bgColor: "#FFFAF0",
+    color: SCORE_COLORS["-1"],
     label: "Bad",
   },
   {
     value: 0,
     emoji: "😐",
-    color: "#FFFFBA",
-    bgColor: "#FFFFF0",
+    color: SCORE_COLORS["0"],
     label: "Okay",
   },
   {
     value: 1,
     emoji: "😊",
-    color: "#BAFFC9",
-    bgColor: "#F0FFF4",
+    color: SCORE_COLORS["1"],
     label: "Good",
   },
   {
     value: 2,
     emoji: "😁",
-    color: "#BAE1FF",
-    bgColor: "#F0F8FF",
+    color: SCORE_COLORS["2"],
     label: "Amazing",
   },
 ];
@@ -125,15 +128,57 @@ const NumberPickerModal = ({
   );
 };
 
+// Burger Menu Modal Component
+const BurgerMenuModal = ({
+  visible,
+  onClose,
+}: {
+  visible: boolean;
+  onClose: () => void;
+}) => {
+  const router = useRouter();
+
+  const goToYearlyView = () => {
+    router.navigate("/yearly-view");
+    onClose();
+  };
+
+  return (
+    <Modal visible={visible} transparent animationType="slide">
+      <View className="flex-1 justify-end bg-black/50">
+        <View className="bg-white rounded-t-sm p-6">
+          <View className="flex-row justify-between items-center mb-4">
+            <TouchableOpacity onPress={onClose}>
+              <Text className="text-blue-500 text-lg font-medium">Close</Text>
+            </TouchableOpacity>
+          </View>
+          <View className="py-4 pb-40">
+            <TouchableOpacity
+              onPress={goToYearlyView}
+              className="py-4 px-6 mx-2 rounded-sm bg-gray-50"
+            >
+              <View className="flex flex-row gap-2 items-center justify-center">
+                <Feather name="calendar" size={20} />
+                <Text className="text-center text-lg text-gray-700">
+                  Yearly view
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
 export default function ThreeCellDailyForm({ date }: { date: Date }) {
+  function openMenu() {
+    setShowBuggerMenu(true);
+  }
+
   const parsedDate = format(date, "yyyy-MM-dd");
-  console.log(format(parsedDate, "yyyy-MM-dd"), "IS_PARSED_DATE_NEW");
   const [showNumberPicker, setShowNumberPicker] = useState(false);
-  const [toast, setToast] = useState({
-    visible: false,
-    message: "",
-    type: "success" as "success" | "error",
-  });
+  const [showBuggerMenu, setShowBuggerMenu] = useState(false);
 
   const data = useQuery(api.threeCells.threeCellForDate, {
     date: parsedDate,
@@ -154,11 +199,6 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
       date_for: parsedDate,
     },
   });
-
-  const selectedMood = watch("score");
-  const currentMoodOption = MOOD_OPTIONS.find(
-    (option) => option.value === selectedMood,
-  );
 
   useEffect(() => {
     if (data) {
@@ -181,7 +221,6 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
   const submitThreeCellEntry = useMutation(api.threeCells.submitThreeCellEntry);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values, "ARE_VALUES_ON_SUBMIT");
     try {
       await submitThreeCellEntry({
         input: {
@@ -196,32 +235,50 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
     }
   };
 
+  const bgColor = color(SCORE_COLORS[watch("score").toString()] ?? "#ffffff")
+    .fade(0.9)
+    .rgb()
+    .string();
+
   return (
     <SafeAreaView
       className="flex-1"
       style={{
-        backgroundColor: currentMoodOption?.bgColor || "#FFFFFF",
+        backgroundColor: bgColor,
       }}
     >
       <ScrollView contentContainerStyle={{ padding: 16, flexGrow: 1 }}>
-        <View className="flex-1 px-6 pt-8">
-          {/* <Toast
-        visible={toast.visible}
-        message={toast.message}
-        type={toast.type}
-        onHide={hideToast}
-      /> */}
-
+        <View className="flex-1">
           {/* Date Header */}
-          <View className="items-center">
-            <Text className="text-2xl font-bold text-gray-800">
-              {format(parsedDate, "EEEE, MMM do")}
-            </Text>
-            <Text className="text-base text-gray-500">
-              {format(parsedDate, "yyyy")}
-            </Text>
-          </View>
+          <View className="flex flex-row items-center justify-between">
+            <View className="items-left">
+              <Text className="text-2xl font-bold text-gray-800">
+                {format(parsedDate, "EEEE, MMM do")}
+              </Text>
+              <Text className="text-base text-gray-500">
+                {format(parsedDate, "yyyy")}
+              </Text>
+            </View>
 
+            <View>
+              {/* Burger menu button */}
+              <Pressable
+                onPress={openMenu}
+                className="p-3 rounded-sm"
+                style={{
+                  backgroundColor: "rgba(0, 0, 0, 0.05)",
+                }}
+              >
+                <View className="w-5 h-0.5 bg-gray-700 mb-1 rounded-full"></View>
+                <View className="w-5 h-0.5 bg-gray-700 mb-1 rounded-full"></View>
+                <View className="w-5 h-0.5 bg-gray-700 rounded-full"></View>
+              </Pressable>
+            </View>
+          </View>
+          <BurgerMenuModal
+            onClose={() => setShowBuggerMenu(false)}
+            visible={showBuggerMenu}
+          />
           <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
             {/* Mood Selection */}
             <View className="mt-8 flex gap-2">
@@ -249,7 +306,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
                           className={moodClasses}
                           style={{
                             borderColor:
-                              field?.value === mood?.value
+                              field.value === mood.value
                                 ? "#D1D5DB"
                                 : "#F3F4F6",
                             backgroundColor:
@@ -263,9 +320,11 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
                         >
                           <Text className="text-xl">{mood.emoji}</Text>
                           <Text
-                            className={`text-xs text-center font-medium leading-tight ${
+                            className={`mt-1 text-xs text-center font-medium leading-tight ${
                               field.value === mood.value
-                                ? "text-gray-700"
+                                ? color(mood.color).isLight()
+                                  ? "text-gray-800"
+                                  : "text-gray-100"
                                 : "text-gray-500"
                             }`}
                             numberOfLines={1}
