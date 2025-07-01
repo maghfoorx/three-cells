@@ -1,6 +1,5 @@
-import { SafeAreaView, ScrollView, Text } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import { parse, format, isValid } from "date-fns";
+import { parse, isValid } from "date-fns";
 import ThreeCellDailyForm from "@/components/ThreeCellDailyFormMobile";
 
 export default function TrackPage() {
