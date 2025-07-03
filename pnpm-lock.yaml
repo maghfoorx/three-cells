@@ -130,6 +130,9 @@ importers:
       react-native-webview:
         specifier: 13.13.5
         version: 13.13.5(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      valtio:
+        specifier: ^2.1.5
+        version: 2.1.5(@types/react@19.0.14)(react@19.0.0)
       zod:
         specifier: ^3.25.67
         version: 3.25.67
