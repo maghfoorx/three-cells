@@ -63,9 +63,7 @@ export default function SubmissionsCalendarHeatmapMobile({
   const scrollViewRef = useRef<ScrollView>(null);
 
   const { selectedDates, toggleDate, togglingSubmission } =
-    useBulkManageHabitSubmissions({
-      habit,
-    });
+    useBulkManageHabitSubmissions();
 
   const [isInitialRender, setIsInitialRender] = useState(true);
 

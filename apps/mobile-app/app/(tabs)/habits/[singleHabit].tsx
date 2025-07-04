@@ -6,6 +6,7 @@ import { api } from "@packages/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { SafeAreaView, Text, View } from "react-native";
 import SubmissionsCalendarHeatmapMobile from "@/components/SubmissionsHeatmapMobile";
+import { BulkManageToast } from "@/components/useCalendarSquareToast";
 
 export default function SingleHabitPage() {
   const { singleHabit: singleHabitId } = useLocalSearchParams();
@@ -51,6 +52,7 @@ export default function SingleHabitPage() {
           />
         </View>
       </View>
+      <BulkManageToast habit={singleHabit?.habit ?? null} />
     </SafeAreaView>
   );
 }
