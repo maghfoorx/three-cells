@@ -1,5 +1,16 @@
 import { Tabs } from "expo-router";
-import { Feather } from "@expo/vector-icons";
+import {
+  CheckBadgeIcon as CheckBadgeIconSolid,
+  UserCircleIcon as UserCircleIconSolid,
+  ChartBarIcon as ChartBarIconSolid,
+  PencilIcon as PencilSolidIcon,
+} from "react-native-heroicons/solid";
+import {
+  CheckBadgeIcon,
+  UserCircleIcon,
+  ChartBarIcon,
+  PencilIcon,
+} from "react-native-heroicons/outline";
 
 export default function TabLayout() {
   return (
@@ -26,36 +37,41 @@ export default function TabLayout() {
         name="track"
         options={{
           title: "Track",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="trending-up" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size, focused }) => {
+            const IconToUse = focused ? PencilSolidIcon : PencilIcon;
+            return <IconToUse />;
+          },
         }}
       />
       <Tabs.Screen
         name="tasks"
         options={{
           title: "Tasks",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="check-square" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size, focused }) => {
+            const IconToUse = focused ? CheckBadgeIconSolid : CheckBadgeIcon;
+            return <IconToUse />;
+          },
         }}
       />
       <Tabs.Screen
         name="habits"
         options={{
           title: "Habits",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="target" size={size} color={color} />
-          ),
+
+          tabBarIcon: ({ color, size, focused }) => {
+            const IconToUse = focused ? ChartBarIconSolid : ChartBarIcon;
+            return <IconToUse />;
+          },
         }}
       />
       <Tabs.Screen
         name="account"
         options={{
           title: "Account",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="user" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size, focused }) => {
+            const IconToUse = focused ? UserCircleIconSolid : UserCircleIcon;
+            return <IconToUse />;
+          },
         }}
       />
       <Tabs.Screen
