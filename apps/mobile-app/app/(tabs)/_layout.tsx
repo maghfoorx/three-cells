@@ -39,7 +39,7 @@ export default function TabLayout() {
           title: "Track",
           tabBarIcon: ({ color, size, focused }) => {
             const IconToUse = focused ? PencilSolidIcon : PencilIcon;
-            return <IconToUse />;
+            return <IconToUse size={24} />;
           },
         }}
       />
@@ -49,7 +49,7 @@ export default function TabLayout() {
           title: "Tasks",
           tabBarIcon: ({ color, size, focused }) => {
             const IconToUse = focused ? CheckBadgeIconSolid : CheckBadgeIcon;
-            return <IconToUse />;
+            return <IconToUse size={24} />;
           },
         }}
       />
@@ -60,7 +60,7 @@ export default function TabLayout() {
 
           tabBarIcon: ({ color, size, focused }) => {
             const IconToUse = focused ? ChartBarIconSolid : ChartBarIcon;
-            return <IconToUse />;
+            return <IconToUse size={24} />;
           },
         }}
       />
@@ -70,7 +70,7 @@ export default function TabLayout() {
           title: "Account",
           tabBarIcon: ({ color, size, focused }) => {
             const IconToUse = focused ? UserCircleIconSolid : UserCircleIcon;
-            return <IconToUse />;
+            return <IconToUse size={24} />;
           },
         }}
       />
