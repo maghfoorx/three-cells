@@ -1,4 +1,6 @@
 import { useForm, Controller } from "react-hook-form";
+import { CalendarIcon } from "react-native-heroicons/outline";
+
 import color from "color";
 import { useNavigation } from "@react-navigation/native";
 import clsx from "clsx";
@@ -22,7 +24,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { useRouter } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { SCORE_COLORS } from "@/utils/types";
 import { Feather } from "@expo/vector-icons";
 
@@ -262,13 +264,13 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
           <View>
             {/* Burger menu button */}
             <Pressable
-              onPress={openMenu}
+              onPress={() => router.navigate("/yearly-view")}
               className="p-3 border border-gray-300 rounded-sm"
               style={{
                 backgroundColor: "white",
               }}
             >
-              <Feather name="menu" size={18} color="#374151" />
+              <CalendarIcon size={16} />
             </Pressable>
           </View>
         </View>
