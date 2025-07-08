@@ -120,7 +120,7 @@ function MonthGrid({
 
   const handleDateClicked = (date: Date) => {
     const formattedDate = format(date, "yyyy-MM-dd");
-    router.navigate(`/track/${formattedDate}`);
+    router.replace(`/track/${formattedDate}`);
   };
 
   const calendarCells: Array<
