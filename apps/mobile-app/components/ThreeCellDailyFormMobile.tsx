@@ -265,7 +265,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
             {/* Burger menu button */}
             <Pressable
               onPress={() => router.navigate("/yearly-view")}
-              className="p-3 border border-gray-300 rounded-sm"
+              className="p-2 border border-gray-300 rounded-lg"
               style={{
                 backgroundColor: "white",
               }}
