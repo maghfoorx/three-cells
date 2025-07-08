@@ -57,6 +57,10 @@ export default function RootLayout() {
             name="yearly-view"
             options={{ headerShown: false, presentation: "modal" }}
           />
+          <Stack.Screen
+            name="create-new-task"
+            options={{ headerShown: false, presentation: "modal" }}
+          />
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />

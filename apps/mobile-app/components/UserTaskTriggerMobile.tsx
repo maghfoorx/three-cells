@@ -1,5 +1,7 @@
+import { Feather } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import { DataModel } from "@packages/backend/convex/_generated/dataModel";
+import clsx from "clsx";
 import { useMutation } from "convex/react";
 import React, { useState, useEffect } from "react";
 import {
@@ -16,7 +18,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-// Simple checkbox component since React Native doesn't have a built-in one
 const Checkbox = ({
   checked,
   onPress,
@@ -29,11 +30,18 @@ const Checkbox = ({
   <TouchableOpacity
     onPress={onPress}
     disabled={disabled}
-    className={`w-5 h-5 border-2 border-gray-600 rounded-sm justify-center items-center ${
-      checked ? "bg-blue-500" : "bg-white"
+    className={`w-6 h-6 border-2 rounded-lg justify-center items-center ${
+      checked ? "bg-blue-500 border-blue-500" : "bg-white border-gray-300"
     }`}
+    style={{
+      shadowColor: checked ? "#3B82F6" : "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: checked ? 0.2 : 0.05,
+      shadowRadius: 4,
+      elevation: 2,
+    }}
   >
-    {checked && <Text className="text-white text-xs font-bold">✓</Text>}
+    {checked && <Feather name="check" size={14} color="white" />}
   </TouchableOpacity>
 );
 
@@ -93,7 +101,7 @@ const EditableText = ({
         onSubmitEditing={handleConfirm}
         multiline
         autoFocus
-        className="text-base font-medium text-gray-800 bg-transparent"
+        className="text-base font-medium text-gray-900 bg-transparent"
         style={{ textDecorationLine: completed ? "line-through" : "none" }}
       />
     );
@@ -102,7 +110,7 @@ const EditableText = ({
   return (
     <TouchableOpacity onPress={handlePress} disabled={disabled}>
       <Text
-        className="text-base font-medium text-gray-800"
+        className={`text-base font-medium ${completed ? "text-gray-500" : "text-gray-900"}`}
         style={{ textDecorationLine: completed ? "line-through" : "none" }}
       >
         {value}
@@ -111,20 +119,16 @@ const EditableText = ({
   );
 };
 
-export default function UserTaskTileTrigger({
+const UserTaskTileTrigger = ({
   userTask,
   recentlyCompleted,
 }: {
   userTask: DataModel["user_tasks"]["document"];
   recentlyCompleted: boolean;
-}) {
+}) => {
   const toggleTaskCompletion = useMutation(api.tasks.toggleUserTaskCompletion);
   const [taskTitle, setTaskTitle] = useState(userTask.title);
   const [isTogglingTask, setIsTogglingTask] = useState(false);
-
-  useEffect(() => {
-    setTaskTitle(userTask.title);
-  }, [userTask]);
 
   const handleCheckboxClicked = async () => {
     setIsTogglingTask(true);
@@ -152,41 +156,55 @@ export default function UserTaskTileTrigger({
   };
 
   // Animated opacity for completed tasks
-  const opacity = useSharedValue(userTask.is_completed ? 0.6 : 1);
+  const opacity = useSharedValue(userTask.is_completed ? 0.7 : 1);
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: withTiming(opacity.value, { duration: 200 }),
   }));
 
-  useEffect(() => {
-    opacity.value = userTask.is_completed ? 0.6 : 1;
+  React.useEffect(() => {
+    opacity.value = userTask.is_completed ? 0.7 : 1;
   }, [userTask.is_completed]);
+
+  React.useEffect(() => {
+    setTaskTitle(userTask.title);
+  }, [userTask]);
 
   return (
     <Animated.View
-      style={animatedStyle}
-      className={`flex-col gap-2 p-3 rounded-sm shadow-md ${
-        recentlyCompleted ? "bg-green-200" : "bg-sky-300"
-      }`}
+      style={[
+        animatedStyle,
+        {
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 8,
+          elevation: 2,
+        },
+      ]}
+      className={clsx("flex-row items-center gap-4 p-5 rounded-md border", {
+        "bg-green-50 border-green-200": recentlyCompleted,
+        "bg-gray-50 border-gray-200":
+          !recentlyCompleted && userTask.is_completed,
+        "bg-white border-gray-100":
+          !recentlyCompleted && !userTask.is_completed,
+      })}
     >
       {/* Checkbox with loading animation */}
-      <View className="h-5 w-5">
-        <Animated.View
-        // entering={FadeInOut}
-        // exiting={FadeInOut}
-        >
-          {isTogglingTask ? (
-            <ActivityIndicator size="small" color="#374151" />
-          ) : (
-            <Checkbox
-              checked={userTask.is_completed}
-              onPress={handleCheckboxClicked}
-            />
-          )}
-        </Animated.View>
+      <View className="pt-1">
+        {isTogglingTask ? (
+          <View className="w-6 h-6 justify-center items-center">
+            <ActivityIndicator size="small" color="#3B82F6" />
+          </View>
+        ) : (
+          <Checkbox
+            checked={userTask.is_completed}
+            onPress={handleCheckboxClicked}
+          />
+        )}
       </View>
 
       {/* Title and Description */}
-      <View>
+      <View className="flex-1">
         <EditableText
           value={taskTitle}
           onCancel={() => setTaskTitle(userTask.title)}
@@ -197,11 +215,20 @@ export default function UserTaskTileTrigger({
         />
 
         {userTask.description && (
-          <Text className="text-xs text-gray-600 mt-1">
+          <Text
+            className={`text-sm mt-2 ${userTask.is_completed ? "text-gray-400" : "text-gray-600"}`}
+          >
             {userTask.description}
           </Text>
         )}
       </View>
+
+      {/* Status indicator */}
+      {recentlyCompleted && (
+        <View className="w-3 h-3 bg-green-500 rounded-full mt-2" />
+      )}
     </Animated.View>
   );
-}
+};
+
+export default UserTaskTileTrigger;

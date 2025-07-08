@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Modal, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 // import { Trash, ClipboardCheck, X } from "lucide-react-native";
 import { DataModel } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
@@ -16,15 +23,29 @@ const UserTaskTile = ({
 }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const deleteUserTask = useMutation(api.tasks.deleteUserTask);
-  const handleDeleteButtonClicked = async () => {
-    await deleteUserTask({
-      taskId: userTask._id,
-    });
-    setDialogOpen(false);
-  };
   const toggleTaskCompletion = useMutation(api.tasks.toggleUserTaskCompletion);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleDeleteButtonClicked = async () => {
+    setIsLoading(true);
+    try {
+      await deleteUserTask({
+        taskId: userTask._id,
+      });
+      setDialogOpen(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleToggleCompletionButtonClicked = async () => {
-    await toggleTaskCompletion({ taskId: userTask._id });
+    setIsLoading(true);
+    try {
+      await toggleTaskCompletion({ taskId: userTask._id });
+      setDialogOpen(false);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -43,49 +64,92 @@ const UserTaskTile = ({
         onRequestClose={() => setDialogOpen(false)}
       >
         <Pressable
-          className="flex-1 bg-black/50 justify-center items-center p-4"
+          className="flex-1 bg-black/50 justify-center items-center p-6"
           onPress={() => setDialogOpen(false)}
         >
           <Pressable
-            className="bg-white rounded-lg p-6 w-full max-w-md"
+            className="bg-white rounded-3xl p-8 w-full max-w-md"
             onPress={(e) => e.stopPropagation()}
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 20 },
+              shadowOpacity: 0.25,
+              shadowRadius: 25,
+              elevation: 25,
+            }}
           >
             {/* Header */}
-            <View className="flex-row justify-between items-center">
-              <Text className="text-lg font-semibold flex-1 pr-4">
+            <View className="flex-row justify-between items-start mb-6">
+              <Text className="text-xl font-bold text-gray-900 flex-1 pr-4 leading-7">
                 {userTask.title}
               </Text>
               <TouchableOpacity
                 onPress={() => setDialogOpen(false)}
-                className="p-1"
+                className="w-8 h-8 rounded-full bg-gray-100 justify-center items-center"
               >
-                <Feather name="x" size={24} color="#6B7280" />
+                <Feather name="x" size={18} color="#6B7280" />
               </TouchableOpacity>
             </View>
 
-            {/* Description */}
             {userTask.description && (
-              <Text className="text-gray-600 mt-4">{userTask.description}</Text>
+              <View className="mb-8">
+                <Text className="text-gray-600 text-base leading-6">
+                  {userTask.description}
+                </Text>
+              </View>
             )}
 
-            {/* Action Buttons */}
-            <View className="flex-row justify-end gap-2 mt-6">
+            <View className="flex-row gap-3">
               <TouchableOpacity
-                className="bg-red-500 px-4 py-2 rounded-md flex-row items-center gap-2"
+                className="flex-1 bg-red-500 py-4 px-6 rounded-md flex-row items-center justify-center gap-2"
                 onPress={handleDeleteButtonClicked}
+                disabled={isLoading}
+                style={{
+                  shadowColor: "#EF4444",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 8,
+                  elevation: 4,
+                }}
               >
-                <Feather name="trash" size={16} color="white" />
-                <Text className="text-white text-sm font-medium">Delete</Text>
+                {isLoading ? (
+                  <ActivityIndicator size="small" color="white" />
+                ) : (
+                  <>
+                    <Feather name="trash-2" size={18} color="white" />
+                    <Text className="text-white text-base font-semibold">
+                      Delete
+                    </Text>
+                  </>
+                )}
               </TouchableOpacity>
 
               <TouchableOpacity
-                className="bg-blue-500 px-4 py-2 rounded-md flex-row items-center gap-2"
+                className="flex-1 bg-blue-500 py-4 px-6 rounded-md flex-row items-center justify-center gap-2"
                 onPress={handleToggleCompletionButtonClicked}
+                disabled={isLoading}
+                style={{
+                  shadowColor: "#3B82F6",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 8,
+                  elevation: 4,
+                }}
               >
-                <Feather name="clipboard" size={16} color="white" />
-                <Text className="text-white text-sm font-medium">
-                  {userTask?.is_completed ? "Back to draft" : "Complete"}
-                </Text>
+                {isLoading ? (
+                  <ActivityIndicator size="small" color="white" />
+                ) : (
+                  <>
+                    <Feather
+                      name={userTask?.is_completed ? "rotate-ccw" : "check"}
+                      size={18}
+                      color="white"
+                    />
+                    <Text className="text-white text-base font-semibold">
+                      {userTask?.is_completed ? "Reopen" : "Complete"}
+                    </Text>
+                  </>
+                )}
               </TouchableOpacity>
             </View>
           </Pressable>
