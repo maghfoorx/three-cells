@@ -2,7 +2,6 @@ import { useForm, Controller } from "react-hook-form";
 import { CalendarIcon } from "react-native-heroicons/outline";
 
 import color from "color";
-import { useNavigation } from "@react-navigation/native";
 import clsx from "clsx";
 import {
   View,
@@ -12,11 +11,8 @@ import {
   ActivityIndicator,
   Modal,
   ScrollView,
-  Animated,
   SafeAreaView,
   Pressable,
-  Dimensions,
-  TouchableWithoutFeedback,
 } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -130,57 +126,9 @@ const NumberPickerModal = ({
   );
 };
 
-// Burger Menu Modal Component
-const BurgerMenuModal = ({
-  visible,
-  onClose,
-}: {
-  visible: boolean;
-  onClose: () => void;
-}) => {
-  const router = useRouter();
-
-  const goToYearlyView = () => {
-    router.navigate("/yearly-view");
-    onClose();
-  };
-
-  return (
-    <Modal visible={visible} transparent animationType="slide">
-      <View className="flex-1 justify-end bg-black/50">
-        <View className="bg-white rounded-t-sm p-6">
-          <View className="flex-row justify-between items-center mb-4">
-            <TouchableOpacity onPress={onClose}>
-              <Text className="text-blue-500 text-lg font-medium">Close</Text>
-            </TouchableOpacity>
-          </View>
-          <View className="py-4 pb-40">
-            <TouchableOpacity
-              onPress={goToYearlyView}
-              className="py-4 px-6 mx-2 rounded-sm bg-gray-50"
-            >
-              <View className="flex flex-row gap-2 items-center justify-center">
-                <Feather name="calendar" size={20} />
-                <Text className="text-center text-lg text-gray-700">
-                  Yearly view
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </Modal>
-  );
-};
-
 export default function ThreeCellDailyForm({ date }: { date: Date }) {
-  function openMenu() {
-    setShowBuggerMenu(true);
-  }
-
   const parsedDate = format(date, "yyyy-MM-dd");
   const [showNumberPicker, setShowNumberPicker] = useState(false);
-  const [showBuggerMenu, setShowBuggerMenu] = useState(false);
 
   const data = useQuery(api.threeCells.threeCellForDate, {
     date: parsedDate,
@@ -251,12 +199,12 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
     >
       <View className="p-4 flex-1">
         {/* Date Header */}
-        <View className="flex flex-row justify-between">
-          <View className="items-left">
-            <Text className="text-2xl font-bold text-gray-800">
+        <View className="flex flex-row justify-between items-center">
+          <View className="items-left px-4 py-2 rounded-md bg-blue-300">
+            <Text className="font-semibold text-gray-800">
               {format(parsedDate, "EEEE, MMM do")}
             </Text>
-            <Text className="text-base text-gray-500">
+            <Text className="text-[11px] text-gray-500">
               {format(parsedDate, "yyyy")}
             </Text>
           </View>
@@ -274,10 +222,6 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
             </Pressable>
           </View>
         </View>
-        <BurgerMenuModal
-          onClose={() => setShowBuggerMenu(false)}
-          visible={showBuggerMenu}
-        />
         <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
           {/* Mood Selection */}
           <View className="mt-8 flex gap-2">
