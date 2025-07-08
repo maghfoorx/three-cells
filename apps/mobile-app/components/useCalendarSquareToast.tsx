@@ -174,7 +174,7 @@ export const BulkManageToast = ({
         transform: [{ translateY }],
         opacity,
         position: "absolute",
-        bottom: 0,
+        bottom: 40,
         left: 0,
         right: 0,
         zIndex: 1000,

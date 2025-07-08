@@ -8,7 +8,7 @@ export default function HabitsLayout() {
       }}
     >
       <Stack.Screen name="index" />
-      <Stack.Screen name="[singleHabit]" />
+      <Stack.Screen name="[singleHabit]" options={{ presentation: "modal" }} />
     </Stack>
   );
 }
