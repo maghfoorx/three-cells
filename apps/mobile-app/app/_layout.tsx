@@ -61,6 +61,10 @@ export default function RootLayout() {
             name="create-new-task"
             options={{ headerShown: false, presentation: "modal" }}
           />
+          <Stack.Screen
+            name="create-new-habit"
+            options={{ headerShown: false, presentation: "modal" }}
+          />
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />

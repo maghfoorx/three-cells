@@ -16,7 +16,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#3B82F6",
+        tabBarActiveTintColor: "black",
         tabBarInactiveTintColor: "#9CA3AF",
         tabBarStyle: {
           backgroundColor: "white",
@@ -28,7 +28,7 @@ export default function TabLayout() {
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: "600",
+          fontWeight: "500",
         },
         headerShown: false,
       }}
@@ -39,7 +39,7 @@ export default function TabLayout() {
           title: "Track",
           tabBarIcon: ({ color, size, focused }) => {
             const IconToUse = focused ? PencilSolidIcon : PencilIcon;
-            return <IconToUse size={24} />;
+            return <IconToUse size={24} color={"gray"} />;
           },
         }}
       />
@@ -49,7 +49,7 @@ export default function TabLayout() {
           title: "Tasks",
           tabBarIcon: ({ color, size, focused }) => {
             const IconToUse = focused ? CheckBadgeIconSolid : CheckBadgeIcon;
-            return <IconToUse size={24} />;
+            return <IconToUse size={24} color={"gray"} />;
           },
         }}
       />
@@ -60,7 +60,7 @@ export default function TabLayout() {
 
           tabBarIcon: ({ color, size, focused }) => {
             const IconToUse = focused ? ChartBarIconSolid : ChartBarIcon;
-            return <IconToUse size={24} />;
+            return <IconToUse size={24} color={"gray"} />;
           },
         }}
       />
@@ -70,7 +70,7 @@ export default function TabLayout() {
           title: "Account",
           tabBarIcon: ({ color, size, focused }) => {
             const IconToUse = focused ? UserCircleIconSolid : UserCircleIcon;
-            return <IconToUse size={24} />;
+            return <IconToUse size={24} color={"gray"} />;
           },
         }}
       />

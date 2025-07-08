@@ -8,23 +8,19 @@ import {
 } from "date-fns";
 import color from "color";
 import { useMutation, useQuery } from "convex/react";
-import { Feather } from "@expo/vector-icons";
+import { CheckIcon, XMarkIcon } from "react-native-heroicons/outline";
 import { useMemo, useState, useCallback } from "react";
 import type { DataModel } from "@packages/backend/convex/_generated/dataModel";
 import { api } from "@packages/backend/convex/_generated/api";
-import { View, Text, TouchableOpacity, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import { Link } from "expo-router";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
 import { handleHookMutationError } from "@/utils/handleHookMutationError";
-
-const AnimatedView = Animated.createAnimatedComponent(View);
-const AnimatedTouchableOpacity =
-  Animated.createAnimatedComponent(TouchableOpacity);
 
 export function UserHabitCard({
   habit,
@@ -48,32 +44,34 @@ export function UserHabitCard({
     end: format(end, "yyyy-MM-dd"),
   });
 
-  const habitCardColour = useMemo(() => {
-    return color(habit.colour).mix(color("white")).hex();
-  }, [habit.colour]);
-
   return (
     <View
-      className="rounded border shadow-sm p-4 flex flex-col gap-4"
+      className="bg-white rounded-md p-6 border border-gray-100"
       style={{
-        backgroundColor: habitCardColour,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
+        elevation: 2,
       }}
     >
-      <View className="flex flex-row justify-between items-center">
+      {/* Header */}
+      <View className="flex flex-row justify-between items-center mb-6">
         <Link href={`/habits/${habit._id}`} asChild>
-          <Pressable className="flex flex-row items-center gap-2">
+          <Pressable className="flex flex-row items-center gap-3">
             <View
-              className="w-3 h-3 rounded-full"
+              className="w-4 h-4 rounded-full"
               style={{ backgroundColor: habit.colour }}
             />
-            <Text className="text-sm font-medium text-gray-800">
+            <Text className="text-lg font-semibold text-gray-900">
               {habit.name}
             </Text>
           </Pressable>
         </Link>
       </View>
 
-      <View className="flex flex-row justify-between gap-2">
+      {/* Week Grid */}
+      <View className="flex flex-row justify-between gap-2 mb-6">
         {dates.map((date) => {
           return (
             <HabitDateButton
@@ -86,14 +84,20 @@ export function UserHabitCard({
         })}
       </View>
 
+      {/* Stats */}
       {submissionsForHabit?.currentMonthPerformancePercentage != null &&
         submissionsForHabit?.lastXDaysSubmissions != null && (
-          <View>
-            <Text className="text-sm text-gray-700">
+          <View className="flex flex-row justify-between items-center pt-4 border-t border-gray-100">
+            <Text className="text-sm text-gray-500">
               {submissionsForHabit?.lastXDaysSubmissions?.length}/{dates.length}{" "}
-              days • {submissionsForHabit?.currentMonthPerformancePercentage}%
-              this month
+              days this week
             </Text>
+            <View className="flex flex-row items-center gap-2">
+              <Text className="text-sm font-medium text-gray-900">
+                {submissionsForHabit?.currentMonthPerformancePercentage}%
+              </Text>
+              <Text className="text-sm text-gray-500">this month</Text>
+            </View>
           </View>
         )}
     </View>
@@ -112,8 +116,6 @@ const HabitDateButton = ({
   submissions,
 }: HabitDateButtonProps) => {
   const [isToggling, setIsToggling] = useState(false);
-  const scale = useSharedValue(1);
-  const opacity = useSharedValue(1);
 
   const toggleYesNoHabitSubmission = useMutation(
     api.habits.toggleYesNoHabitSubmission,
@@ -121,11 +123,6 @@ const HabitDateButton = ({
 
   const toggleSubmission = useCallback(async () => {
     setIsToggling(true);
-
-    // Animate button press
-    scale.value = withSpring(0.9, { duration: 100 }, () => {
-      scale.value = withSpring(1);
-    });
 
     try {
       const formattedDate = format(date, "yyyy-MM-dd");
@@ -135,75 +132,64 @@ const HabitDateButton = ({
     } finally {
       setIsToggling(false);
     }
-  }, [date, habitId, toggleYesNoHabitSubmission, scale]);
+  }, [date, habitId, toggleYesNoHabitSubmission]);
 
   const isChecked = submissions?.some((s) =>
     isSameDay(new Date(s.dateFor), date),
   );
 
-  const buttonAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: scale.value }],
-      opacity: opacity.value,
-    };
-  });
-
-  const iconAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          scale: withSpring(isChecked ? 1 : 0.8, {
-            stiffness: 300,
-            damping: 20,
-          }),
-        },
-      ],
-      opacity: withTiming(1, { duration: 200 }),
-    };
-  });
-
   return (
     <View className="flex flex-col items-center flex-1">
-      <Text className="text-sm font-semibold uppercase text-gray-800">
+      <Text className="text-xs font-medium text-gray-500 mb-1">
         {format(date, "EEE")}
       </Text>
-      <Text className="text-xs font-thin text-gray-500">
-        {format(date, "d")}
-      </Text>
+      <Text className="text-xs text-gray-400 mb-2">{format(date, "d")}</Text>
 
-      <AnimatedTouchableOpacity
-        className="rounded p-2 mt-2 items-center justify-center min-h-[40px] min-w-[40px]"
+      <TouchableOpacity
+        className={`w-10 h-10 rounded-md items-center justify-center ${
+          isChecked
+            ? "bg-green-50 border-2 border-green-200"
+            : "bg-gray-50 border-2 border-gray-200"
+        }`}
         onPress={toggleSubmission}
-        style={buttonAnimatedStyle}
+        disabled={isToggling}
         activeOpacity={0.7}
       >
-        <AnimatedView style={iconAnimatedStyle}>
-          {isToggling ? (
-            <Feather name="loader" size={24} />
-          ) : isChecked ? (
-            <Feather name="check" color={"green"} size={24} />
-          ) : (
-            <Feather name="x" color={"red"} size={24} />
-          )}
-        </AnimatedView>
-      </AnimatedTouchableOpacity>
+        {isToggling ? (
+          <ActivityIndicator size="small" color="#6B7280" />
+        ) : isChecked ? (
+          <CheckIcon size={16} color="#16A34A" />
+        ) : (
+          <XMarkIcon size={16} color="red" />
+        )}
+      </TouchableOpacity>
     </View>
   );
 };
 
 UserHabitCard.Skeleton = () => {
   return (
-    <AnimatedView className="rounded border shadow-sm p-4 flex flex-col gap-4 bg-gray-100">
-      <View className="h-6 w-48 bg-gray-300 rounded" />
-      <View className="flex flex-row justify-between gap-2">
+    <View className="bg-white rounded-md p-6 border border-gray-100">
+      <View className="flex flex-row items-center gap-3 mb-6">
+        <View className="w-4 h-4 rounded-full bg-gray-300" />
+        <View className="h-5 w-32 bg-gray-300 rounded" />
+      </View>
+
+      <View className="flex flex-row justify-between gap-2 mb-6">
         {Array.from({ length: 7 }).map((_, i) => (
-          <View key={i} className="flex-1">
-            <View className="h-10 bg-gray-300 rounded" />
+          <View key={i} className="flex-1 items-center">
+            <View className="h-3 w-8 bg-gray-300 rounded mb-1" />
+            <View className="h-3 w-4 bg-gray-300 rounded mb-2" />
+            <View className="w-10 h-10 bg-gray-300 rounded-md" />
           </View>
         ))}
       </View>
-      <View className="h-6 w-48 bg-gray-300 rounded" />
-    </AnimatedView>
+
+      <View className="flex flex-row justify-between items-center pt-4 border-t border-gray-100">
+        <View className="h-4 w-24 bg-gray-300 rounded" />
+        <View className="h-4 w-20 bg-gray-300 rounded" />
+      </View>
+    </View>
   );
 };
 

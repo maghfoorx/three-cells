@@ -1,30 +1,72 @@
 import React from "react";
-import { View, Text, SafeAreaView } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { View, Text, SafeAreaView, ScrollView, Pressable } from "react-native";
+import { PlusIcon } from "react-native-heroicons/outline";
 import CreateNewHabitDialog from "@/components/CreateNewHabitMobile";
 import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import UserHabitCardMobile from "@/components/UserHabitCardMobile";
+import { router } from "expo-router";
 
 export default function HabitsPage() {
   const allUserHabits = useQuery(api.habits.getAllUserHabits);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="p-4 flex-grow">
-        <View className="flex flex-row justify-between">
-          <View className="items-left">
-            <Text className="text-2xl font-bold text-gray-800">Habits</Text>
-          </View>
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <View className="flex-1">
+        {/* Header */}
+        <View className="px-6 py-4 flex flex-row justify-between items-center bg-white">
           <View>
-            <CreateNewHabitDialog />
+            <Text className="text-2xl font-bold text-gray-900">Habits</Text>
+            <Text className="text-base text-gray-500 mt-1">
+              {allUserHabits?.length || 0} active habits
+            </Text>
           </View>
+
+          <Pressable
+            onPress={() => router.navigate("/create-new-habit")}
+            className="w-12 h-12 rounded-md bg-white/80 items-center justify-center"
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+              elevation: 4,
+            }}
+          >
+            <PlusIcon size={20} color="#6B7280" />
+          </Pressable>
         </View>
-        <View className="mt-4 flex gap-2">
-          {allUserHabits?.map((habit) => {
-            return <UserHabitCardMobile key={habit._id} habit={habit} />;
-          })}
-        </View>
+
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          className="flex-1"
+          contentContainerStyle={{
+            paddingHorizontal: 24,
+            paddingTop: 24,
+            paddingBottom: 32,
+          }}
+        >
+          <View className="gap-4">
+            {allUserHabits?.map((habit) => {
+              return <UserHabitCardMobile key={habit._id} habit={habit} />;
+            })}
+          </View>
+
+          {/* Empty state */}
+          {allUserHabits?.length === 0 && (
+            <View className="flex-1 items-center justify-center mt-20">
+              <View className="w-16 h-16 rounded-full bg-gray-100 items-center justify-center mb-4">
+                <PlusIcon size={24} color="#6B7280" />
+              </View>
+              <Text className="text-lg font-semibold text-gray-900 mb-2">
+                No habits yet
+              </Text>
+              <Text className="text-gray-500 text-center px-8">
+                Create your first habit to start building better daily routines
+              </Text>
+            </View>
+          )}
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
