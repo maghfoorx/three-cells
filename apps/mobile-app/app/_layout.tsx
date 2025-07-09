@@ -58,6 +58,10 @@ export default function RootLayout() {
             options={{ headerShown: false, presentation: "modal" }}
           />
           <Stack.Screen
+            name="three-cell-log"
+            options={{ headerShown: false, presentation: "modal" }}
+          />
+          <Stack.Screen
             name="create-new-task"
             options={{ headerShown: false, presentation: "modal" }}
           />

@@ -1,5 +1,8 @@
 import { useForm, Controller } from "react-hook-form";
-import { CalendarIcon } from "react-native-heroicons/outline";
+import {
+  CalendarIcon,
+  Square3Stack3DIcon,
+} from "react-native-heroicons/outline";
 
 import color from "color";
 import clsx from "clsx";
@@ -211,19 +214,35 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
             </Text>
           </View>
 
-          <Pressable
-            onPress={() => router.navigate("/yearly-view")}
-            className="w-12 h-12 rounded-md bg-white/80 items-center justify-center"
-            style={{
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.1,
-              shadowRadius: 8,
-              elevation: 4,
-            }}
-          >
-            <CalendarIcon size={20} color="#6B7280" />
-          </Pressable>
+          <View className="flex flex-row">
+            <Pressable
+              onPress={() => router.navigate("/three-cell-log")}
+              className="w-12 h-12 rounded-md rounded-r-none bg-white/80 items-center justify-center"
+              style={{
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 8,
+                elevation: 4,
+              }}
+            >
+              <Square3Stack3DIcon size={20} color="#6B7280" />
+            </Pressable>
+            <View className="border-[0.5px] border-gray-600"></View>
+            <Pressable
+              onPress={() => router.navigate("/yearly-view")}
+              className="w-12 h-12 rounded-md rounded-l-none bg-white/80 items-center justify-center"
+              style={{
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 8,
+                elevation: 4,
+              }}
+            >
+              <CalendarIcon size={20} color="#6B7280" />
+            </Pressable>
+          </View>
         </View>
 
         <ScrollView

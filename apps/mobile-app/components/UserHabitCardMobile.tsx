@@ -46,13 +46,14 @@ export function UserHabitCard({
 
   return (
     <View
-      className="bg-white rounded-md p-6 border border-gray-100"
+      className="rounded-md p-6 border border-gray-200"
       style={{
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.05,
         shadowRadius: 8,
         elevation: 2,
+        backgroundColor: color(habit.colour).mix(color("white"), 0.85).hex(),
       }}
     >
       {/* Header */}
@@ -149,7 +150,7 @@ const HabitDateButton = ({
         className={`w-10 h-10 rounded-md items-center justify-center ${
           isChecked
             ? "bg-green-50 border-2 border-green-200"
-            : "bg-gray-50 border-2 border-gray-200"
+            : "bg-red-50 border-2 border-red-100"
         }`}
         onPress={toggleSubmission}
         disabled={isToggling}
