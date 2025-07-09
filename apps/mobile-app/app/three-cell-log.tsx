@@ -1,19 +1,14 @@
 import { router } from "expo-router";
+import { MotiView, AnimatePresence } from "moti";
 import Animated, {
   useSharedValue,
   withTiming,
   useAnimatedStyle,
+  Layout,
 } from "react-native-reanimated";
 import { ChevronDownIcon } from "react-native-heroicons/outline";
-import React, { useState, useMemo } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
-  Pressable,
-} from "react-native";
+import React, { useState, useMemo, useEffect } from "react";
+import { View, Text, ScrollView, SafeAreaView, Pressable } from "react-native";
 import { useQuery } from "convex/react";
 import { format } from "date-fns";
 import color from "color";
@@ -114,32 +109,45 @@ function ThreeCellLogView() {
 
       {/* Log Entries */}
       <ScrollView className="flex-1 mt-6" showsVerticalScrollIndicator={false}>
-        {sortedLogs.map((entry: DataModel["three_cells"]["document"]) => {
-          const baseColor = SCORE_COLORS[entry.score.toString()] ?? "#ffffff";
-          const bg = color(baseColor).fade(0.7).rgb().string();
+        <AnimatePresence>
+          {sortedLogs.map((entry: DataModel["three_cells"]["document"]) => {
+            const baseColor = SCORE_COLORS[entry.score.toString()] ?? "#ffffff";
+            const bg = color(baseColor).fade(0.7).rgb().string();
 
-          return (
-            <Pressable
-              key={entry._id}
-              onPress={() => handleEntryPress(entry.dateFor)}
-              className="rounded-md p-4 mb-4 shadow-sm"
-              style={{ backgroundColor: bg }}
-            >
-              <View className="flex-row justify-between items-center">
-                <Text className="text-sm font-medium text-gray-900">
-                  {format(new Date(entry.dateFor), "MMM dd, yyyy")}
-                </Text>
-                <Text className="text-xs text-gray-500">({entry.score})</Text>
-              </View>
-              <Text className="text-xs text-gray-500 mt-1">
-                {entry.focusedHours}h focused
-              </Text>
-              <Text className="text-sm text-gray-700 mt-2 leading-5">
-                {entry.summary}
-              </Text>
-            </Pressable>
-          );
-        })}
+            return (
+              <MotiView
+                key={entry._id}
+                from={{ opacity: 0, translateY: 20 }}
+                animate={{ opacity: 1, translateY: 0 }}
+                exit={{ opacity: 0, translateY: -10 }}
+                transition={{ type: "timing", duration: 300 }}
+                layout={Layout.duration(200)}
+              >
+                <Pressable
+                  key={entry._id}
+                  onPress={() => handleEntryPress(entry.dateFor)}
+                  className="rounded-md p-4 mb-4 shadow-sm"
+                  style={{ backgroundColor: bg }}
+                >
+                  <View className="flex-row justify-between items-center">
+                    <Text className="text-sm font-medium text-gray-900">
+                      {format(new Date(entry.dateFor), "MMM dd, yyyy")}
+                    </Text>
+                    <Text className="text-xs text-gray-500">
+                      ({entry.score})
+                    </Text>
+                  </View>
+                  <Text className="text-xs text-gray-500 mt-1">
+                    {entry.focusedHours}h focused
+                  </Text>
+                  <Text className="text-sm text-gray-700 mt-2 leading-5">
+                    {entry.summary}
+                  </Text>
+                </Pressable>
+              </MotiView>
+            );
+          })}
+        </AnimatePresence>
       </ScrollView>
     </View>
   );
