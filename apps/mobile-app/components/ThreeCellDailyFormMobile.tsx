@@ -270,7 +270,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
                           field.onChange(mood.value);
                         }}
                         className={clsx(
-                          "flex-1 items-center py-6 px-2 rounded-md border-2 min-h-24 justify-center",
+                          "flex-1 items-center py-2 px-1 rounded-md border-2 justify-center",
                         )}
                         style={{
                           borderColor: isSelected ? mood.color : "#F3F4F6",
