@@ -1,26 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
-import { api } from "@packages/backend/convex/_generated/api";
+import React, { useEffect, useRef } from "react";
 import { Image } from "expo-image";
-import { AntDesign, Feather, FontAwesome } from "@expo/vector-icons";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Animated,
-  Dimensions,
-  SafeAreaView,
-  StatusBar,
-  FlatList,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import GoogleIcon from "@/components/GoogleIcon";
-import { useConvexAuth, useQuery } from "convex/react";
-import { useAuthActions } from "@convex-dev/auth/react";
+import { Feather } from "@expo/vector-icons";
+import { View, Text, Animated, SafeAreaView, Pressable } from "react-native";
+import { useConvexAuth } from "convex/react";
 import SignInWithGoogle from "@/components/SignInWithGoogle";
-import SignOutButton from "@/components/SignOutButton";
 import { Redirect, router } from "expo-router";
-
-const { width, height } = Dimensions.get("window");
 
 const FEATURES = [
   {
@@ -69,7 +53,7 @@ const FEATURES = [
 ];
 
 export default function Homepage() {
-  const { isAuthenticated } = useConvexAuth();
+  const { isAuthenticated, isLoading } = useConvexAuth();
 
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const logoScale = useRef(new Animated.Value(0.8)).current;
@@ -163,7 +147,7 @@ export default function Homepage() {
     console.log("Apple login pressed");
   };
 
-  if (isAuthenticated) {
+  if (isAuthenticated && !isLoading) {
     return <Redirect href={"/(tabs)/track"} />;
   }
 

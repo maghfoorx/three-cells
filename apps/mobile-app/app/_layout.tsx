@@ -70,6 +70,7 @@ export default function RootLayout() {
             options={{ headerShown: false, presentation: "modal" }}
           />
           <Stack.Screen name="+not-found" />
+          <Stack.Screen name="logged-out" />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>

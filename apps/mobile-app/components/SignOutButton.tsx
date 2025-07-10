@@ -4,10 +4,12 @@ import { Text, TouchableOpacity } from "react-native";
 
 export default function SignOutButton() {
   const { signOut } = useAuthActions();
+
   const handleLogout = async () => {
     await signOut();
-    router.navigate("/");
+    router.replace("/logged-out");
   };
+
   return (
     <TouchableOpacity
       onPress={handleLogout}
