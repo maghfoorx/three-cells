@@ -4,21 +4,26 @@ import { makeRedirectUri } from "expo-auth-session";
 import { openAuthSessionAsync } from "expo-web-browser";
 import { Platform, Text, TouchableOpacity } from "react-native";
 import GoogleIcon from "./GoogleIcon";
+import { useConvexAuth } from "convex/react";
 
 const redirectTo = makeRedirectUri();
 
 export default function SignInWithGoogle() {
+  const { isAuthenticated } = useConvexAuth();
+
   const { signIn } = useAuthActions();
   const handleSignIn = async () => {
-    const { redirect } = await signIn("google", { redirectTo });
-    if (Platform.OS === "web") {
-      return;
-    }
-    const result = await openAuthSessionAsync(redirect!.toString());
-    if (result.type === "success") {
-      const { url } = result;
-      const code = new URL(url).searchParams.get("code")!;
-      await signIn("google", { code });
+    if (!isAuthenticated) {
+      const { redirect } = await signIn("google", { redirectTo });
+      if (Platform.OS === "web") {
+        return;
+      }
+      const result = await openAuthSessionAsync(redirect!.toString());
+      if (result.type === "success") {
+        const { url } = result;
+        const code = new URL(url).searchParams.get("code")!;
+        await signIn("google", { code });
+      }
     }
   };
 

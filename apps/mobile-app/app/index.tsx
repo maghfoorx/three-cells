@@ -18,7 +18,7 @@ import { useConvexAuth, useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import SignInWithGoogle from "@/components/SignInWithGoogle";
 import SignOutButton from "@/components/SignOutButton";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 
 const { width, height } = Dimensions.get("window");
 
@@ -70,7 +70,6 @@ const FEATURES = [
 
 export default function Homepage() {
   const { isAuthenticated } = useConvexAuth();
-  const user = useQuery(api.auth.viewer);
 
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const logoScale = useRef(new Animated.Value(0.8)).current;
@@ -159,21 +158,17 @@ export default function Homepage() {
     animateIn();
   }, []);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.replace("/(tabs)/track");
-    }
-  }, [isAuthenticated]);
-
   const handleAppleLogin = () => {
     // Implement Apple login logic
     console.log("Apple login pressed");
   };
 
+  if (isAuthenticated) {
+    return <Redirect href={"/(tabs)/track"} />;
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="white" />
-
       <View className="flex-1 justify-center items-center">
         {/* Logo Section */}
         <Animated.View
@@ -248,11 +243,8 @@ export default function Homepage() {
           {/* Google Login Button */}
           <View className="flex gap-4">
             <View className="flex gap-4">
-              {!isAuthenticated && <SignInWithGoogle />}
+              <SignInWithGoogle />
             </View>
-            {isAuthenticated && <Text>{user?.email}</Text>}
-            {isAuthenticated && <Text>{user?.name}</Text>}
-            {isAuthenticated && <SignOutButton />}
             {/* Apple Login Button */}
             {/* <TouchableOpacity
               onPress={handleAppleLogin}
