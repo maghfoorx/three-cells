@@ -4,7 +4,7 @@ import { View, Text, SafeAreaView, ScrollView } from "react-native";
 import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import SignOutButton from "@/components/SignOutButton";
-import { CakeIcon } from "react-native-heroicons/solid";
+import { CakeIcon, HeartIcon } from "react-native-heroicons/solid";
 
 export default function AccountPage() {
   const user = useQuery(api.auth.viewer);
@@ -49,7 +49,7 @@ export default function AccountPage() {
           {hasLifeTimeAccess && (
             <View className="px-4 py-4 bg-green-300 mt-4 rounded-md">
               <View className="flex flex-row gap-1 items-center">
-                <CakeIcon color={"black"} size={24} />
+                <HeartIcon color={"red"} size={24} />
                 <Text className="text-xl font-semibold">Lifetime access</Text>
               </View>
               <Text className="mt-2">
