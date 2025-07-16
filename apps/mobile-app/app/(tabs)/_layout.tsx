@@ -4,13 +4,14 @@ import {
   CheckBadgeIcon as CheckBadgeIconSolid,
   UserCircleIcon as UserCircleIconSolid,
   ChartBarIcon as ChartBarIconSolid,
-  PencilIcon as PencilSolidIcon,
+  PaintBrushIcon as PaintBrushSolid,
 } from "react-native-heroicons/solid";
 import {
   CheckBadgeIcon,
   UserCircleIcon,
   ChartBarIcon,
   PencilIcon,
+  LightBulbIcon,
 } from "react-native-heroicons/outline";
 
 export default function TabLayout() {
@@ -39,7 +40,7 @@ export default function TabLayout() {
         options={{
           title: "Journal",
           tabBarIcon: ({ color, size, focused }) => {
-            const IconToUse = focused ? PencilSolidIcon : PencilIcon;
+            const IconToUse = focused ? PaintBrushSolid : PencilIcon;
             return <IconToUse size={24} color={focused ? "black" : "gray"} />;
           },
         }}
