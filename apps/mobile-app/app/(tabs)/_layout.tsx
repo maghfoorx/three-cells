@@ -40,41 +40,10 @@ export default function TabLayout() {
         options={{
           title: "Journal",
           tabBarIcon: ({ color, size, focused }) => {
-            const IconToUse = focused ? PaintBrushSolid : PencilIcon;
-            return <IconToUse size={24} color={focused ? "black" : "gray"} />;
-          },
-        }}
-      />
-      <Tabs.Screen
-        name="tasks"
-        options={{
-          title: "Tasks",
-          tabBarIcon: ({ color, size, focused }) => {
-            const IconToUse = focused ? CheckBadgeIconSolid : CheckBadgeIcon;
-            return <IconToUse size={24} color={focused ? "black" : "gray"} />;
-          },
-        }}
-      />
-      <Tabs.Screen
-        name="habits"
-        options={{
-          title: "Habits",
-
-          tabBarIcon: ({ color, size, focused }) => {
-            const IconToUse = focused ? ChartBarIconSolid : ChartBarIcon;
-            return <IconToUse size={24} color={focused ? "black" : "gray"} />;
-          },
-        }}
-      />
-      <Tabs.Screen
-        name="metrics"
-        options={{
-          title: "Metrics",
-
-          tabBarIcon: ({ color, size, focused }) => {
+            const iconName = focused ? "feather" : "feather";
             return (
-              <AntDesign
-                name={focused ? "areachart" : "linechart"}
+              <Feather
+                name={iconName}
                 size={24}
                 color={focused ? "black" : "gray"}
               />
@@ -82,13 +51,71 @@ export default function TabLayout() {
           },
         }}
       />
+
+      <Tabs.Screen
+        name="tasks"
+        options={{
+          title: "Tasks",
+          tabBarIcon: ({ color, size, focused }) => {
+            const iconName = focused ? "checksquareo" : "checksquareo";
+            return (
+              <AntDesign
+                name={iconName}
+                size={24}
+                color={focused ? "black" : "gray"}
+              />
+            );
+          },
+        }}
+      />
+
+      <Tabs.Screen
+        name="habits"
+        options={{
+          title: "Habits",
+          tabBarIcon: ({ color, size, focused }) => {
+            const iconName = focused ? "trending-up" : "trending-up";
+            return (
+              <Feather
+                name={iconName}
+                size={24}
+                color={focused ? "black" : "gray"}
+              />
+            );
+          },
+        }}
+      />
+
+      <Tabs.Screen
+        name="metrics"
+        options={{
+          title: "Metrics",
+          tabBarIcon: ({ color, size, focused }) => {
+            const iconName = focused ? "activity" : "activity";
+            return (
+              <Feather
+                name={iconName}
+                size={24}
+                color={focused ? "black" : "gray"}
+              />
+            );
+          },
+        }}
+      />
+
       <Tabs.Screen
         name="account"
         options={{
           title: "Account",
           tabBarIcon: ({ color, size, focused }) => {
-            const IconToUse = focused ? UserCircleIconSolid : UserCircleIcon;
-            return <IconToUse size={24} color={focused ? "black" : "gray"} />;
+            const iconName = focused ? "user" : "user";
+            return (
+              <Feather
+                name={iconName}
+                size={24}
+                color={focused ? "black" : "gray"}
+              />
+            );
           },
         }}
       />
