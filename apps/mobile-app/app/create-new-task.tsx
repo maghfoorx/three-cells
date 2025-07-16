@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { CalendarIcon, ChevronDownIcon } from "react-native-heroicons/outline";
+import { XMarkIcon } from "react-native-heroicons/outline";
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -75,11 +75,11 @@ export default function CreateNewTaskPage() {
 
   return (
     <SafeAreaView className="flex-1">
-      <View className="px-6 py-4 flex flex-row items-center justify-between">
+      <View className="px-6 py-4 flex flex-row items-center justify-end">
         <View>
           <Pressable onPress={router.back}>
             <Text>
-              <ChevronDownIcon size={20} />
+              <XMarkIcon size={20} />
             </Text>
           </Pressable>
         </View>

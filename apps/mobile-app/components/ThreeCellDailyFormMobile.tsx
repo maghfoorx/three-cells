@@ -214,31 +214,17 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
             </Text>
           </View>
 
-          <View className="flex flex-row">
+          <View className="flex flex-row rounded-r-full rounded-l-full bg-white/80">
             <Pressable
               onPress={() => router.navigate("/three-cell-log")}
-              className="w-12 h-12 rounded-md rounded-r-none bg-white/80 items-center justify-center"
-              style={{
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.1,
-                shadowRadius: 8,
-                elevation: 4,
-              }}
+              className="w-12 h-12 items-center justify-center"
             >
               <Square3Stack3DIcon size={20} color="#6B7280" />
             </Pressable>
-            <View className="border-[0.5px] border-gray-600"></View>
+            <View className="my-2 border-[0.5px] border-gray-600"></View>
             <Pressable
               onPress={() => router.navigate("/yearly-view")}
-              className="w-12 h-12 rounded-md rounded-l-none bg-white/80 items-center justify-center"
-              style={{
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.1,
-                shadowRadius: 8,
-                elevation: 4,
-              }}
+              className="w-12 h-12 items-center justify-center"
             >
               <CalendarIcon size={20} color="#6B7280" />
             </Pressable>

@@ -6,7 +6,7 @@ import Animated, {
   useAnimatedStyle,
   Layout,
 } from "react-native-reanimated";
-import { ChevronDownIcon } from "react-native-heroicons/outline";
+import { ChevronDownIcon, XMarkIcon } from "react-native-heroicons/outline";
 import React, { useState, useMemo, useEffect } from "react";
 import { View, Text, ScrollView, SafeAreaView, Pressable } from "react-native";
 import { useQuery } from "convex/react";
@@ -22,11 +22,11 @@ type SortOption = "latest" | "score" | "focused_hours";
 export default function TrackLogPage() {
   return (
     <SafeAreaView className="flex-1">
-      <View className="px-6 py-4 flex flex-row items-center justify-between">
+      <View className="px-6 py-4 flex flex-row items-center justify-end">
         <View>
           <Pressable onPress={router.back}>
             <Text>
-              <ChevronDownIcon size={20} />
+              <XMarkIcon size={20} />
             </Text>
           </Pressable>
         </View>
@@ -50,18 +50,10 @@ function ThreeCellLogView() {
   const allThreeCellEntries = useQuery(api.threeCells.allThreeCellEntries);
   const [sortBy, setSortBy] = useState<SortOption>("latest");
 
-  const selectedIndex = sortOptions.indexOf(sortBy);
-  const indicatorX = useSharedValue(selectedIndex * 80); // width of button
-
   const handleSortChange = (value: SortOption) => {
     const index = sortOptions.indexOf(value);
-    indicatorX.value = withTiming(index * 80, { duration: 200 });
     setSortBy(value);
   };
-
-  const indicatorStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: indicatorX.value }],
-  }));
 
   const sortedLogs = useMemo(() => {
     if (!allThreeCellEntries) return [];
@@ -70,7 +62,7 @@ function ThreeCellLogView() {
       case "score":
         return logs.sort((a, b) => b.score - a.score);
       case "focused_hours":
-        return logs.sort((a, b) => a.focusedHours - b.focusedHours);
+        return logs.sort((a, b) => b.focusedHours - a.focusedHours);
       case "latest":
       default:
         return logs.sort(
@@ -87,17 +79,17 @@ function ThreeCellLogView() {
   return (
     <View className="flex-1 px-6">
       {/* Sort Buttons Row */}
-      <View className="flex-row justify-between items-center mt-4">
-        <View className="relative h-8 rounded-md bg-gray-100 overflow-hidden flex-row">
+      <View className="flex-row justify-between items-center">
+        <View className="relative h-8 rounded-md bg-gray-100 flex-row">
           {sortOptions.map((option, idx) => (
             <Pressable
               key={option}
               onPress={() => handleSortChange(option)}
-              className="w-20 h-8 items-center justify-center bg-gray-400"
+              className="w-20 h-8 items-center justify-center bg-gray-200"
             >
               <Text
                 className={clsx("text-xs", {
-                  "text-white font-bold": sortBy === option,
+                  "font-bold": sortBy === option,
                 })}
               >
                 {sortLabels[option]}
@@ -108,7 +100,7 @@ function ThreeCellLogView() {
       </View>
 
       {/* Log Entries */}
-      <ScrollView className="flex-1 mt-6" showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 mt-4" showsVerticalScrollIndicator={false}>
         <AnimatePresence>
           {sortedLogs.map((entry: DataModel["three_cells"]["document"]) => {
             const baseColor = SCORE_COLORS[entry.score.toString()] ?? "#ffffff";

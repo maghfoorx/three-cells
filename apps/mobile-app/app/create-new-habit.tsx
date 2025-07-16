@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { ChevronDownIcon } from "react-native-heroicons/outline";
+import { ChevronDownIcon, XMarkIcon } from "react-native-heroicons/outline";
 import React, { useMemo } from "react";
 import {
   View,
@@ -110,10 +110,10 @@ export default function CreateNewHabitPage() {
         backgroundColor: pageColour,
       }}
     >
-      <View className="px-6 py-4 flex flex-row items-center justify-between">
+      <View className="px-6 py-4 flex flex-row items-center justify-end">
         <View>
           <Pressable onPress={router.back}>
-            <ChevronDownIcon size={20} />
+            <XMarkIcon size={20} />
           </Pressable>
         </View>
       </View>
