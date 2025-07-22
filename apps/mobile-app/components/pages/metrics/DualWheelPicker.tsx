@@ -78,7 +78,7 @@ export default function DualValuePicker({
       {/* Fraction Wheel - Only shown if increment has decimals */}
       {showFractionWheel && (
         <WheelPickerExpo
-          key={`int-${fractionPart}`}
+          key={`frac-${fractionPart}`}
           height={200}
           width={80}
           initialSelectedIndex={fractionPart}
