@@ -1,6 +1,5 @@
 import { Text, Vibration, View } from "react-native";
 import WheelPickerExpo from "react-native-wheel-picker-expo";
-import color from "color";
 import React from "react";
 
 function countDecimalPlaces(num: number): number {
@@ -26,8 +25,14 @@ export default function DualValuePicker({
   const decimalPlaces = countDecimalPlaces(increment);
   const fractionRange = Math.pow(10, decimalPlaces);
 
-  const integerPart = Math.floor(value);
-  const fractionPart = Math.round((value - integerPart) * fractionRange);
+  const integerPart = React.useMemo(() => {
+    return Math.floor(value);
+  }, [value]);
+
+  const fractionPart = React.useMemo(
+    () => Math.round((value - integerPart) * fractionRange),
+    [value],
+  );
 
   const formatFraction = (num: number) =>
     num.toString().padStart(decimalPlaces, "0");
@@ -38,6 +43,7 @@ export default function DualValuePicker({
     <View className="flex-row justify-center items-center gap-4 h-[200px] mb-8">
       {/* Integer Wheel */}
       <WheelPickerExpo
+        key={`int-${integerPart}`}
         height={200}
         width={100}
         initialSelectedIndex={integerPart}
@@ -54,13 +60,16 @@ export default function DualValuePicker({
         selectedStyle={{ borderColor: colorHex, borderWidth: 1 }}
         haptics={true}
       />
-      <View>
-        <Text>.</Text>
-      </View>
+      {showFractionWheel && (
+        <View>
+          <Text>.</Text>
+        </View>
+      )}
 
       {/* Fraction Wheel - Only shown if increment has decimals */}
       {showFractionWheel && (
         <WheelPickerExpo
+          key={`int-${decimalPlaces}`}
           height={200}
           width={80}
           initialSelectedIndex={fractionPart}
