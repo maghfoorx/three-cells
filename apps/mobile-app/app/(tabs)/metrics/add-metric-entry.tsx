@@ -23,6 +23,7 @@ import { format } from "date-fns";
 import color from "color";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 import { formatValueByIncrement } from "@/utils/numbers";
+import DualValuePicker from "@/components/pages/metrics/DualWheelPicker";
 
 const formSchema = z.object({
   value: z.number().min(0, "Value must be positive"),
@@ -173,6 +174,12 @@ export default function AddMetricEntryPage() {
                 borderWidth: 2,
               }}
             >
+              <DualValuePicker
+                value={currentValue}
+                onChange={(newValue) => setValue("value", newValue)}
+                increment={increment}
+                colorHex={metric.colour}
+              />
               {/* Value Display */}
               <View className="items-center mb-6">
                 {isEditing ? (
@@ -193,7 +200,7 @@ export default function AddMetricEntryPage() {
 
                       const maxDecimalPlaces = getMaxDecimalPlaces();
 
-                      const handleTextChange = (text) => {
+                      const handleTextChange = (text: string) => {
                         // Allow empty string
                         if (text === "") {
                           setDisplayText("");
@@ -292,41 +299,6 @@ export default function AddMetricEntryPage() {
                     {metric.unit}
                   </Text>
                 )}
-              </View>
-
-              {/* Increment/Decrement Controls */}
-              <View className="flex-row items-center justify-center gap-8">
-                <TouchableOpacity
-                  onPress={handleDecrement}
-                  className="w-16 h-16 rounded-full items-center justify-center"
-                  style={{
-                    backgroundColor: color(metric.colour)
-                      .mix(color("white"), 0.8)
-                      .hex(),
-                  }}
-                  activeOpacity={0.7}
-                >
-                  <MinusIcon size={24} color={metric.colour} />
-                </TouchableOpacity>
-
-                <View className="items-center">
-                  <Text className="text-sm text-gray-500">
-                    ±{formatValue(increment)}
-                  </Text>
-                </View>
-
-                <TouchableOpacity
-                  onPress={handleIncrement}
-                  className="w-16 h-16 rounded-full items-center justify-center"
-                  style={{
-                    backgroundColor: color(metric.colour)
-                      .mix(color("white"), 0.8)
-                      .hex(),
-                  }}
-                  activeOpacity={0.7}
-                >
-                  <PlusIcon size={24} color={metric.colour} />
-                </TouchableOpacity>
               </View>
             </View>
           </View>

@@ -139,6 +139,9 @@ importers:
       react-native-webview:
         specifier: 13.13.5
         version: 13.13.5(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      react-native-wheel-picker-expo:
+        specifier: ^0.5.4
+        version: 0.5.4(expo-haptics@14.1.4(expo@53.0.13(@babel/core@7.27.7)(@expo/metro-runtime@5.0.4(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0)))(graphql@16.11.0)(react-native-webview@13.13.5(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)))(expo-linear-gradient@14.1.5(expo@53.0.13(@babel/core@7.27.7)(@expo/metro-runtime@5.0.4(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0)))(graphql@16.11.0)(react-native-webview@13.13.5(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       valtio:
         specifier: ^2.1.5
         version: 2.1.5(@types/react@19.0.14)(react@19.0.0)
@@ -6237,6 +6240,14 @@ packages:
   react-native-webview@13.13.5:
     resolution: {integrity: sha512-MfC2B+woL4Hlj2WCzcb1USySKk+SteXnUKmKktOk/H/AQy5+LuVdkPKm8SknJ0/RxaxhZ48WBoTRGaqgR137hw==}
     peerDependencies:
+      react: '*'
+      react-native: '*'
+
+  react-native-wheel-picker-expo@0.5.4:
+    resolution: {integrity: sha512-mTA35pqAGioi7gie+nLF4EcwCj7zU36zzlYZVRS/bZul84zvvoMFKJu6Sm84WuWQiUJ40J1EgYxQ3Ui1pIMJZg==}
+    peerDependencies:
+      expo-haptics: '>=11'
+      expo-linear-gradient: '>=11'
       react: '*'
       react-native: '*'
 
@@ -14059,6 +14070,13 @@ snapshots:
     dependencies:
       escape-string-regexp: 4.0.0
       invariant: 2.2.4
+      react: 19.0.0
+      react-native: 0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0)
+
+  react-native-wheel-picker-expo@0.5.4(expo-haptics@14.1.4(expo@53.0.13(@babel/core@7.27.7)(@expo/metro-runtime@5.0.4(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0)))(graphql@16.11.0)(react-native-webview@13.13.5(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)))(expo-linear-gradient@14.1.5(expo@53.0.13(@babel/core@7.27.7)(@expo/metro-runtime@5.0.4(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0)))(graphql@16.11.0)(react-native-webview@13.13.5(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
+    dependencies:
+      expo-haptics: 14.1.4(expo@53.0.13(@babel/core@7.27.7)(@expo/metro-runtime@5.0.4(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0)))(graphql@16.11.0)(react-native-webview@13.13.5(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))
+      expo-linear-gradient: 14.1.5(expo@53.0.13(@babel/core@7.27.7)(@expo/metro-runtime@5.0.4(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0)))(graphql@16.11.0)(react-native-webview@13.13.5(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react: 19.0.0
       react-native: 0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0)
 
