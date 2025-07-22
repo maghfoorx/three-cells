@@ -69,7 +69,6 @@ export default function AddMetricEntryPage() {
   const currentValue = watch("value");
 
   const increment = metric?.increment || 1;
-  const valueType = metric?.valueType || "float";
   const today = format(new Date(), "yyyy-MM-dd");
 
   // Set initial value from latest entry
@@ -167,12 +166,6 @@ export default function AddMetricEntryPage() {
                   borderWidth: 2,
                 }}
               >
-                <DualValuePicker
-                  value={currentValue}
-                  onChange={(newValue) => setValue("value", newValue)}
-                  increment={increment}
-                  colorHex={metric.colour}
-                />
                 {/* Value Display */}
                 <View className="items-center mb-6">
                   {isEditing ? (
@@ -252,6 +245,13 @@ export default function AddMetricEntryPage() {
                     </Text>
                   )}
                 </View>
+
+                <DualValuePicker
+                  value={currentValue}
+                  onChange={(newValue) => setValue("value", newValue)}
+                  increment={increment}
+                  colorHex={metric.colour}
+                />
               </View>
             </View>
 

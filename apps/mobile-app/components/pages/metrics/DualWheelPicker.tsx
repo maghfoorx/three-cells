@@ -1,6 +1,7 @@
 import { Text, Vibration, View } from "react-native";
 import WheelPickerExpo from "react-native-wheel-picker-expo";
 import React from "react";
+import { Doc } from "@packages/backend/convex/_generated/dataModel";
 
 function countDecimalPlaces(num: number): number {
   if (!isFinite(num)) return 0;
@@ -13,26 +14,35 @@ export default function DualValuePicker({
   value,
   onChange,
   increment,
-  maxInteger = 200,
   colorHex,
 }: {
   value: number;
   onChange: (val: number) => void;
   increment: number;
-  maxInteger?: number;
   colorHex: string;
 }) {
   const decimalPlaces = countDecimalPlaces(increment);
   const fractionRange = Math.pow(10, decimalPlaces);
+  const integerPart = Math.floor(value);
+  const fractionPart = Math.round((value - integerPart) * fractionRange);
 
-  const integerPart = React.useMemo(() => {
-    return Math.floor(value);
-  }, [value]);
+  const rangeStart = React.useMemo(() => {
+    return Math.max(0, Math.floor((integerPart - 50) / 10) * 10);
+  }, [integerPart]);
 
-  const fractionPart = React.useMemo(
-    () => Math.round((value - integerPart) * fractionRange),
-    [value],
-  );
+  const integerItemsOnWheel = React.useMemo(() => {
+    return Array.from({ length: 101 }, (_, i) => {
+      const val = rangeStart + i;
+      return {
+        value: val,
+        label: val.toString(),
+      };
+    });
+  }, [rangeStart]);
+
+  const selectedIndex = integerPart - rangeStart;
+
+  const safeIndex = Math.max(0, Math.min(100, selectedIndex));
 
   const formatFraction = (num: number) =>
     num.toString().padStart(decimalPlaces, "0");
@@ -46,16 +56,15 @@ export default function DualValuePicker({
         key={`int-${integerPart}`}
         height={200}
         width={100}
-        initialSelectedIndex={integerPart}
-        items={Array.from({ length: maxInteger + 1 }, (_, i) => ({
-          label: i.toString(),
-          value: i,
-        }))}
+        initialSelectedIndex={safeIndex}
+        items={integerItemsOnWheel}
         onChange={({ item }) => {
           const newValue = showFractionWheel
             ? parseFloat(`${item.value}.${formatFraction(fractionPart)}`)
             : item.value;
-          onChange(newValue);
+          if (newValue !== value) {
+            onChange(newValue); // Avoid triggering onChange if value didn’t change
+          }
         }}
         selectedStyle={{ borderColor: colorHex, borderWidth: 1 }}
         haptics={true}
@@ -69,7 +78,7 @@ export default function DualValuePicker({
       {/* Fraction Wheel - Only shown if increment has decimals */}
       {showFractionWheel && (
         <WheelPickerExpo
-          key={`int-${decimalPlaces}`}
+          key={`int-${fractionPart}`}
           height={200}
           width={80}
           initialSelectedIndex={fractionPart}
@@ -85,6 +94,7 @@ export default function DualValuePicker({
             Vibration.vibrate(10);
           }}
           selectedStyle={{ borderColor: colorHex, borderWidth: 1 }}
+          haptics={true}
         />
       )}
     </View>
