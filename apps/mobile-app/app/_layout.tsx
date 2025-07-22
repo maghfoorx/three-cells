@@ -69,6 +69,10 @@ export default function RootLayout() {
             name="create-new-habit"
             options={{ headerShown: false, presentation: "modal" }}
           />
+          <Stack.Screen
+            name="create-new-metric"
+            options={{ headerShown: false, presentation: "modal" }}
+          />
           <Stack.Screen name="+not-found" />
           <Stack.Screen name="logged-out" />
         </Stack>

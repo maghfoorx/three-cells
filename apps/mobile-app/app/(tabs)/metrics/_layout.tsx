@@ -9,6 +9,10 @@ export default function MetricsLayout() {
     >
       <Stack.Screen name="index" />
       <Stack.Screen name="[singleMetric]" options={{ presentation: "modal" }} />
+      <Stack.Screen
+        name="add-metric-entry"
+        options={{ presentation: "modal" }}
+      />
     </Stack>
   );
 }

@@ -17,6 +17,8 @@ import type * as migrations from "../migrations.js";
 import type * as stripe from "../stripe.js";
 import type * as tasks from "../tasks.js";
 import type * as threeCells from "../threeCells.js";
+import type * as userMetrics_mutations from "../userMetrics/mutations.js";
+import type * as userMetrics_queries from "../userMetrics/queries.js";
 
 import type {
   ApiFromModules,
@@ -42,6 +44,8 @@ declare const fullApi: ApiFromModules<{
   stripe: typeof stripe;
   tasks: typeof tasks;
   threeCells: typeof threeCells;
+  "userMetrics/mutations": typeof userMetrics_mutations;
+  "userMetrics/queries": typeof userMetrics_queries;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

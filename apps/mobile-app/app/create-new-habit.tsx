@@ -217,7 +217,7 @@ export default function CreateNewHabitPage() {
             </View>
 
             {/* Habit Type Section */}
-            <View className="mb-6">
+            {/* <View className="mb-6">
               <Text className="text-sm font-medium text-gray-700 mb-2">
                 Habit type*
               </Text>
@@ -230,7 +230,7 @@ export default function CreateNewHabitPage() {
               <Text className="text-xs text-gray-500 mt-2">
                 More types coming soon...
               </Text>
-            </View>
+            </View> */}
 
             {/* Submit Button */}
             <TouchableOpacity

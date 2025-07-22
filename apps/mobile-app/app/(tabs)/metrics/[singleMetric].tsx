@@ -3,18 +3,20 @@ import { DataModel } from "@packages/backend/convex/_generated/dataModel";
 import { api } from "@packages/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { SafeAreaView, Text, View } from "react-native";
-import SubmissionsCalendarHeatmapMobile from "@/components/SubmissionsHeatmapMobile";
-import { BulkManageToast } from "@/components/useCalendarSquareToast";
 import { Feather } from "@expo/vector-icons";
 
 export default function SingleMetricPage() {
   const { singleMetric: singleMetricId } = useLocalSearchParams();
 
-  const metricId = singleMetricId as DataModel["userHabits"]["document"]["_id"];
+  const metricId =
+    singleMetricId as DataModel["userMetrics"]["document"]["_id"];
 
-  const singleMetric = useQuery(api.habits.getAllSubmissionsForHabit, {
-    habitId: metricId,
-  });
+  const singleMetric = useQuery(
+    api.userMetrics.queries.getAllSubmissionsForMetric,
+    {
+      metricId: metricId,
+    },
+  );
 
   if (singleMetric === undefined) {
     return (
@@ -39,7 +41,7 @@ export default function SingleMetricPage() {
         <View className="px-4 flex flex-row justify-between">
           <View className="items-left">
             <Text className="text-2xl font-bold text-gray-800">
-              Single metric name
+              {singleMetric.metric?.name}
             </Text>
           </View>
         </View>

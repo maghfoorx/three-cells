@@ -17,7 +17,7 @@ import type { DataModel } from "@packages/backend/convex/_generated/dataModel";
 import { SCORE_COLORS } from "@/utils/types";
 import clsx from "clsx";
 
-type SortOption = "latest" | "score" | "focused_hours";
+type SortOption = "latest" | "score";
 
 export default function TrackLogPage() {
   return (
@@ -39,11 +39,10 @@ export default function TrackLogPage() {
   );
 }
 
-const sortOptions: SortOption[] = ["latest", "score", "focused_hours"];
+const sortOptions: SortOption[] = ["latest", "score"];
 const sortLabels: Record<SortOption, string> = {
   latest: "LATEST",
   score: "SCORE",
-  focused_hours: "FOCUSED",
 };
 
 function ThreeCellLogView() {
@@ -61,8 +60,6 @@ function ThreeCellLogView() {
     switch (sortBy) {
       case "score":
         return logs.sort((a, b) => b.score - a.score);
-      case "focused_hours":
-        return logs.sort((a, b) => b.focusedHours - a.focusedHours);
       case "latest":
       default:
         return logs.sort(
@@ -129,9 +126,6 @@ function ThreeCellLogView() {
                       ({entry.score})
                     </Text>
                   </View>
-                  <Text className="text-xs text-gray-500 mt-1">
-                    {entry.focusedHours}h focused
-                  </Text>
                   <Text className="text-sm text-gray-700 mt-2 leading-5">
                     {entry.summary}
                   </Text>

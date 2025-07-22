@@ -29,7 +29,7 @@ const schema = defineSchema({
     userId: v.id("users"),
     dateFor: v.string(),
     summary: v.string(),
-    focusedHours: v.float64(),
+    focusedHours: v.optional(v.float64()),
     score: v.float64(),
 
     updatedAt: v.number(),
@@ -50,7 +50,7 @@ const schema = defineSchema({
     type: v.union(
       v.literal("yes_no"),
       v.literal("number"),
-      v.literal("custom")
+      v.literal("custom"),
     ),
 
     // flexible recurrence rules
@@ -60,7 +60,7 @@ const schema = defineSchema({
         v.literal("interval"),
         v.literal("weekly"),
         v.literal("monthly"),
-        v.literal("custom")
+        v.literal("custom"),
       ),
 
       interval: v.optional(v.number()), // e.g. every N days (interval)
@@ -74,9 +74,9 @@ const schema = defineSchema({
             v.literal("thu"),
             v.literal("fri"),
             v.literal("sat"),
-            v.literal("sun")
-          )
-        )
+            v.literal("sun"),
+          ),
+        ),
       ),
       startDate: v.optional(v.number()), // ISO date (for calculating next occurrences)
     }),
@@ -100,7 +100,7 @@ const schema = defineSchema({
     value: v.union(
       v.boolean(), // for yes_no
       v.number(), // for number
-      v.string() // for custom
+      v.string(), // for custom
     ),
 
     note: v.optional(v.string()), // optional notes per submission (e.g., "felt tired", "extra session")
@@ -136,6 +136,39 @@ const schema = defineSchema({
     // Useful for updates
     updatedAt: v.optional(v.number()),
   }).index("by_user", ["userId"]),
+
+  userMetrics: defineTable({
+    userId: v.id("users"),
+
+    name: v.string(), // e.g., "Weight", "Focus Hours"
+    unit: v.optional(v.string()), // e.g., "kg", "hours", "words"
+
+    // Optional formatting hints for the UI
+    increment: v.optional(v.float64()), // e.g., 0.1 step size
+    valueType: v.optional(v.union(v.literal("float"), v.literal("integer"))), // UI formatting only
+
+    colour: v.string(), // hex format
+
+    isArchived: v.optional(v.boolean()), // hide from dashboard if archived
+
+    createdAt: v.number(),
+    updatedAt: v.optional(v.number()),
+  }).index("by_user", ["userId"]),
+
+  userMetricSubmissions: defineTable({
+    userId: v.id("users"),
+    metricId: v.id("userMetrics"),
+
+    dateFor: v.string(), // e.g., "2025-07-17"
+    submittedAt: v.number(), // precise timestamp
+
+    value: v.float64(), // stored as float for all cases
+    note: v.optional(v.string()),
+
+    updatedAt: v.optional(v.number()),
+  })
+    .index("by_user_and_metric", ["userId", "metricId"])
+    .index("by_user_metric_date", ["userId", "metricId", "dateFor"]), // enforce one per day
 });
 
 export default schema;

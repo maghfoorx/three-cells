@@ -1,0 +1,385 @@
+import { router, useLocalSearchParams } from "expo-router";
+import { XMarkIcon, MinusIcon, PlusIcon } from "react-native-heroicons/outline";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  Pressable,
+  Vibration,
+} from "react-native";
+import { Feather } from "@expo/vector-icons";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useForm, Controller } from "react-hook-form";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@packages/backend/convex/_generated/api";
+import { format } from "date-fns";
+import color from "color";
+import { Id } from "@packages/backend/convex/_generated/dataModel";
+import { formatValueByIncrement } from "@/utils/numbers";
+
+const formSchema = z.object({
+  value: z.number().min(0, "Value must be positive"),
+  note: z.string().optional(),
+});
+
+type FormSchema = z.output<typeof formSchema>;
+
+export default function AddMetricEntryPage() {
+  const { metricId } = useLocalSearchParams();
+  const [isEditing, setIsEditing] = useState(false);
+
+  const metric = useQuery(api.userMetrics.queries.getMetricById, {
+    metricId: metricId as Id<"userMetrics">,
+  });
+
+  const latestEntry = useQuery(api.userMetrics.queries.latestMetricEntry, {
+    metricId: metricId as Id<"userMetrics">,
+  });
+
+  const createMetricEntry = useMutation(
+    api.userMetrics.mutations.createMetricEntry,
+  );
+
+  const form = useForm<FormSchema>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      value: 0,
+      note: "",
+    },
+  });
+
+  const {
+    control,
+    watch,
+    setValue,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = form;
+
+  const currentValue = watch("value");
+
+  const increment = metric?.increment || 1;
+  const valueType = metric?.valueType || "float";
+  const today = format(new Date(), "yyyy-MM-dd");
+
+  // Set initial value from latest entry
+  useEffect(() => {
+    if (latestEntry?.value !== undefined && latestEntry.value > 0) {
+      setValue("value", latestEntry.value);
+    }
+  }, [latestEntry, setValue]);
+
+  const formatValue = (value: number) => {
+    if (valueType === "integer") {
+      return value.toString();
+    }
+    return value.toFixed(increment < 1 ? 1 : 0);
+  };
+
+  const handleIncrement = () => {
+    const newValue = (currentValue ?? 0) + increment;
+    setValue("value", newValue);
+    Vibration.vibrate(50);
+  };
+
+  const handleDecrement = () => {
+    const newValue = Math.max(0, (currentValue ?? 0) - increment);
+    setValue("value", newValue);
+    Vibration.vibrate(50);
+  };
+
+  const handleDirectEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleCreateEntry = async (data: FormSchema) => {
+    console.log(data, "IS_THE_DATA_BEING_SUBMITTED");
+    console.log(data.value, "IS_CURRENT_VALUE_PASSED_IN");
+
+    try {
+      await createMetricEntry({
+        metricId: metricId as Id<"userMetrics">,
+        value: data.value,
+        dateFor: today,
+        note: data.note,
+      });
+
+      form.reset();
+      router.back();
+    } catch (error) {
+      Alert.alert("Error", "Failed to create entry");
+    }
+  };
+
+  if (!metric) {
+    return (
+      <SafeAreaView className="flex-1 bg-white">
+        <View className="flex-1 items-center justify-center">
+          <Text className="text-gray-500">Loading...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView className="flex-1 bg-white">
+      <View className="px-6 py-4 flex flex-row items-center justify-between">
+        <View className="w-6" />
+        <Text className="text-lg font-semibold text-gray-900">Add Entry</Text>
+        <Pressable onPress={router.back}>
+          <XMarkIcon size={24} color="#6B7280" />
+        </Pressable>
+      </View>
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+      >
+        <View className="flex-1 px-6">
+          {/* Metric Info */}
+          <View className="items-center mb-8">
+            <View className="flex-row items-center gap-3 mb-2">
+              <View
+                className="w-4 h-4 rounded-full"
+                style={{ backgroundColor: metric.colour }}
+              />
+              <Text className="text-xl font-semibold text-gray-900">
+                {metric.name}
+              </Text>
+            </View>
+            <Text className="text-gray-500">
+              {format(new Date(), "EEEE, MMMM do")}
+            </Text>
+          </View>
+
+          {/* Value Selector */}
+          <View className="flex-1 items-center justify-center">
+            <View
+              className="rounded-2xl p-8 mb-8 min-w-[280px]"
+              style={{
+                backgroundColor: color(metric.colour)
+                  .mix(color("white"), 0.95)
+                  .hex(),
+                borderColor: color(metric.colour)
+                  .mix(color("white"), 0.8)
+                  .hex(),
+                borderWidth: 2,
+              }}
+            >
+              {/* Value Display */}
+              <View className="items-center mb-6">
+                {isEditing ? (
+                  <Controller
+                    control={control}
+                    name="value"
+                    render={({ field: { onChange, onBlur, value } }) => {
+                      const [displayText, setDisplayText] = useState(
+                        value?.toString() || "0",
+                      );
+
+                      // Calculate max decimal places based on increment
+                      const getMaxDecimalPlaces = () => {
+                        if (valueType === "integer") return 0;
+                        if (increment >= 1) return 0;
+                        return Math.abs(Math.floor(Math.log10(increment)));
+                      };
+
+                      const maxDecimalPlaces = getMaxDecimalPlaces();
+
+                      const handleTextChange = (text) => {
+                        // Allow empty string
+                        if (text === "") {
+                          setDisplayText("");
+                          onChange(0);
+                          return;
+                        }
+
+                        // Check if text matches numeric pattern
+                        if (!/^\d*\.?\d*$/.test(text)) {
+                          return; // Silently ignore invalid input
+                        }
+
+                        // Check decimal places restriction
+                        const decimalIndex = text.indexOf(".");
+                        if (decimalIndex !== -1) {
+                          const decimalPlaces = text.length - decimalIndex - 1;
+                          if (decimalPlaces > maxDecimalPlaces) {
+                            return; // Silently ignore if too many decimal places
+                          }
+                        }
+
+                        // All validations passed - safe to update
+                        setDisplayText(text);
+
+                        // Update form value if it's a valid number
+                        const parsed = parseFloat(text);
+                        if (!isNaN(parsed) && parsed >= 0) {
+                          onChange(
+                            formatValueByIncrement(parsed, metric?.increment),
+                          );
+                        }
+                      };
+
+                      return (
+                        <TextInput
+                          className="text-5xl font-bold text-center min-w-[120px]"
+                          style={{ color: metric.colour }}
+                          value={displayText}
+                          onChangeText={handleTextChange}
+                          onBlur={() => {
+                            // Clean up the display text on blur
+                            const parsed = parseFloat(displayText);
+                            if (!isNaN(parsed) && parsed >= 0) {
+                              const formatted =
+                                maxDecimalPlaces === 0
+                                  ? parsed.toString()
+                                  : parsed
+                                      .toFixed(maxDecimalPlaces)
+                                      .replace(/\.?0+$/, "");
+                              setDisplayText(formatted);
+                              onChange(parsed);
+                            } else {
+                              setDisplayText("0");
+                              onChange(0);
+                            }
+                            setIsEditing(false);
+                            onBlur();
+                          }}
+                          onSubmitEditing={() => {
+                            // Clean up the display text on submit
+                            const parsed = parseFloat(displayText);
+                            if (!isNaN(parsed) && parsed >= 0) {
+                              const formatted =
+                                maxDecimalPlaces === 0
+                                  ? parsed.toString()
+                                  : parsed
+                                      .toFixed(maxDecimalPlaces)
+                                      .replace(/\.?0+$/, "");
+                              setDisplayText(formatted);
+                              onChange(parsed);
+                            } else {
+                              setDisplayText("0");
+                              onChange(0);
+                            }
+                            setIsEditing(false);
+                          }}
+                          keyboardType="numeric"
+                          autoFocus
+                          selectTextOnFocus
+                        />
+                      );
+                    }}
+                  />
+                ) : (
+                  <Pressable onPress={handleDirectEdit}>
+                    <Text
+                      className="text-5xl font-bold text-center"
+                      style={{ color: metric.colour }}
+                    >
+                      {formatValue(currentValue)}
+                    </Text>
+                  </Pressable>
+                )}
+                {metric.unit && (
+                  <Text className="text-xl text-gray-500 mt-2">
+                    {metric.unit}
+                  </Text>
+                )}
+              </View>
+
+              {/* Increment/Decrement Controls */}
+              <View className="flex-row items-center justify-center gap-8">
+                <TouchableOpacity
+                  onPress={handleDecrement}
+                  className="w-16 h-16 rounded-full items-center justify-center"
+                  style={{
+                    backgroundColor: color(metric.colour)
+                      .mix(color("white"), 0.8)
+                      .hex(),
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <MinusIcon size={24} color={metric.colour} />
+                </TouchableOpacity>
+
+                <View className="items-center">
+                  <Text className="text-sm text-gray-500">
+                    ±{formatValue(increment)}
+                  </Text>
+                </View>
+
+                <TouchableOpacity
+                  onPress={handleIncrement}
+                  className="w-16 h-16 rounded-full items-center justify-center"
+                  style={{
+                    backgroundColor: color(metric.colour)
+                      .mix(color("white"), 0.8)
+                      .hex(),
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <PlusIcon size={24} color={metric.colour} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+
+          {/* Note Field */}
+          <View className="mb-6">
+            <Text className="text-sm font-medium text-gray-700 mb-2">
+              Note (optional)
+            </Text>
+            <Controller
+              control={control}
+              name="note"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  className="border border-gray-300 rounded-md p-3 text-base min-h-[80px]"
+                  placeholder="Add a note..."
+                  multiline
+                  textAlignVertical="top"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  autoComplete="off"
+                />
+              )}
+            />
+          </View>
+
+          {/* Submit Button */}
+          <TouchableOpacity
+            onPress={handleSubmit(handleCreateEntry)}
+            disabled={isSubmitting}
+            className={`rounded-md p-4 flex-row justify-center items-center mb-8 ${
+              isSubmitting ? "bg-gray-300" : ""
+            }`}
+            style={{
+              backgroundColor: isSubmitting ? "#D1D5DB" : metric.colour,
+            }}
+          >
+            <Feather
+              name="check"
+              size={20}
+              color={isSubmitting ? "#9CA3AF" : "white"}
+            />
+            <Text
+              className={`font-medium ml-2 ${
+                isSubmitting ? "text-gray-500" : "text-white"
+              }`}
+            >
+              {isSubmitting ? "Adding..." : "Add Entry"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+}
