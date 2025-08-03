@@ -159,7 +159,7 @@ export default function EditHabitPage() {
       <View className="py-4 flex-grow">
         {/* Header */}
         <View className="px-4 pt-2 flex flex-row items-center justify-between">
-          <View />
+          <View className="w-6" />
           <Text className="text-lg font-semibold text-gray-900">
             Edit habit
           </Text>

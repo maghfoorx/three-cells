@@ -146,29 +146,25 @@ export default function SingleTaskPage() {
     <SafeAreaView className="flex-1 bg-gray-50">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
+        className="flex-1 py-4"
       >
         {/* Header */}
-        <View className="px-6 py-4 bg-white border-b border-gray-100 flex-row items-center justify-between">
-          <View className="flex-row items-center gap-2">
-            <Text className="text-lg font-semibold text-gray-900">
-              {isEditing ? "Edit Task" : "Task Details"}
-            </Text>
+        <View className="px-4 pt-2 flex flex-row items-center justify-between">
+          {!isEditing ? (
+            <View className="flex-row items-center gap-1">
+              <Pressable onPress={() => setIsEditing(true)} className="p-2">
+                <PencilIcon size={20} color="#374151" />
+              </Pressable>
+            </View>
+          ) : (
+            <View className="w-6" />
+          )}
 
-            {!isEditing && (
-              <View className="flex-row items-center">
-                <Pressable onPress={() => setIsEditing(true)} className="p-2">
-                  <PencilIcon size={20} color="#6B7280" />
-                </Pressable>
-                <Pressable onPress={handleDelete} className="p-2">
-                  <TrashIcon size={20} color="#EF4444" />
-                </Pressable>
-              </View>
-            )}
-          </View>
-
-          <Pressable onPress={() => router.back()} className="p-2">
-            <XMarkIcon size={24} color="#6B7280" />
+          <Text className="text-lg font-semibold text-gray-900">
+            {isEditing ? "Edit Task" : "Task Details"}
+          </Text>
+          <Pressable onPress={router.back}>
+            <XMarkIcon size={24} color="#374151" />
           </Pressable>
         </View>
 
@@ -275,6 +271,17 @@ export default function SingleTaskPage() {
                   )}
                 </View>
               </View>
+
+              {/* Delete Button */}
+              <TouchableOpacity
+                onPress={handleDelete}
+                className="mt-4 bg-red-50 border border-red-200 rounded-md p-4 flex-row justify-center items-center"
+              >
+                <TrashIcon size={20} color="#EF4444" />
+                <Text className="text-red-600 font-medium ml-2">
+                  Delete task
+                </Text>
+              </TouchableOpacity>
             </>
           ) : (
             // Edit Mode

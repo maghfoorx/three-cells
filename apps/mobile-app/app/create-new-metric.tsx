@@ -103,121 +103,130 @@ export default function CreateNewMetricPage() {
 
   return (
     <SafeAreaView className="flex-1" style={{ backgroundColor: pageColour }}>
-      <View className="px-6 py-4 flex flex-row items-center justify-end">
-        <Pressable onPress={router.back}>
-          <XMarkIcon size={20} />
-        </Pressable>
-      </View>
+      <View className="py-4 flex-grow">
+        <View className="px-4 pt-2 flex flex-row items-center justify-between">
+          <View className="w-6" />
+          <Text className="text-xl font-semibold text-gray-900">
+            New metric
+          </Text>
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          className="px-6"
+          <Pressable onPress={router.back}>
+            <XMarkIcon size={24} color="#374151" />
+          </Pressable>
+        </View>
+
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 40 }}
+          className="mt-4"
         >
-          <Text className="text-xl font-semibold text-gray-900 mb-2">
-            New Metric
-          </Text>
-          <Text className="text-gray-600 mb-6">
-            Use this form to create a new metric you want to track daily.
-          </Text>
-
-          {/* Name */}
-          <View className="mb-4">
-            <Text className="text-sm font-medium text-gray-700 mb-2">
-              Name*
-            </Text>
-            <Controller
-              control={control}
-              name="name"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  className="border bg-white border-gray-300 rounded-md p-3 text-base"
-                  placeholder="e.g. Weight, Focus Hours"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                />
-              )}
-            />
-            {errors.name && (
-              <Text className="text-red-500 text-sm mt-1">
-                {errors.name.message}
-              </Text>
-            )}
-          </View>
-
-          {/* Unit */}
-          <View className="mb-4">
-            <Text className="text-sm font-medium text-gray-700 mb-2">Unit</Text>
-            <Controller
-              control={control}
-              name="unit"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  className="border bg-white border-gray-300 rounded-md p-3 text-base"
-                  placeholder="e.g. kg, hours, words"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                />
-              )}
-            />
-          </View>
-
-          {/* Increment */}
-          <View className="mb-4">
-            <Text className="text-sm font-medium text-gray-700 mb-2">
-              Increment
-            </Text>
-            <Controller
-              control={control}
-              name="increment"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  keyboardType="numeric"
-                  className="border bg-white border-gray-300 rounded-md p-3 text-base"
-                  placeholder="e.g. 1 or 0.1"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                />
-              )}
-            />
-          </View>
-
-          {/* Colour Selection */}
-          <View className="mb-6">
-            <Text className="text-sm font-medium text-gray-700 mb-2">
-              Colour*
-            </Text>
-            <View className="flex-row flex-wrap gap-2">
-              {colourOptions.map((c) => (
-                <TouchableOpacity
-                  key={c}
-                  onPress={() => setValue("colour", c)}
-                  className={clsx("h-10 w-10 rounded-md border-2", {
-                    "border-gray-900": c === selectedColour,
-                    "border-gray-300": c !== selectedColour,
-                  })}
-                  style={{ backgroundColor: c }}
-                />
-              ))}
-            </View>
-          </View>
-
-          {/* Submit Button */}
-          <TouchableOpacity
-            onPress={handleSubmit(onSubmit)}
-            disabled={isSubmitting}
-            className={`bg-blue-600 rounded-md p-4 flex-row justify-center items-center ${isSubmitting ? "opacity-50" : ""}`}
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            className="px-6"
           >
-            <Feather name="plus-circle" size={20} color="white" />
-            <Text className="text-white font-medium ml-2">
-              {isSubmitting ? "Creating..." : "Create metric"}
+            <Text className="text-gray-600 mb-6">
+              Use this form to create a new metric you want to track daily.
             </Text>
-          </TouchableOpacity>
-        </KeyboardAvoidingView>
-      </ScrollView>
+
+            {/* Name */}
+            <View className="mb-4">
+              <Text className="text-sm font-medium text-gray-700 mb-2">
+                Name*
+              </Text>
+              <Controller
+                control={control}
+                name="name"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    className="border bg-white border-gray-300 rounded-md p-3 text-base"
+                    placeholder="e.g. Weight, Focus Hours"
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                  />
+                )}
+              />
+              {errors.name && (
+                <Text className="text-red-500 text-sm mt-1">
+                  {errors.name.message}
+                </Text>
+              )}
+            </View>
+
+            {/* Unit */}
+            <View className="mb-4">
+              <Text className="text-sm font-medium text-gray-700 mb-2">
+                Unit
+              </Text>
+              <Controller
+                control={control}
+                name="unit"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    className="border bg-white border-gray-300 rounded-md p-3 text-base"
+                    placeholder="e.g. kg, hours, words"
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                  />
+                )}
+              />
+            </View>
+
+            {/* Increment */}
+            <View className="mb-4">
+              <Text className="text-sm font-medium text-gray-700 mb-2">
+                Increment
+              </Text>
+              <Controller
+                control={control}
+                name="increment"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    keyboardType="numeric"
+                    className="border bg-white border-gray-300 rounded-md p-3 text-base"
+                    placeholder="e.g. 1 or 0.1"
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                  />
+                )}
+              />
+            </View>
+
+            {/* Colour Selection */}
+            <View className="mb-6">
+              <Text className="text-sm font-medium text-gray-700 mb-2">
+                Colour*
+              </Text>
+              <View className="flex-row flex-wrap gap-2">
+                {colourOptions.map((c) => (
+                  <TouchableOpacity
+                    key={c}
+                    onPress={() => setValue("colour", c)}
+                    className={clsx("h-10 w-10 rounded-md border-2", {
+                      "border-gray-900": c === selectedColour,
+                      "border-gray-300": c !== selectedColour,
+                    })}
+                    style={{ backgroundColor: c }}
+                  />
+                ))}
+              </View>
+            </View>
+
+            {/* Submit Button */}
+            <TouchableOpacity
+              onPress={handleSubmit(onSubmit)}
+              disabled={isSubmitting}
+              className={`bg-blue-600 rounded-md p-4 flex-row justify-center items-center ${isSubmitting ? "opacity-50" : ""}`}
+            >
+              <Feather name="plus-circle" size={20} color="white" />
+              <Text className="text-white font-medium ml-2">
+                {isSubmitting ? "Creating..." : "Create metric"}
+              </Text>
+            </TouchableOpacity>
+          </KeyboardAvoidingView>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }

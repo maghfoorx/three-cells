@@ -22,18 +22,19 @@ type SortOption = "latest" | "score";
 export default function TrackLogPage() {
   return (
     <SafeAreaView className="flex-1">
-      <View className="px-6 py-4 flex flex-row items-center justify-end">
-        <View>
+      <View className="py-4 flex-grow">
+        <View className="px-4 pt-2 flex flex-row items-center justify-between">
+          <View className="w-6" />
+          <Text className="text-xl font-semibold text-gray-900">Log</Text>
+
           <Pressable onPress={router.back}>
-            <Text>
-              <XMarkIcon size={20} />
-            </Text>
+            <XMarkIcon size={24} color="#374151" />
           </Pressable>
         </View>
-      </View>
 
-      <View className="flex-1">
-        <ThreeCellLogView />
+        <View className="flex-1 mt-4">
+          <ThreeCellLogView />
+        </View>
       </View>
     </SafeAreaView>
   );

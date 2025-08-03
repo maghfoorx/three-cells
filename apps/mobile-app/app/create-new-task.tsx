@@ -72,97 +72,91 @@ export default function CreateNewTaskPage() {
 
   return (
     <SafeAreaView className="flex-1">
-      <View className="px-6 py-4 flex flex-row items-center justify-end">
-        <View>
+      <View className="py-4 flex-grow">
+        <View className="px-4 pt-2 flex flex-row items-center justify-between">
+          <View className="w-6" />
+          <Text className="text-xl font-semibold text-gray-900">New task</Text>
+
           <Pressable onPress={router.back}>
-            <Text>
-              <XMarkIcon size={20} />
-            </Text>
+            <XMarkIcon size={24} color="#374151" />
           </Pressable>
         </View>
-      </View>
 
-      <View className="flex-1">
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          className=""
-        >
-          <View className="px-6">
-            {/* Header */}
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-xl font-semibold text-gray-900">
-                New task
+        <View className="flex-1 mt-4">
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            className=""
+          >
+            <View className="px-6">
+              <Text className="text-gray-600 mb-6">
+                Use this form to create a new task
               </Text>
-            </View>
 
-            <Text className="text-gray-600 mb-6">
-              Use this form to create a new task
-            </Text>
-
-            {/* Title Field */}
-            <View className="mb-4">
-              <Text className="text-sm font-medium text-gray-700 mb-2">
-                Task*
-              </Text>
-              <Controller
-                control={control}
-                name="title"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    className="border border-gray-300 rounded-md p-3 text-base min-h-[80px]"
-                    placeholder="What's there to do?"
-                    multiline
-                    textAlignVertical="top"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    autoComplete="off"
-                  />
-                )}
-              />
-              {errors.title && (
-                <Text className="text-red-500 text-sm mt-1">
-                  {errors.title.message}
+              {/* Title Field */}
+              <View className="mb-4">
+                <Text className="text-sm font-medium text-gray-700 mb-2">
+                  Task*
                 </Text>
-              )}
-            </View>
-
-            {/* Description Field */}
-            <View className="mb-6">
-              <Text className="text-sm font-medium text-gray-700 mb-2">
-                Description
-              </Text>
-              <Controller
-                control={control}
-                name="description"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    className="border border-gray-300 rounded-md p-3 text-base min-h-[120px]"
-                    placeholder="Any extra info..."
-                    multiline
-                    textAlignVertical="top"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    autoComplete="off"
-                  />
+                <Controller
+                  control={control}
+                  name="title"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      className="border border-gray-300 rounded-md p-3 text-base min-h-[80px]"
+                      placeholder="What's there to do?"
+                      multiline
+                      textAlignVertical="top"
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      autoComplete="off"
+                    />
+                  )}
+                />
+                {errors.title && (
+                  <Text className="text-red-500 text-sm mt-1">
+                    {errors.title.message}
+                  </Text>
                 )}
-              />
-            </View>
+              </View>
 
-            {/* Submit Button */}
-            <TouchableOpacity
-              onPress={handleSubmit(handleCreateNewTask)}
-              disabled={isSubmitting}
-              className={`bg-blue-600 rounded-md p-4 flex-row justify-center items-center ${isSubmitting ? "opacity-50" : ""}`}
-            >
-              <Feather name="clipboard" size={20} color="white" />
-              <Text className="text-white font-medium ml-2">
-                {isSubmitting ? "Adding..." : "Add Task"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </KeyboardAvoidingView>
+              {/* Description Field */}
+              <View className="mb-6">
+                <Text className="text-sm font-medium text-gray-700 mb-2">
+                  Description
+                </Text>
+                <Controller
+                  control={control}
+                  name="description"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      className="border border-gray-300 rounded-md p-3 text-base min-h-[120px]"
+                      placeholder="Any extra info..."
+                      multiline
+                      textAlignVertical="top"
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      autoComplete="off"
+                    />
+                  )}
+                />
+              </View>
+
+              {/* Submit Button */}
+              <TouchableOpacity
+                onPress={handleSubmit(handleCreateNewTask)}
+                disabled={isSubmitting}
+                className={`bg-blue-600 rounded-md p-4 flex-row justify-center items-center ${isSubmitting ? "opacity-50" : ""}`}
+              >
+                <Feather name="clipboard" size={20} color="white" />
+                <Text className="text-white font-medium ml-2">
+                  {isSubmitting ? "Adding..." : "Add Task"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
       </View>
     </SafeAreaView>
   );

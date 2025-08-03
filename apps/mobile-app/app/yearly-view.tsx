@@ -16,26 +16,27 @@ export default function CalendarViewPage() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <SafeAreaView className="flex-1 px-6">
-      <View className="py-4 flex flex-row items-center justify-between">
-        <View className="flex flex-row items-left gap-2">
-          <View className="bg-green-300 px-2 py-1 rounded-sm flex flex-row gap-1 items-center">
-            <CalendarIcon size={20} />
-            <Text className="font-semibold text-gray-800">{currentYear}</Text>
+    <SafeAreaView className="flex-1">
+      <View className="py-4 flex-grow">
+        <View className="px-4 pt-2 flex flex-row items-center justify-between">
+          <View className="flex flex-row items-left gap-2">
+            <View className="flex flex-row gap-1 items-center">
+              <CalendarIcon size={24} color="#374151" />
+              <Text className="font-semibold text-gray-800">{currentYear}</Text>
+            </View>
           </View>
-        </View>
+          <Text className="text-xl font-semibold text-gray-900">
+            Yearly view
+          </Text>
 
-        <View>
           <Pressable onPress={router.back}>
-            <Text>
-              <XMarkIcon size={20} />
-            </Text>
+            <XMarkIcon size={24} color="#374151" />
           </Pressable>
         </View>
-      </View>
 
-      <View>
-        <CalendarView allThreeCellEntries={allThreeCellEntries} />
+        <View className="mt-4 px-4">
+          <CalendarView allThreeCellEntries={allThreeCellEntries} />
+        </View>
       </View>
     </SafeAreaView>
   );

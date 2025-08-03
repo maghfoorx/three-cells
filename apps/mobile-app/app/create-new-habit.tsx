@@ -110,114 +110,111 @@ export default function CreateNewHabitPage() {
         backgroundColor: pageColour,
       }}
     >
-      <View className="px-6 py-4 flex flex-row items-center justify-end">
-        <View>
+      <View className="py-4 flex-grow">
+        <View className="px-4 pt-2 flex flex-row items-center justify-between">
+          <View className="w-6" />
+          <Text className="text-xl font-semibold text-gray-900">New habit</Text>
+
           <Pressable onPress={router.back}>
-            <XMarkIcon size={20} />
+            <XMarkIcon size={24} color="#374151" />
           </Pressable>
         </View>
-      </View>
 
-      <View className="flex-1">
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          className=""
-        >
-          <View className="px-6">
-            {/* Header */}
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-xl font-semibold text-gray-900">
-                New habit
+        <View className="flex-1 mt-4">
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            className=""
+          >
+            <View className="px-6">
+              {/* Header */}
+
+              <Text className="text-gray-600 mb-6">
+                Use this form to create a new habit
               </Text>
-            </View>
 
-            <Text className="text-gray-600 mb-6">
-              Use this form to create a new habit
-            </Text>
-
-            {/* Name Field */}
-            <View className="mb-4">
-              <Text className="text-sm font-medium text-gray-700 mb-2">
-                Name*
-              </Text>
-              <Controller
-                control={control}
-                name="name"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    className="border bg-white border-gray-300 rounded-md p-3 text-base"
-                    placeholder="Workout"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    autoComplete="off"
-                  />
-                )}
-              />
-              {errors.name && (
-                <Text className="text-red-500 text-sm mt-1">
-                  {errors.name.message}
+              {/* Name Field */}
+              <View className="mb-4">
+                <Text className="text-sm font-medium text-gray-700 mb-2">
+                  Name*
                 </Text>
-              )}
-            </View>
-
-            {/* Colour Field */}
-            <View className="mb-4">
-              <Text className="text-sm font-medium text-gray-700 mb-2">
-                Colour*
-              </Text>
-              <View className="flex-row flex-wrap gap-2">
-                {habitsFormColourOptions.map((habitColour) => (
-                  <TouchableOpacity
-                    key={habitColour}
-                    onPress={() => setValue("colour", habitColour)}
-                    className={clsx("h-10 w-10 rounded-md border-2", {
-                      "border-gray-900": habitColour === selectedColour,
-                      "border-gray-300": habitColour !== selectedColour,
-                    })}
-                    style={{
-                      backgroundColor: habitColour,
-                    }}
-                  />
-                ))}
+                <Controller
+                  control={control}
+                  name="name"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      className="border bg-white border-gray-300 rounded-md p-3 text-base"
+                      placeholder="Workout"
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      autoComplete="off"
+                    />
+                  )}
+                />
+                {errors.name && (
+                  <Text className="text-red-500 text-sm mt-1">
+                    {errors.name.message}
+                  </Text>
+                )}
               </View>
-              {errors.colour && (
-                <Text className="text-red-500 text-sm mt-1">
-                  {errors.colour.message}
-                </Text>
-              )}
-            </View>
 
-            {/* Question Field */}
-            <View className="mb-4">
-              <Text className="text-sm font-medium text-gray-700 mb-2">
-                Question*
-              </Text>
-              <Controller
-                control={control}
-                name="habitQuestion"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    className="border bg-white border-gray-300 rounded-md p-3 text-base min-h-[80px]"
-                    placeholder="e.g. Did you workout today?"
-                    multiline
-                    textAlignVertical="top"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    autoComplete="off"
-                  />
+              {/* Colour Field */}
+              <View className="mb-4">
+                <Text className="text-sm font-medium text-gray-700 mb-2">
+                  Colour*
+                </Text>
+                <View className="flex-row flex-wrap gap-2">
+                  {habitsFormColourOptions.map((habitColour) => (
+                    <TouchableOpacity
+                      key={habitColour}
+                      onPress={() => setValue("colour", habitColour)}
+                      className={clsx("h-10 w-10 rounded-md border-2", {
+                        "border-gray-900": habitColour === selectedColour,
+                        "border-gray-300": habitColour !== selectedColour,
+                      })}
+                      style={{
+                        backgroundColor: habitColour,
+                      }}
+                    />
+                  ))}
+                </View>
+                {errors.colour && (
+                  <Text className="text-red-500 text-sm mt-1">
+                    {errors.colour.message}
+                  </Text>
                 )}
-              />
-              {errors.habitQuestion && (
-                <Text className="text-red-500 text-sm mt-1">
-                  {errors.habitQuestion.message}
-                </Text>
-              )}
-            </View>
+              </View>
 
-            {/* Habit Type Section */}
-            {/* <View className="mb-6">
+              {/* Question Field */}
+              <View className="mb-4">
+                <Text className="text-sm font-medium text-gray-700 mb-2">
+                  Question*
+                </Text>
+                <Controller
+                  control={control}
+                  name="habitQuestion"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      className="border bg-white border-gray-300 rounded-md p-3 text-base min-h-[80px]"
+                      placeholder="e.g. Did you workout today?"
+                      multiline
+                      textAlignVertical="top"
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      autoComplete="off"
+                    />
+                  )}
+                />
+                {errors.habitQuestion && (
+                  <Text className="text-red-500 text-sm mt-1">
+                    {errors.habitQuestion.message}
+                  </Text>
+                )}
+              </View>
+
+              {/* Habit Type Section */}
+              {/* <View className="mb-6">
               <Text className="text-sm font-medium text-gray-700 mb-2">
                 Habit type*
               </Text>
@@ -232,19 +229,20 @@ export default function CreateNewHabitPage() {
               </Text>
             </View> */}
 
-            {/* Submit Button */}
-            <TouchableOpacity
-              onPress={handleSubmit(handleCreateNewHabit)}
-              disabled={isSubmitting}
-              className={`bg-blue-600 rounded-md p-4 flex-row justify-center items-center ${isSubmitting ? "opacity-50" : ""}`}
-            >
-              <Feather name="plus-circle" size={20} color="white" />
-              <Text className="text-white font-medium ml-2">
-                {isSubmitting ? "Creating..." : "Create habit"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </KeyboardAvoidingView>
+              {/* Submit Button */}
+              <TouchableOpacity
+                onPress={handleSubmit(handleCreateNewHabit)}
+                disabled={isSubmitting}
+                className={`bg-blue-600 rounded-md p-4 flex-row justify-center items-center ${isSubmitting ? "opacity-50" : ""}`}
+              >
+                <Feather name="plus-circle" size={20} color="white" />
+                <Text className="text-white font-medium ml-2">
+                  {isSubmitting ? "Creating..." : "Create habit"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
       </View>
     </SafeAreaView>
   );
