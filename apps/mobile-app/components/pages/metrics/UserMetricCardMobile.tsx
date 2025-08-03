@@ -227,7 +227,7 @@ export function UserMetricCardMobile({
 
   return (
     <View
-      className="rounded-xl p-5 border border-gray-200"
+      className="rounded-md p-5 border border-gray-200"
       style={{
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
@@ -300,7 +300,7 @@ export function UserMetricCardMobile({
 // Skeleton component
 UserMetricCardMobile.Skeleton = (() => {
   return (
-    <View className="bg-white rounded-xl p-5 border border-gray-100">
+    <View className="bg-white rounded-md p-5 border border-gray-100">
       <View className="flex flex-row items-center gap-3 mb-4">
         <View className="w-3 h-3 rounded-full bg-gray-300" />
         <View className="flex-1">
@@ -310,7 +310,7 @@ UserMetricCardMobile.Skeleton = (() => {
         <View className="w-8 h-8 bg-gray-300 rounded-md" />
       </View>
 
-      <View className="h-32 mb-3 bg-gray-100 rounded-lg" />
+      <View className="h-32 mb-3 bg-gray-100 rounded-md" />
 
       <View className="flex flex-row justify-between items-center pt-3 border-t border-gray-100">
         <View className="h-4 w-16 bg-gray-300 rounded" />
