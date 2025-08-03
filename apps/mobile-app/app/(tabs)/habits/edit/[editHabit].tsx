@@ -156,187 +156,188 @@ export default function EditHabitPage() {
         backgroundColor: pageColour,
       }}
     >
-      {/* Header */}
-      <View className="px-6 py-4 flex flex-row items-center justify-between">
-        <View className="flex-row items-center">
-          <Text className="text-2xl font-semibold text-gray-900">
-            Edit Habit
+      <View className="py-4 flex-grow">
+        {/* Header */}
+        <View className="px-4 pt-2 flex flex-row items-center justify-between">
+          <View />
+          <Text className="text-lg font-semibold text-gray-900">
+            Edit habit
           </Text>
+          <Pressable onPress={router.back} className="">
+            <XMarkIcon size={24} color="#374151" />
+          </Pressable>
         </View>
-        <Pressable onPress={router.back} className="">
-          <XMarkIcon size={24} color="#374151" />
-        </Pressable>
-      </View>
 
-      <ScrollView
-        className="flex-1"
-        contentContainerStyle={{ paddingBottom: 32 }}
-      >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          className=""
+        <ScrollView
+          className="flex-1 mt-4"
+          contentContainerStyle={{ paddingBottom: 32 }}
         >
-          <View className="px-6">
-            <Text className="text-gray-600 mb-6">
-              Update your habit details
-            </Text>
-
-            {/* Name Field */}
-            <View className="mb-4">
-              <Text className="text-sm font-medium text-gray-700 mb-2">
-                Name*
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            className=""
+          >
+            <View className="px-6">
+              <Text className="text-gray-600 mb-6">
+                Update your habit details
               </Text>
-              <Controller
-                control={control}
-                name="name"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    className="border bg-white border-gray-300 rounded-md p-3 text-base"
-                    placeholder="Workout"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    autoComplete="off"
-                    keyboardType="default"
-                  />
-                )}
-              />
-              {errors.name && (
-                <Text className="text-red-500 text-sm mt-1">
-                  {errors.name.message}
-                </Text>
-              )}
-            </View>
 
-            {/* Colour Field */}
-            <View className="mb-4">
-              <Text className="text-sm font-medium text-gray-700 mb-2">
-                Colour*
-              </Text>
-              <View className="flex-row flex-wrap gap-2">
-                {habitsFormColourOptions.map((habitColour) => (
-                  <TouchableOpacity
-                    key={habitColour}
-                    onPress={() => setValue("colour", habitColour)}
-                    className={clsx("h-10 w-10 rounded-md border-2", {
-                      "border-gray-900": habitColour === selectedColour,
-                      "border-gray-300": habitColour !== selectedColour,
-                    })}
-                    style={{
-                      backgroundColor: habitColour,
-                    }}
-                  />
-                ))}
-              </View>
-              {errors.colour && (
-                <Text className="text-red-500 text-sm mt-1">
-                  {errors.colour.message}
+              {/* Name Field */}
+              <View className="mb-4">
+                <Text className="text-sm font-medium text-gray-700 mb-2">
+                  Name*
                 </Text>
-              )}
-            </View>
-
-            {/* Question Field */}
-            <View className="mb-6">
-              <Text className="text-sm font-medium text-gray-700 mb-2">
-                Question*
-              </Text>
-              <Controller
-                control={control}
-                name="habitQuestion"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    className="border bg-white border-gray-300 rounded-md p-3 text-base min-h-[80px]"
-                    placeholder="e.g. Did you workout today?"
-                    multiline
-                    textAlignVertical="top"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    autoComplete="off"
-                    keyboardType="default"
-                  />
-                )}
-              />
-              {errors.habitQuestion && (
-                <Text className="text-red-500 text-sm mt-1">
-                  {errors.habitQuestion.message}
-                </Text>
-              )}
-            </View>
-
-            {/* Current Habit Info */}
-            <View className="mb-6 bg-white/50 rounded-md p-4 border border-gray-200">
-              <Text className="text-sm font-medium text-gray-700 mb-2">
-                Current Habit Info
-              </Text>
-              <View className="space-y-1">
-                <Text className="text-sm text-gray-600">
-                  <Text className="font-medium">Type:</Text>{" "}
-                  {singleHabitData.type === "yes_no"
-                    ? "Yes/No"
-                    : singleHabitData.type}
-                </Text>
-                <Text className="text-sm text-gray-600">
-                  <Text className="font-medium">Frequency:</Text>{" "}
-                  {singleHabitData.frequency.mode}
-                </Text>
-                {singleHabitData.updatedAt && (
-                  <Text className="text-sm text-gray-600">
-                    <Text className="font-medium">Last updated:</Text>{" "}
-                    {new Date(singleHabitData.updatedAt).toLocaleDateString()}
+                <Controller
+                  control={control}
+                  name="name"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      className="border bg-white border-gray-300 rounded-md p-3 text-base"
+                      placeholder="Workout"
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      autoComplete="off"
+                      keyboardType="default"
+                    />
+                  )}
+                />
+                {errors.name && (
+                  <Text className="text-red-500 text-sm mt-1">
+                    {errors.name.message}
                   </Text>
                 )}
               </View>
-            </View>
 
-            {/* Action Buttons */}
-            <View className="flex-row gap-3 mb-4">
-              <TouchableOpacity
-                onPress={router.back}
-                className="flex-1 bg-gray-100 rounded-md p-4 items-center justify-center"
-              >
-                <Text className="text-gray-700 font-medium">Cancel</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={handleSubmit(handleUpdateHabit)}
-                disabled={isSubmitting}
-                className={clsx(
-                  "flex-1 bg-blue-600 rounded-md p-4 flex-row justify-center items-center",
-                  isSubmitting ? "opacity-50" : "",
+              {/* Colour Field */}
+              <View className="mb-4">
+                <Text className="text-sm font-medium text-gray-700 mb-2">
+                  Colour*
+                </Text>
+                <View className="flex-row flex-wrap gap-2">
+                  {habitsFormColourOptions.map((habitColour) => (
+                    <TouchableOpacity
+                      key={habitColour}
+                      onPress={() => setValue("colour", habitColour)}
+                      className={clsx("h-10 w-10 rounded-md border-2", {
+                        "border-gray-900": habitColour === selectedColour,
+                        "border-gray-300": habitColour !== selectedColour,
+                      })}
+                      style={{
+                        backgroundColor: habitColour,
+                      }}
+                    />
+                  ))}
+                </View>
+                {errors.colour && (
+                  <Text className="text-red-500 text-sm mt-1">
+                    {errors.colour.message}
+                  </Text>
                 )}
-              >
-                {isSubmitting ? (
-                  <>
-                    <ActivityIndicator size="small" color="white" />
-                    <Text className="text-white font-medium ml-2">
-                      Updating...
-                    </Text>
-                  </>
-                ) : (
-                  <>
-                    <Feather name="check" size={20} color="white" />
-                    <Text className="text-white font-medium ml-2">
-                      Update Habit
-                    </Text>
-                  </>
+              </View>
+
+              {/* Question Field */}
+              <View className="mb-6">
+                <Text className="text-sm font-medium text-gray-700 mb-2">
+                  Question*
+                </Text>
+                <Controller
+                  control={control}
+                  name="habitQuestion"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      className="border bg-white border-gray-300 rounded-md p-3 text-base min-h-[80px]"
+                      placeholder="e.g. Did you workout today?"
+                      multiline
+                      textAlignVertical="top"
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      autoComplete="off"
+                      keyboardType="default"
+                    />
+                  )}
+                />
+                {errors.habitQuestion && (
+                  <Text className="text-red-500 text-sm mt-1">
+                    {errors.habitQuestion.message}
+                  </Text>
                 )}
+              </View>
+
+              {/* Current Habit Info */}
+              <View className="mb-6 bg-white/50 rounded-md p-4 border border-gray-200">
+                <Text className="text-sm font-medium text-gray-700 mb-2">
+                  Current habit info
+                </Text>
+                <View className="space-y-1">
+                  <Text className="text-sm text-gray-600">
+                    <Text className="font-medium">Type:</Text>{" "}
+                    {singleHabitData.type === "yes_no"
+                      ? "Yes/No"
+                      : singleHabitData.type}
+                  </Text>
+                  <Text className="text-sm text-gray-600">
+                    <Text className="font-medium">Frequency:</Text>{" "}
+                    {singleHabitData.frequency.mode}
+                  </Text>
+                  {singleHabitData.updatedAt && (
+                    <Text className="text-sm text-gray-600">
+                      <Text className="font-medium">Last updated:</Text>{" "}
+                      {new Date(singleHabitData.updatedAt).toLocaleDateString()}
+                    </Text>
+                  )}
+                </View>
+              </View>
+
+              {/* Action Buttons */}
+              <View className="flex-row gap-3 mb-4">
+                <TouchableOpacity
+                  onPress={router.back}
+                  className="flex-1 bg-gray-100 rounded-md p-4 items-center justify-center"
+                >
+                  <Text className="text-gray-700 font-medium">Cancel</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={handleSubmit(handleUpdateHabit)}
+                  disabled={isSubmitting}
+                  className={clsx(
+                    "flex-1 bg-blue-600 rounded-md p-4 flex-row justify-center items-center",
+                    isSubmitting ? "opacity-50" : "",
+                  )}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <ActivityIndicator size="small" color="white" />
+                      <Text className="text-white font-medium ml-2">
+                        Updating...
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <Feather name="check" size={20} color="white" />
+                      <Text className="text-white font-medium ml-2">
+                        Update Habit
+                      </Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+              </View>
+
+              {/* Delete Button */}
+              <TouchableOpacity
+                onPress={handleDeleteHabit}
+                className="bg-red-50 border border-red-200 rounded-md p-4 flex-row justify-center items-center"
+              >
+                <TrashIcon size={20} color="#EF4444" />
+                <Text className="text-red-600 font-medium ml-2">
+                  Delete Habit
+                </Text>
               </TouchableOpacity>
             </View>
-
-            {/* Delete Button */}
-            <TouchableOpacity
-              onPress={handleDeleteHabit}
-              className="bg-red-50 border border-red-200 rounded-md p-4 flex-row justify-center items-center"
-            >
-              <TrashIcon size={20} color="#EF4444" />
-              <Text className="text-red-600 font-medium ml-2">
-                Delete Habit
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </KeyboardAvoidingView>
-      </ScrollView>
+          </KeyboardAvoidingView>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
