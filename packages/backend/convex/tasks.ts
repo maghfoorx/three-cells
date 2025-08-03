@@ -17,8 +17,26 @@ export const getAllUserTasks = query({
       .collect();
 
     return tasks.sort(
-      (a, b) => Number(a.is_completed) - Number(b.is_completed)
+      (a, b) => Number(a.is_completed) - Number(b.is_completed),
     );
+  },
+});
+
+export const getSingleTask = query({
+  args: { id: v.id("user_tasks") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new ConvexError("You must be logged in to view tasks.");
+    }
+
+    const task = await ctx.db
+      .query("user_tasks")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .filter((q) => q.eq(q.field("_id"), args.id))
+      .unique();
+
+    return task;
   },
 });
 
@@ -99,5 +117,35 @@ export const updateTaskTitle = mutation({
 
     await ctx.db.patch(args.taskId, { title: args.title });
     return { ...task, title: args.title };
+  },
+});
+
+export const updateTask = mutation({
+  args: {
+    id: v.id("user_tasks"),
+    title: v.string(),
+    description: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) throw new ConvexError("Not authenticated");
+
+    const task = await ctx.db.get(args.id);
+    if (!task || task.userId !== userId) {
+      throw new ConvexError("Task not found or unauthorized");
+    }
+
+    await ctx.db.patch(args.id, {
+      title: args.title,
+      description: args.description,
+      updated_at: Date.now(),
+    });
+
+    return {
+      ...task,
+      title: args.title,
+      description: args.description,
+      updated_at: Date.now(),
+    };
   },
 });

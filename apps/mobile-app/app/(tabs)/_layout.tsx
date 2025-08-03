@@ -1,18 +1,5 @@
 import { Tabs } from "expo-router";
-import { AntDesign, Feather, FontAwesome } from "@expo/vector-icons";
-import {
-  CheckBadgeIcon as CheckBadgeIconSolid,
-  UserCircleIcon as UserCircleIconSolid,
-  ChartBarIcon as ChartBarIconSolid,
-  PaintBrushIcon as PaintBrushSolid,
-} from "react-native-heroicons/solid";
-import {
-  CheckBadgeIcon,
-  UserCircleIcon,
-  ChartBarIcon,
-  PencilIcon,
-  LightBulbIcon,
-} from "react-native-heroicons/outline";
+import { AntDesign, Feather } from "@expo/vector-icons";
 
 export default function TabLayout() {
   return (

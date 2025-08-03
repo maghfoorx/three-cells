@@ -13,6 +13,7 @@ import { useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import UserTaskTileTrigger from "./UserTaskTriggerMobile";
 import { Feather } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 const UserTaskTile = ({
   userTask,
@@ -48,9 +49,13 @@ const UserTaskTile = ({
     }
   };
 
+  const handleTaskTileClicked = () => {
+    router.navigate(`/tasks/${userTask._id}`);
+  };
+
   return (
     <View className="w-full">
-      <TouchableOpacity onPress={() => setDialogOpen(true)} activeOpacity={0.7}>
+      <TouchableOpacity onPress={handleTaskTileClicked} activeOpacity={0.7}>
         <UserTaskTileTrigger
           userTask={userTask}
           recentlyCompleted={recentlyCompleted}
@@ -68,7 +73,7 @@ const UserTaskTile = ({
           onPress={() => setDialogOpen(false)}
         >
           <Pressable
-            className="bg-white rounded-3xl p-8 w-full max-w-md"
+            className="bg-white rounded-md p-8 w-full max-w-md"
             onPress={(e) => e.stopPropagation()}
             style={{
               shadowColor: "#000",
@@ -85,7 +90,7 @@ const UserTaskTile = ({
               </Text>
               <TouchableOpacity
                 onPress={() => setDialogOpen(false)}
-                className="w-8 h-8 rounded-full bg-gray-100 justify-center items-center"
+                className="w-8 h-8 rounded-full justify-center items-center"
               >
                 <Feather name="x" size={18} color="#6B7280" />
               </TouchableOpacity>
