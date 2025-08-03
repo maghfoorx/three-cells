@@ -66,6 +66,22 @@ export const createNewUserHabit = mutation({
   },
 });
 
+export const getSingleHabit = query({
+  args: {
+    id: v.id("userHabits"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) {
+      throw new ConvexError("You must be logged in to view habits");
+    }
+
+    const habit = await ctx.db.get(args.id);
+
+    return habit;
+  },
+});
+
 export const getSubmissionsForHabit = query({
   args: {
     habitId: v.id("userHabits"),
@@ -89,7 +105,7 @@ export const getSubmissionsForHabit = query({
           .eq("userId", userId)
           .eq("habitId", args.habitId)
           .gte("dateFor", args.start)
-          .lte("dateFor", args.end)
+          .lte("dateFor", args.end),
       )
       .collect();
 
@@ -104,12 +120,12 @@ export const getSubmissionsForHabit = query({
           .eq("userId", userId)
           .eq("habitId", args.habitId)
           .gte("dateFor", monthStartStr)
-          .lte("dateFor", todayStr)
+          .lte("dateFor", todayStr),
       )
       .collect();
 
     const submittedDates = currentMonthSubmissions.map((s) =>
-      parseISO(s.dateFor)
+      parseISO(s.dateFor),
     );
 
     const allDaysInMonth = eachDayOfInterval({
@@ -130,7 +146,7 @@ export const getSubmissionsForHabit = query({
     return {
       lastXDaysSubmissions: lastXDaysSubmissions,
       currentMonthPerformancePercentage: Number(
-        currentMonthPerformancePercentage.toFixed(0)
+        currentMonthPerformancePercentage.toFixed(0),
       ),
     };
   },
@@ -151,7 +167,7 @@ export const toggleYesNoHabitSubmission = mutation({
         q
           .eq("userId", userId)
           .eq("habitId", args.habitId)
-          .eq("dateFor", args.dateFor)
+          .eq("dateFor", args.dateFor),
       )
       .unique();
 
@@ -183,19 +199,19 @@ export const bulkCompleteSelectedDates = mutation({
     const existingSubmissions = await ctx.db
       .query("userHabitSubmissions")
       .withIndex("by_user_and_habit", (q) =>
-        q.eq("userId", userId).eq("habitId", args.habitId)
+        q.eq("userId", userId).eq("habitId", args.habitId),
       )
       .collect();
 
     const existingDatesSet = new Set(
-      existingSubmissions.map((submission) => submission.dateFor)
+      existingSubmissions.map((submission) => submission.dateFor),
     );
 
     const now = Date.now();
 
     // Filter only dates that don't already have a submission
     const newDates = args.selectedDates.filter(
-      (date) => !existingDatesSet.has(date)
+      (date) => !existingDatesSet.has(date),
     );
 
     // Insert new submissions for the filtered dates
@@ -207,7 +223,7 @@ export const bulkCompleteSelectedDates = mutation({
         value: true, // Since this is for yes_no habits being "completed"
         submittedAt: now,
         updatedAt: now,
-      })
+      }),
     );
 
     await Promise.all(insertPromises);
@@ -228,7 +244,7 @@ export const bulkUnCompleteSelectedDates = mutation({
     const existingSubmissions = await ctx.db
       .query("userHabitSubmissions")
       .withIndex("by_user_and_habit", (q) =>
-        q.eq("userId", userId).eq("habitId", args.habitId)
+        q.eq("userId", userId).eq("habitId", args.habitId),
       )
       .collect();
 
@@ -243,12 +259,12 @@ export const bulkUnCompleteSelectedDates = mutation({
 
     // Filter to only those selectedDates that have an existing entry
     const datesToDelete = args.selectedDates.filter(
-      (date) => submissionsByDate[date]
+      (date) => submissionsByDate[date],
     );
 
     // Delete each one
     const deletePromises = datesToDelete.map((date) =>
-      ctx.db.delete(submissionsByDate[date]._id)
+      ctx.db.delete(submissionsByDate[date]._id),
     );
 
     await Promise.all(deletePromises);
@@ -276,13 +292,13 @@ export const getAllSubmissionsForHabit = query({
       .unique();
 
     if (!habit) {
-      throw new ConvexError("No habit found with this id");
+      return null;
     }
 
     const allSubmissions = await ctx.db
       .query("userHabitSubmissions")
       .withIndex("by_user_and_habit", (q) =>
-        q.eq("userId", userId).eq("habitId", args.habitId)
+        q.eq("userId", userId).eq("habitId", args.habitId),
       )
       .collect();
 
@@ -334,11 +350,11 @@ function calculateHabitStatistics(submissions: any[]) {
   // Calculate progress percentages
   const weekProgress = Math.min(
     Math.round((thisWeekSubmissions.length / 7) * 100),
-    100
+    100,
   );
   const monthProgress = Math.min(
     Math.round((thisMonthSubmissions.length / 30) * 100),
-    100
+    100,
   );
 
   return {
@@ -365,7 +381,7 @@ function calculateStreaks(submissions: any[]) {
   const sortedSubmissions = [...submissions]
     .filter((s) => s.value === true)
     .sort(
-      (a, b) => new Date(a.dateFor).getTime() - new Date(b.dateFor).getTime()
+      (a, b) => new Date(a.dateFor).getTime() - new Date(b.dateFor).getTime(),
     );
 
   if (!sortedSubmissions.length) return { current: 0, longest: 0 };
@@ -410,7 +426,7 @@ function calculateStreaks(submissions: any[]) {
 function getRecentActivity(submissions: any[]) {
   return [...submissions]
     .sort(
-      (a, b) => new Date(b.dateFor).getTime() - new Date(a.dateFor).getTime()
+      (a, b) => new Date(b.dateFor).getTime() - new Date(a.dateFor).getTime(),
     )
     .slice(0, 7)
     .map((submission) => ({
@@ -420,3 +436,67 @@ function getRecentActivity(submissions: any[]) {
       note: submission.note,
     }));
 }
+
+// Delete habit mutation
+export const deleteHabit = mutation({
+  args: {
+    habitId: v.id("userHabits"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) throw new ConvexError("Not authenticated");
+
+    const habit = await ctx.db.get(args.habitId);
+    if (!habit || habit.userId !== userId) {
+      throw new ConvexError("Habit not found or unauthorized");
+    }
+
+    const submissions = await ctx.db
+      .query("userHabitSubmissions")
+      .withIndex("by_user_and_habit", (q) =>
+        q.eq("userId", userId).eq("habitId", args.habitId),
+      )
+      .collect();
+
+    for (const submission of submissions) {
+      await ctx.db.delete(submission._id);
+    }
+
+    await ctx.db.delete(args.habitId);
+    return habit;
+  },
+});
+
+// Update habit mutation
+export const updateHabit = mutation({
+  args: {
+    habitId: v.id("userHabits"),
+    name: v.string(),
+    colour: v.string(),
+    habitQuestion: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) throw new ConvexError("Not authenticated");
+
+    const habit = await ctx.db.get(args.habitId);
+    if (!habit || habit.userId !== userId) {
+      throw new ConvexError("Habit not found or unauthorized");
+    }
+
+    await ctx.db.patch(args.habitId, {
+      name: args.name,
+      colour: args.colour,
+      habitQuestion: args.habitQuestion,
+      updatedAt: Date.now(),
+    });
+
+    return {
+      ...habit,
+      name: args.name,
+      colour: args.colour,
+      habitQuestion: args.habitQuestion,
+      updatedAt: Date.now(),
+    };
+  },
+});

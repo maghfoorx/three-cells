@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, SafeAreaView, ScrollView, Pressable } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
-import CreateNewHabitDialog from "@/components/CreateNewHabitMobile";
 import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import UserHabitCardMobile from "@/components/UserHabitCardMobile";

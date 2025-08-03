@@ -1,16 +1,14 @@
 import { router } from "expo-router";
 import { XMarkIcon } from "react-native-heroicons/outline";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
-  Modal,
   Alert,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   SafeAreaView,
   Pressable,
 } from "react-native";
@@ -20,7 +18,6 @@ import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import clsx from "clsx";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
