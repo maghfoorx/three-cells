@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { XMarkIcon, MinusIcon, PlusIcon } from "react-native-heroicons/outline";
+import { XMarkIcon } from "react-native-heroicons/outline";
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -71,24 +71,11 @@ export default function AddMetricEntryPage() {
   const increment = metric?.increment || 1;
   const today = format(new Date(), "yyyy-MM-dd");
 
-  // Set initial value from latest entry
   useEffect(() => {
     if (latestEntry?.value !== undefined && latestEntry.value > 0) {
       setValue("value", latestEntry.value);
     }
   }, [latestEntry, setValue]);
-
-  const handleIncrement = () => {
-    const newValue = (currentValue ?? 0) + increment;
-    setValue("value", newValue);
-    Vibration.vibrate(50);
-  };
-
-  const handleDecrement = () => {
-    const newValue = Math.max(0, (currentValue ?? 0) - increment);
-    setValue("value", newValue);
-    Vibration.vibrate(50);
-  };
 
   const handleDirectEdit = () => {
     setIsEditing(true);
@@ -204,7 +191,6 @@ export default function AddMetricEntryPage() {
                               parsed,
                               increment,
                             );
-                            // console.log(rounded, "_IS_THE)ROUNDED_VALUE");
                             setValue("value", parsed);
                             setInputText(parsed.toString());
                           } else {
@@ -223,8 +209,14 @@ export default function AddMetricEntryPage() {
                             keyboardType="decimal-pad"
                             autoFocus
                             selectTextOnFocus
-                            className="text-5xl font-bold text-center min-w-[120px]"
-                            style={{ color: metric.colour }}
+                            className="font-bold text-center"
+                            style={{
+                              color: color(metric.colour)
+                                .mix(color("black"), 0.1)
+                                .hex(),
+                              fontSize: 40,
+                              lineHeight: 48,
+                            }}
                           />
                         );
                       }}
@@ -232,8 +224,14 @@ export default function AddMetricEntryPage() {
                   ) : (
                     <Pressable onPress={handleDirectEdit}>
                       <Text
-                        className="text-5xl font-bold text-center"
-                        style={{ color: metric.colour }}
+                        className="font-bold text-center"
+                        style={{
+                          color: color(metric.colour)
+                            .mix(color("black"), 0.1)
+                            .hex(),
+                          fontSize: 40,
+                          lineHeight: 48,
+                        }}
                       >
                         {currentValue}
                       </Text>
@@ -256,7 +254,7 @@ export default function AddMetricEntryPage() {
             </View>
 
             {/* Note Field */}
-            <View className="mb-6">
+            {/* <View className="mb-6">
               <Text className="text-sm font-medium text-gray-700 mb-2">
                 Note (optional)
               </Text>
@@ -276,7 +274,7 @@ export default function AddMetricEntryPage() {
                   />
                 )}
               />
-            </View>
+            </View> */}
 
             {/* Submit Button */}
             <TouchableOpacity
@@ -292,12 +290,15 @@ export default function AddMetricEntryPage() {
               <Feather
                 name="check"
                 size={20}
-                color={isSubmitting ? "#9CA3AF" : "white"}
+                style={{
+                  color: color(metric.colour).isDark() ? "#FFFF" : "#000",
+                }}
               />
               <Text
-                className={`font-medium ml-2 ${
-                  isSubmitting ? "text-gray-500" : "text-white"
-                }`}
+                className={"font-medium ml-2"}
+                style={{
+                  color: color(metric.colour).isDark() ? "#FFFF" : "#000",
+                }}
               >
                 {isSubmitting ? "Adding..." : "Add Entry"}
               </Text>

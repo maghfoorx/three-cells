@@ -101,7 +101,7 @@ export function UserMetricCardMobile({
                 x={GRAPH_WIDTH / 2}
                 y={GRAPH_HEIGHT / 2 - 20}
                 fontSize="12"
-                fill={metric.colour}
+                fill={color(metric.colour).mix(color("black"), 0.4).hex()}
                 textAnchor="middle"
                 fontWeight="600"
               >
@@ -176,7 +176,7 @@ export function UserMetricCardMobile({
               x={xScale(last7Entries[0].date)}
               y={yScale(last7Entries[0].value) - 12}
               fontSize="10"
-              fill={metric.colour}
+              fill={color(metric.colour).mix(color("black"), 0.4).hex()}
               textAnchor="middle"
               fontWeight="600"
             >
@@ -186,7 +186,7 @@ export function UserMetricCardMobile({
               x={xScale(last7Entries[last7Entries.length - 1].date)}
               y={yScale(last7Entries[last7Entries.length - 1].value) - 12}
               fontSize="10"
-              fill={metric.colour}
+              fill={color(metric.colour).mix(color("black"), 0.4).hex()}
               textAnchor="middle"
               fontWeight="600"
             >
@@ -265,7 +265,10 @@ export function UserMetricCardMobile({
               .hex(),
           }}
         >
-          <PlusIcon size={16} color={metric.colour} />
+          <PlusIcon
+            size={16}
+            color={color(metric.colour).mix(color("black"), 0.3).hex()}
+          />
         </Pressable>
       </View>
 
@@ -293,28 +296,5 @@ export function UserMetricCardMobile({
     </View>
   );
 }
-
-// Skeleton component
-UserMetricCardMobile.Skeleton = () => {
-  return (
-    <View className="bg-white rounded-xl p-5 border border-gray-100">
-      <View className="flex flex-row items-center gap-3 mb-4">
-        <View className="w-3 h-3 rounded-full bg-gray-300" />
-        <View className="flex-1">
-          <View className="h-4 w-24 bg-gray-300 rounded mb-1" />
-          <View className="h-3 w-16 bg-gray-300 rounded" />
-        </View>
-        <View className="w-8 h-8 bg-gray-300 rounded-md" />
-      </View>
-
-      <View className="h-32 mb-3 bg-gray-100 rounded-lg" />
-
-      <View className="flex flex-row justify-between items-center pt-3 border-t border-gray-100">
-        <View className="h-4 w-16 bg-gray-300 rounded" />
-        <View className="h-4 w-20 bg-gray-300 rounded" />
-      </View>
-    </View>
-  );
-};
 
 export default UserMetricCardMobile;
