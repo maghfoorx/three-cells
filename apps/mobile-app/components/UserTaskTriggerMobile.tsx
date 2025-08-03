@@ -102,7 +102,12 @@ const EditableText = ({
         multiline
         autoFocus
         className="text-base font-medium text-gray-900 bg-transparent"
-        style={{ textDecorationLine: completed ? "line-through" : "none" }}
+        style={{
+          textDecorationLine: completed ? "line-through" : "none",
+          lineHeight: 14,
+          paddingVertical: 0, // important
+          marginVertical: 0, // optional
+        }}
       />
     );
   }
@@ -110,8 +115,16 @@ const EditableText = ({
   return (
     <TouchableOpacity onPress={handlePress} disabled={disabled}>
       <Text
-        className={`text-base font-medium ${completed ? "text-gray-500" : "text-gray-900"}`}
-        style={{ textDecorationLine: completed ? "line-through" : "none" }}
+        className={clsx(
+          "text-base font-medium",
+          completed ? "text-gray-500" : "text-gray-900",
+        )}
+        style={{
+          textDecorationLine: completed ? "line-through" : "none",
+          lineHeight: 14,
+          paddingVertical: 0, // important
+          marginVertical: 0, // optional
+        }}
       >
         {value}
       </Text>

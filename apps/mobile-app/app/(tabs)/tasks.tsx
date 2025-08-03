@@ -6,14 +6,15 @@ import {
   ActivityIndicator,
   ScrollView,
   Pressable,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import UserTaskTile from "@/components/UserTaskTileMobile";
-import CreateNewTaskDialog from "@/components/CreateNewTaskMobile";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { ClipboardIcon, PlusIcon } from "react-native-heroicons/outline";
+import { PlusIcon } from "react-native-heroicons/outline";
 
 export default function TasksPage() {
   const userTasks = useQuery(api.tasks.getAllUserTasks);
@@ -52,87 +53,89 @@ export default function TasksPage() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
-      <View className="flex-1">
-        {/* Header */}
-        <View className="px-6 py-4 flex flex-row justify-between items-center">
-          <View>
-            <Text className="text-2xl font-bold text-gray-900">Tasks</Text>
-            <Text className="text-base text-gray-600 mt-1">
-              {pendingTasks.length} pending, {completedTasks.length} completed
-            </Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView className="flex-1 bg-gray-50">
+        <View className="flex-1">
+          {/* Header */}
+          <View className="px-6 py-4 flex flex-row justify-between items-center">
+            <View>
+              <Text className="text-2xl font-bold text-gray-900">Tasks</Text>
+              <Text className="text-base text-gray-600 mt-1">
+                {pendingTasks.length} pending, {completedTasks.length} completed
+              </Text>
+            </View>
+            {/* <CreateNewTaskDialog /> */}
+            <Pressable
+              onPress={() => router.navigate("/create-new-task")}
+              className="w-12 h-12 rounded-md bg-white/80 items-center justify-center"
+              style={{
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 8,
+                elevation: 4,
+              }}
+            >
+              <PlusIcon size={20} color="#6B7280" />
+            </Pressable>
           </View>
-          {/* <CreateNewTaskDialog /> */}
-          <Pressable
-            onPress={() => router.navigate("/create-new-task")}
-            className="w-12 h-12 rounded-md bg-white/80 items-center justify-center"
-            style={{
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.1,
-              shadowRadius: 8,
-              elevation: 4,
-            }}
+
+          <ScrollView
+            className="flex-1"
+            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 32 }}
+            showsVerticalScrollIndicator={false}
           >
-            <PlusIcon size={20} color="#6B7280" />
-          </Pressable>
+            {/* Pending Tasks */}
+            {pendingTasks.length > 0 && (
+              <View className="mt-4">
+                <Text className="font-semibold text-gray-900 mb-4">To do</Text>
+                <View className="gap-3">
+                  {pendingTasks.map((task) => (
+                    <UserTaskTile
+                      key={task._id}
+                      userTask={task}
+                      recentlyCompleted={recentCompletedTaskIds.has(task._id)}
+                    />
+                  ))}
+                </View>
+              </View>
+            )}
+
+            {/* Completed Tasks */}
+            {completedTasks.length > 0 && (
+              <View className="mt-8">
+                <Text className="font-semibold text-gray-900 mb-4">
+                  Completed
+                </Text>
+                <View className="gap-3">
+                  {completedTasks.map((task) => (
+                    <UserTaskTile
+                      key={task._id}
+                      userTask={task}
+                      recentlyCompleted={recentCompletedTaskIds.has(task._id)}
+                    />
+                  ))}
+                </View>
+              </View>
+            )}
+
+            {/* Empty State */}
+            {userTasks.length === 0 && (
+              <View className="flex-1 items-center justify-center mt-20">
+                <View className="w-20 h-20 rounded-full bg-blue-100 items-center justify-center mb-6">
+                  <Feather name="check-circle" size={32} color="#3B82F6" />
+                </View>
+                <Text className="text-xl font-bold text-gray-900 mb-2">
+                  No tasks yet
+                </Text>
+                <Text className="text-gray-600 text-center mb-8 px-8">
+                  Create your first task to get started with organizing your day
+                </Text>
+              </View>
+            )}
+          </ScrollView>
         </View>
-
-        <ScrollView
-          className="flex-1"
-          contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 32 }}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Pending Tasks */}
-          {pendingTasks.length > 0 && (
-            <View className="mt-4">
-              <Text className="font-semibold text-gray-900 mb-4">To do</Text>
-              <View className="gap-3">
-                {pendingTasks.map((task) => (
-                  <UserTaskTile
-                    key={task._id}
-                    userTask={task}
-                    recentlyCompleted={recentCompletedTaskIds.has(task._id)}
-                  />
-                ))}
-              </View>
-            </View>
-          )}
-
-          {/* Completed Tasks */}
-          {completedTasks.length > 0 && (
-            <View className="mt-8">
-              <Text className="font-semibold text-gray-900 mb-4">
-                Completed
-              </Text>
-              <View className="gap-3">
-                {completedTasks.map((task) => (
-                  <UserTaskTile
-                    key={task._id}
-                    userTask={task}
-                    recentlyCompleted={recentCompletedTaskIds.has(task._id)}
-                  />
-                ))}
-              </View>
-            </View>
-          )}
-
-          {/* Empty State */}
-          {userTasks.length === 0 && (
-            <View className="flex-1 items-center justify-center mt-20">
-              <View className="w-20 h-20 rounded-full bg-blue-100 items-center justify-center mb-6">
-                <Feather name="check-circle" size={32} color="#3B82F6" />
-              </View>
-              <Text className="text-xl font-bold text-gray-900 mb-2">
-                No tasks yet
-              </Text>
-              <Text className="text-gray-600 text-center mb-8 px-8">
-                Create your first task to get started with organizing your day
-              </Text>
-            </View>
-          )}
-        </ScrollView>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
