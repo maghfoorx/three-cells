@@ -208,11 +208,9 @@ export const BulkManageToast = ({
             {$state.selectedDates.map((date, index) => (
               <View
                 key={index}
-                className="bg-blue-100 dark:bg-blue-900 px-3 py-1 rounded-full"
+                className="bg-gray-50 border px-3 py-1 rounded-sm"
               >
-                <Text className="text-blue-800 dark:text-blue-200 text-xs">
-                  {format(date, "MMM d")}
-                </Text>
+                <Text className="text-xs">{format(date, "MMM d")}</Text>
               </View>
             ))}
           </View>
@@ -221,7 +219,7 @@ export const BulkManageToast = ({
         {/* Action buttons */}
         <View className="flex-row gap-3">
           <TouchableOpacity
-            className="flex-1 bg-green-500 py-3 px-4 rounded-lg flex-row items-center justify-center"
+            className="flex-1 bg-green-500 py-3 px-4 rounded-md flex-row items-center justify-center"
             onPress={handleCompleteAction}
             disabled={$state.togglingSubmission}
           >
@@ -232,7 +230,7 @@ export const BulkManageToast = ({
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="flex-1 bg-red-500 py-3 px-4 rounded-lg flex-row items-center justify-center"
+            className="flex-1 bg-red-500 py-3 px-4 rounded-md flex-row items-center justify-center"
             onPress={handleUnCompleteAction}
             disabled={$state.togglingSubmission}
           >

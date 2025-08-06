@@ -280,7 +280,7 @@ export default function SubmissionsCalendarHeatmapMobile({
                             className="h-5 w-5 border border-gray-200 rounded-sm items-center justify-center"
                             style={{
                               backgroundColor: isInBulkSelectedDates
-                                ? "#3B82F6" // primary color
+                                ? "#FFB86A" // selected date colour
                                 : dateBoxColour,
                             }}
                             onPress={() => {
