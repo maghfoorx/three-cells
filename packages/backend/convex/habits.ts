@@ -16,6 +16,7 @@ import {
   differenceInDays,
   subMonths,
   subWeeks,
+  startOfDay,
 } from "date-fns";
 
 export const getAllUserHabits = query({
@@ -626,5 +627,128 @@ export const getMonthlyPerformance = query({
     }
 
     return months;
+  },
+});
+
+// Add this query to your habits.ts file in convex
+
+export const getStreaksData = query({
+  args: {
+    habitId: v.id("userHabits"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) {
+      throw new ConvexError("You must be logged in to view habits");
+    }
+
+    // Get all submissions for this habit, ordered by date
+    const submissions = await ctx.db
+      .query("userHabitSubmissions")
+      .withIndex("by_user_and_habit", (q) =>
+        q.eq("userId", userId).eq("habitId", args.habitId),
+      )
+      .collect();
+
+    // Sort by date
+    const sortedSubmissions = submissions
+      .map((s) => ({
+        ...s,
+        dateObj: parseISO(s.dateFor),
+      }))
+      .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
+
+    if (sortedSubmissions.length === 0) {
+      return {
+        currentStreak: 0,
+        topStreaks: [],
+        isCurrentStreakActive: false,
+      };
+    }
+
+    // Calculate all streaks
+    const streaks: { length: number; startDate: Date; endDate: Date }[] = [];
+    let currentStreakLength = 0;
+    let currentStreakStart: Date | null = null;
+    let previousDate: Date | null = null;
+
+    for (const submission of sortedSubmissions) {
+      const currentDate = submission.dateObj;
+
+      if (previousDate === null) {
+        // First submission
+        currentStreakLength = 1;
+        currentStreakStart = currentDate;
+      } else {
+        const daysDiff = differenceInDays(currentDate, previousDate);
+
+        if (daysDiff === 1) {
+          // Consecutive day
+          currentStreakLength++;
+        } else {
+          // Streak broken, save the previous streak
+          if (currentStreakStart && currentStreakLength > 0) {
+            streaks.push({
+              length: currentStreakLength,
+              startDate: currentStreakStart,
+              endDate: previousDate,
+            });
+          }
+          // Start new streak
+          currentStreakLength = 1;
+          currentStreakStart = currentDate;
+        }
+      }
+
+      previousDate = currentDate;
+    }
+
+    // Don't forget the last streak
+    if (currentStreakStart && currentStreakLength > 0 && previousDate) {
+      streaks.push({
+        length: currentStreakLength,
+        startDate: currentStreakStart,
+        endDate: previousDate,
+      });
+    }
+
+    // Check if current streak is still active (last submission was yesterday or today)
+    const now = new Date();
+    const today = startOfDay(now);
+    const yesterday = subDays(today, 1);
+    const lastSubmissionDate =
+      sortedSubmissions[sortedSubmissions.length - 1]?.dateObj;
+
+    const isCurrentStreakActive =
+      lastSubmissionDate &&
+      (isSameDay(lastSubmissionDate, today) ||
+        isSameDay(lastSubmissionDate, yesterday));
+
+    // Current streak is the last streak if it's active, otherwise 0
+    const currentStreak =
+      isCurrentStreakActive && streaks.length > 0
+        ? streaks[streaks.length - 1].length
+        : 0;
+
+    // Get top 5 streaks (sorted by length, then by end date)
+    const topStreaks = streaks
+      .sort((a, b) => {
+        if (b.length !== a.length) return b.length - a.length;
+        return b.endDate.getTime() - a.endDate.getTime();
+      })
+      .slice(0, 5)
+      .map((streak) => ({
+        length: streak.length,
+        startDate: streak.startDate.getTime(),
+        endDate: streak.endDate.getTime(),
+        isCurrentStreak:
+          isCurrentStreakActive && streak === streaks[streaks.length - 1],
+      }));
+
+    return {
+      currentStreak,
+      topStreaks,
+      isCurrentStreakActive: isCurrentStreakActive,
+    };
   },
 });

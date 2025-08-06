@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Pressable,
   SafeAreaView,
+  ScrollView,
   Text,
   View,
 } from "react-native";
@@ -14,6 +15,7 @@ import SubmissionsCalendarHeatmapMobile from "@/components/SubmissionsHeatmapMob
 import { BulkManageToast } from "@/components/useCalendarSquareToast";
 import { Feather } from "@expo/vector-icons";
 import PerformanceGraph from "@/components/PerformanceGraph";
+import StreaksView from "@/components/StreaksView";
 
 export default function SingleHabitPage() {
   const { singleHabit: singleHabitId } = useLocalSearchParams();
@@ -72,35 +74,44 @@ export default function SingleHabitPage() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="py-4 flex-grow">
-        <View className="px-4 pt-2 flex flex-row items-center justify-between">
-          <Pressable
-            onPress={() => router.navigate(`/habits/edit/${singleHabitId}`)}
-          >
-            <Feather name="settings" size={20} color="#374151" />
-          </Pressable>
+      <ScrollView>
+        <View className="py-4 flex-grow">
+          <View className="px-4 pt-2 flex flex-row items-center justify-between">
+            <Pressable
+              onPress={() => router.navigate(`/habits/edit/${singleHabitId}`)}
+            >
+              <Feather name="settings" size={20} color="#374151" />
+            </Pressable>
 
-          <Text className="text-lg font-bold text-gray-800">
-            {singleHabit.habit.name}
-          </Text>
-          <Pressable onPress={() => router.back()}>
-            <XMarkIcon size={24} color="#374151" />
-          </Pressable>
+            <Text className="text-lg font-bold text-gray-800">
+              {singleHabit.habit.name}
+            </Text>
+            <Pressable onPress={() => router.back()}>
+              <XMarkIcon size={24} color="#374151" />
+            </Pressable>
+          </View>
+          <View className="mt-6 flex gap-2">
+            <SubmissionsCalendarHeatmapMobile
+              allSubmissions={singleHabit.allSubmissions ?? []}
+              habit={singleHabit.habit}
+            />
+          </View>
+
+          {/* Performance Graph */}
+          <View className="mt-4">
+            <PerformanceGraph
+              habitId={habitId}
+              habitColor={singleHabit.habit.colour}
+            />
+          </View>
+          <View className="mt-4">
+            <StreaksView
+              habitId={habitId}
+              habitColor={singleHabit.habit.colour}
+            />
+          </View>
         </View>
-        <View className="mt-6 flex gap-2">
-          <SubmissionsCalendarHeatmapMobile
-            allSubmissions={singleHabit.allSubmissions ?? []}
-            habit={singleHabit.habit}
-          />
-        </View>
-        {/* Performance Graph */}
-        <View className="mt-4">
-          <PerformanceGraph
-            habitId={habitId}
-            habitColor={singleHabit.habit.colour}
-          />
-        </View>
-      </View>
+      </ScrollView>
       <BulkManageToast habit={singleHabit?.habit ?? null} />
     </SafeAreaView>
   );
