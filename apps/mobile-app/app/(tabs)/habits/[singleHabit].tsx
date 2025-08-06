@@ -1,4 +1,4 @@
-import { Link, router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { XMarkIcon } from "react-native-heroicons/outline";
 import { DataModel } from "@packages/backend/convex/_generated/dataModel";
 import { api } from "@packages/backend/convex/_generated/api";
@@ -13,6 +13,7 @@ import {
 import SubmissionsCalendarHeatmapMobile from "@/components/SubmissionsHeatmapMobile";
 import { BulkManageToast } from "@/components/useCalendarSquareToast";
 import { Feather } from "@expo/vector-icons";
+import PerformanceGraph from "@/components/PerformanceGraph";
 
 export default function SingleHabitPage() {
   const { singleHabit: singleHabitId } = useLocalSearchParams();
@@ -90,6 +91,13 @@ export default function SingleHabitPage() {
           <SubmissionsCalendarHeatmapMobile
             allSubmissions={singleHabit.allSubmissions ?? []}
             habit={singleHabit.habit}
+          />
+        </View>
+        {/* Performance Graph */}
+        <View className="mt-4">
+          <PerformanceGraph
+            habitId={habitId}
+            habitColor={singleHabit.habit.colour}
           />
         </View>
       </View>

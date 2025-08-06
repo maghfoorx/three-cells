@@ -14,6 +14,8 @@ import {
   startOfWeek,
   endOfWeek,
   differenceInDays,
+  subMonths,
+  subWeeks,
 } from "date-fns";
 
 export const getAllUserHabits = query({
@@ -498,5 +500,131 @@ export const updateHabit = mutation({
       habitQuestion: args.habitQuestion,
       updatedAt: Date.now(),
     };
+  },
+});
+
+export const getWeeklyPerformance = query({
+  args: {
+    habitId: v.id("userHabits"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) {
+      throw new ConvexError("You must be logged in to view habits");
+    }
+
+    const now = new Date();
+    const weeks = [];
+
+    for (let i = 7; i >= 0; i--) {
+      const weekStart = startOfWeek(subWeeks(now, i), { weekStartsOn: 1 }); // Monday start
+      const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
+
+      const weekStartStr = format(weekStart, "yyyy-MM-dd");
+      const weekEndStr = format(weekEnd, "yyyy-MM-dd");
+
+      // Get submissions for this week
+      const submissions = await ctx.db
+        .query("userHabitSubmissions")
+        .withIndex("by_user_and_habit_and_date", (q) =>
+          q
+            .eq("userId", userId)
+            .eq("habitId", args.habitId)
+            .gte("dateFor", weekStartStr)
+            .lte("dateFor", weekEndStr),
+        )
+        .collect();
+
+      // Calculate completion rate for the week
+      const daysInWeek = eachDayOfInterval({ start: weekStart, end: weekEnd });
+      const submittedDates = submissions.map((s) => parseISO(s.dateFor));
+
+      let completedDays = 0;
+      for (const day of daysInWeek) {
+        if (day <= now && submittedDates.some((s) => isSameDay(s, day))) {
+          completedDays++;
+        }
+      }
+
+      // Only count days up to today for current week
+      const relevantDays = daysInWeek.filter((day) => day <= now);
+      const completionRate =
+        relevantDays.length > 0
+          ? (completedDays / relevantDays.length) * 100
+          : 0;
+
+      weeks.push({
+        date: weekStart.getTime(),
+        value: Math.round(completionRate),
+        label: format(weekStart, "MMM d"),
+      });
+    }
+
+    return weeks;
+  },
+});
+
+export const getMonthlyPerformance = query({
+  args: {
+    habitId: v.id("userHabits"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) {
+      throw new ConvexError("You must be logged in to view habits");
+    }
+
+    const now = new Date();
+    const months = [];
+
+    // Get last 6 months of data
+    for (let i = 5; i >= 0; i--) {
+      const monthStart = startOfMonth(subMonths(now, i));
+      const monthEnd = endOfMonth(monthStart);
+
+      const monthStartStr = format(monthStart, "yyyy-MM-dd");
+      const monthEndStr = format(monthEnd, "yyyy-MM-dd");
+
+      // Get submissions for this month
+      const submissions = await ctx.db
+        .query("userHabitSubmissions")
+        .withIndex("by_user_and_habit_and_date", (q) =>
+          q
+            .eq("userId", userId)
+            .eq("habitId", args.habitId)
+            .gte("dateFor", monthStartStr)
+            .lte("dateFor", monthEndStr),
+        )
+        .collect();
+
+      // Calculate completion rate for the month
+      const daysInMonth = eachDayOfInterval({
+        start: monthStart,
+        end: monthEnd,
+      });
+      const submittedDates = submissions.map((s) => parseISO(s.dateFor));
+
+      let completedDays = 0;
+      for (const day of daysInMonth) {
+        if (day <= now && submittedDates.some((s) => isSameDay(s, day))) {
+          completedDays++;
+        }
+      }
+
+      // Only count days up to today for current month
+      const relevantDays = daysInMonth.filter((day) => day <= now);
+      const completionRate =
+        relevantDays.length > 0
+          ? (completedDays / relevantDays.length) * 100
+          : 0;
+
+      months.push({
+        date: monthStart.getTime(),
+        value: Math.round(completionRate),
+        label: format(monthStart, "MMM"),
+      });
+    }
+
+    return months;
   },
 });
