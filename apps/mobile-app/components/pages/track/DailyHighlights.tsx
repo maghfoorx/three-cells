@@ -1,4 +1,5 @@
 import color from "color";
+import pluralize from "pluralize";
 import React from "react";
 import { View, Text } from "react-native";
 import { useQuery } from "convex/react";
@@ -65,7 +66,7 @@ const DailyHighlights = ({ date }: DailyHighlightsProps) => {
             return (
               <View
                 key={`habit-${index}`}
-                className="px-3 py-1.5 rounded-md bg-red-100"
+                className="px-3 py-1 rounded-md bg-red-100"
                 style={{
                   backgroundColor: color(habit.colour).lighten(0.2).hex(),
                 }}
@@ -90,7 +91,7 @@ const DailyHighlights = ({ date }: DailyHighlightsProps) => {
             return (
               <View
                 key={`metric-${index}`}
-                className="px-3 py-1.5 rounded-md"
+                className="px-3 py-1 rounded-md"
                 style={{
                   backgroundColor: color(metric.colour).lighten(0.2).hex(),
                 }}
@@ -108,13 +109,10 @@ const DailyHighlights = ({ date }: DailyHighlightsProps) => {
           })}
         </View>
       </View>
-      <View className="flex gap-2">
-        <Text className="font-semibold text-xs">Completed tasks</Text>
-        <View className="flex-row flex-wrap gap-1">
-          <Text className="px-2 py-1.5 font-semibold rounded-md bg-gray-200">
-            {completedTasks}
-          </Text>
-        </View>
+      <View className="mt-2">
+        <Text className="text-center px-2 py-1 font-semibold rounded-md bg-gray-200">
+          Completed {completedTasks} {pluralize("task", completedTasks)}
+        </Text>
       </View>
     </View>
   );
