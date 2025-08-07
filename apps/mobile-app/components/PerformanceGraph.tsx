@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
   Pressable,
   ActivityIndicator,
   Dimensions,
+  Animated,
 } from "react-native";
 import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
@@ -12,6 +13,8 @@ import { DataModel } from "@packages/backend/convex/_generated/dataModel";
 import Svg, { Path, Circle, G, Text as SvgText } from "react-native-svg";
 import * as d3 from "d3";
 import color from "color";
+
+const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 interface PerformanceGraphProps {
   habitId: DataModel["userHabits"]["document"]["_id"];
@@ -30,12 +33,25 @@ export default function PerformanceGraph({
   habitColor,
 }: PerformanceGraphProps) {
   const [viewMode, setViewMode] = useState<"weekly" | "monthly">("weekly");
+  const animatedValue = useRef(new Animated.Value(0)).current;
 
   const weeklyData = useQuery(api.habits.getWeeklyPerformance, { habitId });
   const monthlyData = useQuery(api.habits.getMonthlyPerformance, { habitId });
 
   const currentData = viewMode === "weekly" ? weeklyData : monthlyData;
   const isLoading = currentData === undefined;
+
+  // Animation effect - trigger when data changes or view mode changes
+  useEffect(() => {
+    if (currentData && currentData.length > 1) {
+      animatedValue.setValue(0);
+      Animated.timing(animatedValue, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: false,
+      }).start();
+    }
+  }, [currentData, viewMode, animatedValue]);
 
   const renderGraph = () => {
     if (isLoading) {
@@ -122,12 +138,16 @@ export default function PerformanceGraph({
 
     return (
       <Svg width={GRAPH_WIDTH} height={GRAPH_HEIGHT}>
-        <Path
+        <AnimatedPath
           d={path}
           fill="none"
           stroke={habitColor}
           strokeWidth={2.5}
           strokeOpacity={0.8}
+          strokeDasharray={animatedValue.interpolate({
+            inputRange: [0, 1],
+            outputRange: ["0,1000", "1000,0"], // Adjust length as needed
+          })}
         />
 
         {/* Data points */}

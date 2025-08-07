@@ -1,5 +1,11 @@
-import React from "react";
-import { View, Text, ActivityIndicator, Dimensions } from "react-native";
+import React, { useRef, useEffect } from "react";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  Dimensions,
+  Animated,
+} from "react-native";
 import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { DataModel } from "@packages/backend/convex/_generated/dataModel";
@@ -7,6 +13,8 @@ import Svg, { Rect, Text as SvgText, G } from "react-native-svg";
 import * as d3 from "d3";
 import color from "color";
 import { format } from "date-fns";
+
+const AnimatedRect = Animated.createAnimatedComponent(Rect);
 
 interface StreaksComponentProps {
   habitId: DataModel["userHabits"]["document"]["_id"];
@@ -24,9 +32,22 @@ export default function StreaksView({
   habitId,
   habitColor,
 }: StreaksComponentProps) {
+  const animatedValue = useRef(new Animated.Value(0)).current;
   const streaksData = useQuery(api.habits.getStreaksData, { habitId });
 
   const isLoading = streaksData === undefined;
+
+  // Animation effect - trigger when data loads
+  useEffect(() => {
+    if (streaksData && streaksData.topStreaks.length > 0) {
+      animatedValue.setValue(0);
+      Animated.timing(animatedValue, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: false,
+      }).start();
+    }
+  }, [streaksData, animatedValue]);
 
   const renderStreaksChart = () => {
     if (isLoading) {
@@ -72,11 +93,14 @@ export default function StreaksView({
 
           return (
             <G key={index}>
-              {/* Bar */}
-              <Rect
+              {/* Animated Bar */}
+              <AnimatedRect
                 x={0}
                 y={y}
-                width={barWidth}
+                width={animatedValue.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, barWidth],
+                })}
                 height={BAR_HEIGHT}
                 fill={barColor}
                 rx={4}
