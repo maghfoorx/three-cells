@@ -155,7 +155,9 @@ export default function StreaksView({
               <Text className="text-xs text-gray-500 mb-1">Current streak</Text>
               <Text
                 className="text-2xl font-bold"
-                style={{ color: habitColor }}
+                style={{
+                  color: color(habitColor).mix(color("black"), 0.2).hex(),
+                }}
               >
                 {isLoading ? "..." : streaksData?.currentStreak || 0}
               </Text>
