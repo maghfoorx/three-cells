@@ -2,6 +2,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import { query } from "../_generated/server";
 import { ConvexError } from "convex/values";
+import { format, parseISO, subDays } from "date-fns";
 
 export const getAllUserMetrics = query({
   args: {},
@@ -139,5 +140,152 @@ export const latestMetricEntry = query({
     )[0];
 
     return latest;
+  },
+});
+
+export const getMetricTrendData = query({
+  args: {
+    metricId: v.id("userMetrics"),
+    period: v.union(
+      v.literal("7days"),
+      v.literal("30days"),
+      v.literal("90days"),
+    ),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) {
+      throw new ConvexError("You must be logged in to view metrics");
+    }
+
+    // Calculate the date range based on period
+    const now = new Date();
+    let startDate: Date;
+
+    switch (args.period) {
+      case "7days":
+        startDate = subDays(now, 7);
+        break;
+      case "30days":
+        startDate = subDays(now, 30);
+        break;
+      case "90days":
+        startDate = subDays(now, 90);
+        break;
+    }
+
+    const startDateString = format(startDate, "yyyy-MM-dd");
+
+    const submissions = await ctx.db
+      .query("userMetricSubmissions")
+      .withIndex("by_user_and_metric", (q) =>
+        q.eq("userId", userId).eq("metricId", args.metricId),
+      )
+      .filter((q) => q.gte(q.field("dateFor"), startDateString))
+      .collect();
+
+    // Sort by date and format for chart
+    const sortedData = submissions
+      .map((submission) => ({
+        date: parseISO(submission.dateFor).getTime(), // Return timestamp instead of Date
+        value: submission.value,
+        dateFor: submission.dateFor,
+        label: format(parseISO(submission.dateFor), "MMM d"),
+      }))
+      .sort((a, b) => a.date - b.date);
+
+    return sortedData;
+  },
+});
+
+export const getMetricStatistics = query({
+  args: { metricId: v.id("userMetrics") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) {
+      throw new ConvexError("You must be logged in to view metrics");
+    }
+
+    const submissions = await ctx.db
+      .query("userMetricSubmissions")
+      .withIndex("by_user_and_metric", (q) =>
+        q.eq("userId", userId).eq("metricId", args.metricId),
+      )
+      .collect();
+
+    if (submissions.length === 0) {
+      return {
+        currentValue: null,
+        previousValue: null,
+        percentageChange: null,
+        averageLast7Days: null,
+        averageLast30Days: null,
+        highestValue: null,
+        lowestValue: null,
+        totalEntries: 0,
+        trend: "neutral" as "up" | "down" | "neutral",
+      };
+    }
+
+    // Sort submissions by date
+    const sortedSubmissions = submissions
+      .map((s) => ({
+        ...s,
+        dateObj: parseISO(s.dateFor),
+      }))
+      .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
+
+    const values = sortedSubmissions.map((s) => s.value);
+    const currentValue = values[values.length - 1];
+    const previousValue = values.length > 1 ? values[values.length - 2] : null;
+
+    // Calculate percentage change
+    const percentageChange =
+      previousValue !== null && previousValue !== 0
+        ? ((currentValue - previousValue) / Math.abs(previousValue)) * 100
+        : null;
+
+    // Determine trend
+    let trend: "up" | "down" | "neutral" = "neutral";
+    if (percentageChange !== null) {
+      if (percentageChange > 0) trend = "up";
+      else if (percentageChange < 0) trend = "down";
+    }
+
+    // Calculate averages for different periods
+    const now = new Date();
+    const last7Days = subDays(now, 7);
+    const last30Days = subDays(now, 30);
+
+    const last7DaysSubmissions = sortedSubmissions.filter(
+      (s) => s.dateObj >= last7Days,
+    );
+    const last30DaysSubmissions = sortedSubmissions.filter(
+      (s) => s.dateObj >= last30Days,
+    );
+
+    const averageLast7Days =
+      last7DaysSubmissions.length > 0
+        ? last7DaysSubmissions.reduce((sum, s) => sum + s.value, 0) /
+          last7DaysSubmissions.length
+        : null;
+
+    const averageLast30Days =
+      last30DaysSubmissions.length > 0
+        ? last30DaysSubmissions.reduce((sum, s) => sum + s.value, 0) /
+          last30DaysSubmissions.length
+        : null;
+
+    return {
+      currentValue,
+      previousValue,
+      percentageChange,
+      averageLast7Days,
+      averageLast30Days,
+      highestValue: Math.max(...values),
+      lowestValue: Math.min(...values),
+      totalEntries: submissions.length,
+      trend,
+    };
   },
 });
