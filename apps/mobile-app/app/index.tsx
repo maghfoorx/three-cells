@@ -1,10 +1,18 @@
 import React, { useEffect, useRef } from "react";
 import { Image } from "expo-image";
 import { Feather } from "@expo/vector-icons";
-import { View, Text, Animated, SafeAreaView, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  Animated,
+  SafeAreaView,
+  Pressable,
+  Platform,
+} from "react-native";
 import { useConvexAuth } from "convex/react";
 import SignInWithGoogle from "@/components/SignInWithGoogle";
-import { Redirect, router } from "expo-router";
+import { Redirect } from "expo-router";
+import SignInWithApple from "@/components/SignInWithApple";
 
 const FEATURES = [
   {
@@ -228,6 +236,7 @@ export default function Homepage() {
           <View className="flex gap-4">
             <View className="flex gap-4">
               <SignInWithGoogle />
+              {Platform.OS === "ios" && <SignInWithApple />}
             </View>
             {/* Apple Login Button */}
             {/* <TouchableOpacity

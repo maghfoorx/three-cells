@@ -1,19 +1,19 @@
 import { useAuthActions } from "@convex-dev/auth/react";
+import { AntDesign } from "@expo/vector-icons";
 import { makeRedirectUri } from "expo-auth-session";
 import { openAuthSessionAsync } from "expo-web-browser";
 import { Platform, Text, TouchableOpacity } from "react-native";
-import GoogleIcon from "./GoogleIcon";
 import { useConvexAuth } from "convex/react";
 
 const redirectTo = makeRedirectUri();
 
-export default function SignInWithGoogle() {
+export default function SignInWithApple() {
   const { isAuthenticated } = useConvexAuth();
 
   const { signIn } = useAuthActions();
   const handleSignIn = async () => {
     if (!isAuthenticated) {
-      const { redirect } = await signIn("google", { redirectTo });
+      const { redirect } = await signIn("apple", { redirectTo });
       if (Platform.OS === "web") {
         return;
       }
@@ -21,7 +21,7 @@ export default function SignInWithGoogle() {
       if (result.type === "success") {
         const { url } = result;
         const code = new URL(url).searchParams.get("code")!;
-        await signIn("google", { code });
+        await signIn("apple", { code });
       }
     }
   };
@@ -32,8 +32,8 @@ export default function SignInWithGoogle() {
       className="w-full border-2 border-gray-200 rounded-sm py-4 px-6 flex-row items-center gap-2 justify-center shadow-sm"
       activeOpacity={0.8}
     >
-      <GoogleIcon size={20} />
-      <Text className="font-semibold text-lg">Continue with Google</Text>
+      <AntDesign name="apple1" size={24} />
+      <Text className="font-semibold text-lg">Continue with Apple</Text>
     </TouchableOpacity>
   );
 }
