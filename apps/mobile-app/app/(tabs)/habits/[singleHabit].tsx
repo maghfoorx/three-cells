@@ -74,22 +74,22 @@ export default function SingleHabitPage() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <ScrollView>
-        <View className="py-4 flex-grow">
-          <View className="px-4 pt-2 flex flex-row items-center justify-between">
-            <Pressable
-              onPress={() => router.navigate(`/habits/edit/${singleHabitId}`)}
-            >
-              <Feather name="settings" size={20} color="#374151" />
-            </Pressable>
+      <View className="py-4 flex-grow">
+        <View className="px-4 py-2 flex flex-row items-center justify-between">
+          <Pressable
+            onPress={() => router.navigate(`/habits/edit/${singleHabitId}`)}
+          >
+            <Feather name="settings" size={20} color="#374151" />
+          </Pressable>
 
-            <Text className="text-lg font-bold text-gray-800">
-              {singleHabit.habit.name}
-            </Text>
-            <Pressable onPress={() => router.back()}>
-              <XMarkIcon size={24} color="#374151" />
-            </Pressable>
-          </View>
+          <Text className="text-lg font-bold text-gray-800">
+            {singleHabit.habit.name}
+          </Text>
+          <Pressable onPress={() => router.back()}>
+            <XMarkIcon size={24} color="#374151" />
+          </Pressable>
+        </View>
+        <ScrollView>
           <View className="mt-6 flex gap-2">
             <SubmissionsCalendarHeatmapMobile
               allSubmissions={singleHabit.allSubmissions ?? []}
@@ -110,8 +110,8 @@ export default function SingleHabitPage() {
               habitColor={singleHabit.habit.colour}
             />
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
       <BulkManageToast habit={singleHabit?.habit ?? null} />
     </SafeAreaView>
   );

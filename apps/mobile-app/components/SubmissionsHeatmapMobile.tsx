@@ -187,7 +187,7 @@ export default function SubmissionsCalendarHeatmapMobile({
 
       {/* Calendar heatmap */}
       <View className="w-full mt-4">
-        <View className="border border-x-0 p-4 bg-white">
+        <View className="border border-gray-300 border-x-0 p-4 bg-white">
           <View className="flex flex-row">
             {/* Scrollable calendar content */}
             <ScrollView
