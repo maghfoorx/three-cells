@@ -152,7 +152,7 @@ export default function StreaksView({
         <View className="bg-white rounded-lg p-4 shadow-sm">
           <View className="flex-row items-center justify-between">
             <View>
-              <Text className="text-xs text-gray-500 mb-1">Current Streak</Text>
+              <Text className="text-xs text-gray-500 mb-1">Current streak</Text>
               <Text
                 className="text-2xl font-bold"
                 style={{ color: habitColor }}
