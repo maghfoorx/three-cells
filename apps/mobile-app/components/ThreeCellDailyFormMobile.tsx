@@ -26,6 +26,7 @@ import { useEffect } from "react";
 import { format } from "date-fns";
 import { router } from "expo-router";
 import { SCORE_COLORS } from "@/utils/types";
+import DailyHighlights from "./pages/track/DailyHighlights";
 
 const formSchema = z.object({
   summary: z.string().min(1, "Summary is required"),
@@ -126,7 +127,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
   };
 
   const bgColor = color(SCORE_COLORS[watch("score").toString()] ?? "#ffffff")
-    .fade(0.95)
+    .fade(0.8)
     .rgb()
     .string();
 
@@ -170,8 +171,14 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
           <ScrollView
             showsVerticalScrollIndicator={false}
             className="flex-1"
-            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 32 }}
+            contentContainerStyle={{
+              paddingHorizontal: 24,
+              paddingBottom: 32,
+              flexGrow: 1,
+            }}
           >
+            <DailyHighlights date={date} />
+
             {/* Mood Selection */}
             <View className="mt-8">
               <Text className="font-semibold text-gray-900 mb-4">

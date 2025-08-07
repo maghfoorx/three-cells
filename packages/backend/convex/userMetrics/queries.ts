@@ -289,3 +289,34 @@ export const getMetricStatistics = query({
     };
   },
 });
+
+export const getMetricsForDate = query({
+  args: { date: v.string() },
+  handler: async (ctx, { date }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+
+    const submissions = await ctx.db
+      .query("userMetricSubmissions")
+      .withIndex("by_user_date", (q) =>
+        q.eq("userId", userId).eq("dateFor", date),
+      )
+      .collect();
+
+    const metricsWithDetails = await Promise.all(
+      submissions.map(async (submission) => {
+        const metric = await ctx.db.get(submission.metricId);
+        if (!metric) return null;
+
+        return {
+          name: metric.name,
+          value: submission.value,
+          unit: metric.unit || "",
+          colour: metric.colour,
+        };
+      }),
+    );
+
+    return metricsWithDetails.filter((value) => !!value);
+  },
+});

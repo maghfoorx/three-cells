@@ -752,3 +752,53 @@ export const getStreaksData = query({
     };
   },
 });
+
+export const getHabitsForDate = query({
+  args: { date: v.string() },
+  handler: async (ctx, { date }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+
+    // Get all user habits
+    const userHabits = await ctx.db
+      .query("userHabits")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+
+    // Get submissions for the specific date
+    const submissions = await ctx.db
+      .query("userHabitSubmissions")
+      .withIndex("by_user_date", (q) =>
+        q.eq("userId", userId).eq("dateFor", date),
+      )
+      .collect();
+
+    // Filter completed habits based on submission value
+    const completedHabits = [];
+    for (const submission of submissions) {
+      const habit = userHabits.find((h) => h._id === submission.habitId);
+      if (habit) {
+        // Consider habit completed if:
+        // - yes_no type and value is true
+        // - number/custom type and value is greater than 0
+        const isCompleted =
+          (habit.type === "yes_no" && submission.value === true) ||
+          ((habit.type === "number" || habit.type === "custom") &&
+            typeof submission.value === "number" &&
+            submission.value > 0) ||
+          (habit.type === "custom" &&
+            typeof submission.value === "string" &&
+            submission.value.length > 0);
+
+        if (isCompleted) {
+          completedHabits.push({
+            name: habit.name,
+            colour: habit.colour,
+          });
+        }
+      }
+    }
+
+    return completedHabits;
+  },
+});

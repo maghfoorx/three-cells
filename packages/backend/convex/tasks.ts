@@ -149,3 +149,30 @@ export const updateTask = mutation({
     };
   },
 });
+
+export const getTasksForDate = query({
+  args: { date: v.string() },
+  handler: async (ctx, { date }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return 0;
+
+    const targetDate = new Date(date);
+    const startOfDay = targetDate.getTime();
+    const endOfDay = startOfDay + 24 * 60 * 60 * 1000 - 1; // End of day
+
+    const completedTasks = await ctx.db
+      .query("user_tasks")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("is_completed"), true),
+          q.neq(q.field("completed_at"), undefined),
+          q.gte(q.field("completed_at"), startOfDay),
+          q.lte(q.field("completed_at"), endOfDay),
+        ),
+      )
+      .collect();
+
+    return completedTasks.length;
+  },
+});

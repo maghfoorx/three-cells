@@ -1,13 +1,13 @@
 import { useLocalSearchParams } from "expo-router";
 import { parse, isValid } from "date-fns";
 import ThreeCellDailyForm from "@/components/ThreeCellDailyFormMobile";
+import DailyHighlights from "@/components/pages/track/DailyHighlights";
 
 export default function TrackPage() {
   const { date } = useLocalSearchParams();
 
   // Handle the date parsing more safely
   let parsedDate: Date;
-
   if (typeof date === "string") {
     parsedDate = parse(date, "yyyy-MM-dd", new Date());
   } else {
@@ -19,5 +19,9 @@ export default function TrackPage() {
     parsedDate = new Date();
   }
 
-  return <ThreeCellDailyForm date={parsedDate} />;
+  return (
+    <>
+      <ThreeCellDailyForm date={parsedDate} />
+    </>
+  );
 }

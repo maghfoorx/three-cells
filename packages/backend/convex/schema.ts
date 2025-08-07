@@ -109,7 +109,8 @@ const schema = defineSchema({
     updatedAt: v.optional(v.number()),
   })
     .index("by_user_and_habit", ["userId", "habitId"])
-    .index("by_user_and_habit_and_date", ["userId", "habitId", "dateFor"]),
+    .index("by_user_and_habit_and_date", ["userId", "habitId", "dateFor"])
+    .index("by_user_date", ["userId", "dateFor"]),
 
   userPurchases: defineTable({
     userId: v.id("users"),
@@ -168,7 +169,8 @@ const schema = defineSchema({
     updatedAt: v.optional(v.number()),
   })
     .index("by_user_and_metric", ["userId", "metricId"])
-    .index("by_user_metric_date", ["userId", "metricId", "dateFor"]), // enforce one per day
+    .index("by_user_metric_date", ["userId", "metricId", "dateFor"]) // enforce one per day
+    .index("by_user_date", ["userId", "dateFor"]),
 });
 
 export default schema;
