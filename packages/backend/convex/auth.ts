@@ -5,7 +5,9 @@ import { query } from "./_generated/server";
 
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [
-    Google,
+    Google({
+      allowDangerousEmailAccountLinking: true,
+    }),
     Apple({
       profile: (appleInfo) => {
         const name = appleInfo.user
@@ -17,6 +19,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
           email: appleInfo.email,
         };
       },
+      allowDangerousEmailAccountLinking: true,
     }),
   ],
   callbacks: {
