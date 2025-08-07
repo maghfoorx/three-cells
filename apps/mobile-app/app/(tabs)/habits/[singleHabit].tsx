@@ -95,20 +95,20 @@ export default function SingleHabitPage() {
               allSubmissions={singleHabit.allSubmissions ?? []}
               habit={singleHabit.habit}
             />
-          </View>
 
-          {/* Performance Graph */}
-          <View className="mt-4">
-            <PerformanceGraph
-              habitId={habitId}
-              habitColor={singleHabit.habit.colour}
-            />
-          </View>
-          <View className="mt-4">
-            <StreaksView
-              habitId={habitId}
-              habitColor={singleHabit.habit.colour}
-            />
+            {/* Performance Graph */}
+            <View className="">
+              <PerformanceGraph
+                habitId={habitId}
+                habitColor={singleHabit.habit.colour}
+              />
+            </View>
+            <View className="">
+              <StreaksView
+                habitId={habitId}
+                habitColor={singleHabit.habit.colour}
+              />
+            </View>
           </View>
         </ScrollView>
       </View>
