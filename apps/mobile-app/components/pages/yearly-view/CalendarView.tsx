@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import color from "color";
 import { SCORE_COLORS } from "@/utils/types";
 
-const MONTH_CARD_HEIGHT = 300;
+const MONTH_CARD_HEIGHT = 320;
 
 export default function CalendarView({
   allThreeCellEntries,
@@ -47,10 +47,9 @@ export default function CalendarView({
     index,
   });
 
-  // In your useEffect:
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (scrollRef.current) {
+      if (scrollRef.current && currentMonthIndex > 0) {
         scrollRef.current.scrollToIndex({
           index: currentMonthIndex - 1,
           animated: true,
@@ -64,7 +63,6 @@ export default function CalendarView({
     <FlatList
       ref={scrollRef}
       getItemLayout={getItemLayout}
-      className=""
       data={months}
       keyExtractor={(item) => item.key}
       renderItem={({ item }) => (
@@ -78,9 +76,10 @@ export default function CalendarView({
           }}
         />
       )}
-      initialNumToRender={1}
+      initialNumToRender={2}
       windowSize={3}
       showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ padding: 16 }}
     />
   );
 }
@@ -96,14 +95,28 @@ type MonthCardProps = {
 const MonthCard = ({ monthName, days, scoreMap, onLayout }: MonthCardProps) => {
   return (
     <View
-      className="border rounded-sm p-4 mt-2"
+      className="bg-white rounded-md shadow-sm mb-4"
+      style={{
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 1,
+      }}
       onLayout={(event) => {
         const y = event.nativeEvent.layout.y;
         onLayout?.(y);
       }}
     >
-      <Text className="text-lg font-semibold mb-3">{monthName}</Text>
-      <MonthGrid days={days} scoreMap={scoreMap} />
+      {/* Month Header */}
+      <View className="px-4 py-4 border-b border-gray-100">
+        <Text className="text-lg font-semibold text-gray-900">{monthName}</Text>
+      </View>
+
+      {/* Calendar Grid */}
+      <View className="p-4">
+        <MonthGrid days={days} scoreMap={scoreMap} />
+      </View>
     </View>
   );
 };
@@ -148,51 +161,61 @@ function MonthGrid({
     rows.push(calendarCells.slice(i, i + 7));
   }
 
+  const weekdayLabels = ["S", "M", "T", "W", "T", "F", "S"];
+
   return (
     <View>
       {/* Weekday headers */}
-      <View className="flex flex-row mb-2">
-        {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
-          <View key={i} className="flex-1 h-8 mx-0.5">
-            <Text className="text-center text-gray-600 font-medium">{d}</Text>
+      <View className="flex-row mb-3">
+        {weekdayLabels.map((label, i) => (
+          <View key={i} className="flex-1 items-center">
+            <Text className="text-xs font-medium text-gray-500 uppercase">
+              {label}
+            </Text>
           </View>
         ))}
       </View>
 
+      {/* Calendar rows */}
       {rows.map((row, rowIndex) => (
-        <View key={`row-${rowIndex}`} className="flex flex-row mb-1">
+        <View key={`row-${rowIndex}`} className="flex-row mb-1">
           {row.map((cell) => {
             if (cell.type === "empty") {
-              return (
-                <View
-                  key={cell.key}
-                  className="flex-1 h-10 mx-0.5 rounded-sm"
-                />
-              );
+              return <View key={cell.key} className="flex-1 h-12" />;
             }
 
             const dateStr = format(cell.day, "yyyy-MM-dd");
             const score = scoreMap.get(dateStr);
             const bgColor =
               score !== undefined ? SCORE_COLORS[score] : undefined;
+            const isToday = format(new Date(), "yyyy-MM-dd") === dateStr;
 
             return (
               <TouchableOpacity
                 key={cell.key}
                 onPress={() => handleDateClicked(cell.day)}
-                className="flex-1 h-10 justify-center items-center mx-0.5 rounded-sm"
-                style={{ backgroundColor: bgColor }}
+                className={`flex-1 h-12 justify-center items-center mx-0.5 rounded-md ${
+                  isToday && !bgColor ? "bg-blue-50 border border-blue-200" : ""
+                }`}
+                style={{
+                  backgroundColor:
+                    bgColor || (isToday ? "#EFF6FF" : "transparent"),
+                }}
+                activeOpacity={0.7}
               >
                 <Text
+                  className={`text-sm font-medium ${
+                    isToday && !bgColor ? "text-blue-700" : ""
+                  }`}
                   style={{
-                    color:
-                      bgColor != null
-                        ? color(bgColor).isLight()
-                          ? "black"
-                          : "white"
-                        : "black",
+                    color: bgColor
+                      ? color(bgColor).isLight()
+                        ? "#374151"
+                        : "white"
+                      : isToday
+                        ? "#1D4ED8"
+                        : "#374151",
                   }}
-                  className="text-sm"
                 >
                   {cell.day.getDate()}
                 </Text>

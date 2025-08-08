@@ -1,13 +1,8 @@
 import { router } from "expo-router";
 import { MotiView, AnimatePresence } from "moti";
-import Animated, {
-  useSharedValue,
-  withTiming,
-  useAnimatedStyle,
-  Layout,
-} from "react-native-reanimated";
-import { ChevronDownIcon, XMarkIcon } from "react-native-heroicons/outline";
-import React, { useState, useMemo, useEffect } from "react";
+import { Layout } from "react-native-reanimated";
+import { XMarkIcon } from "react-native-heroicons/outline";
+import React, { useState, useMemo } from "react";
 import { View, Text, ScrollView, SafeAreaView, Pressable } from "react-native";
 import { useQuery } from "convex/react";
 import { format } from "date-fns";
