@@ -337,7 +337,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
               onPress={handleSubmit(onSubmit)}
               disabled={isSubmitting}
               className={clsx(
-                "bg-blue-600 rounded-md py-5 items-center justify-center mt-12",
+                "bg-blue-600 rounded-md py-5 items-center justify-center mt-6",
                 isSubmitting ? "opacity-70" : "",
               )}
               style={{
