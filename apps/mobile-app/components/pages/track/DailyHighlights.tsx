@@ -36,7 +36,7 @@ const DailyHighlights = ({ date }: DailyHighlightsProps) => {
 
   if (isLoading) {
     return (
-      <View className="bg-gray-50 rounded-lg p-4 mx-4 mb-4">
+      <View className="bg-gray-50 rounded-md p-4">
         <View className="h-4 bg-gray-200 rounded w-32 mb-3" />
         <View className="h-3 bg-gray-200 rounded w-full mb-2" />
         <View className="h-3 bg-gray-200 rounded w-3/4" />
@@ -46,7 +46,7 @@ const DailyHighlights = ({ date }: DailyHighlightsProps) => {
 
   if (isEmpty) {
     return (
-      <View className="bg-gray-50 rounded-lg p-6 mx-4 mb-4 items-center">
+      <View className="bg-gray-50 rounded-md p-6 items-center">
         <Text className="text-gray-400 text-sm">
           {isToday
             ? "No activity recorded today"
