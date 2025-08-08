@@ -89,23 +89,48 @@ const DailyHighlights = ({ date }: DailyHighlightsProps) => {
           <Text className="text-sm font-medium text-gray-700 mb-2">
             Tracked
           </Text>
-          <View className="flex-row flex-wrap gap-2">
+
+          <View className="rounded-md overflow-hidden">
             {trackedMetrics.map((metric, index) => (
               <View
                 key={`metric-${index}`}
-                className="px-3 py-1 rounded-md"
+                className="flex-row items-center"
                 style={{
                   backgroundColor: color(metric.colour).lighten(0.25).hex(),
                 }}
               >
-                <Text
-                  className="text-sm font-semibold"
+                {/* Left column: Name */}
+                <View
                   style={{
-                    color: color(metric.colour).darken(0.9).hex(),
+                    width: 200,
+                    paddingVertical: 8,
+                    paddingHorizontal: 12,
                   }}
                 >
-                  {metric.value} {metric.unit} | {metric.name}
-                </Text>
+                  <Text
+                    className="text-sm font-semibold"
+                    style={{
+                      color: color(metric.colour).darken(0.9).hex(),
+                    }}
+                    numberOfLines={1}
+                  >
+                    {metric.name}
+                  </Text>
+                </View>
+
+                {/* Right column: Value + Unit */}
+                <View
+                  style={{ flex: 1, alignItems: "flex-end", paddingRight: 12 }}
+                >
+                  <Text
+                    className="text-sm font-medium"
+                    style={{
+                      color: color(metric.colour).darken(0.9).hex(),
+                    }}
+                  >
+                    {metric.value} {metric.unit}
+                  </Text>
+                </View>
               </View>
             ))}
           </View>
