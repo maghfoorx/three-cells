@@ -84,3 +84,74 @@ export const createMetricEntry = mutation({
     return await ctx.db.get(newId);
   },
 });
+
+// Update metric mutation
+export const updateMetric = mutation({
+  args: {
+    metricId: v.id("userMetrics"),
+    name: v.string(),
+    colour: v.string(),
+    unit: v.optional(v.string()),
+    increment: v.optional(v.float64()),
+    valueType: v.optional(v.union(v.literal("float"), v.literal("integer"))),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) throw new ConvexError("Not authenticated");
+
+    const metric = await ctx.db.get(args.metricId);
+    if (!metric || metric.userId !== userId) {
+      throw new ConvexError("Metric not found or unauthorized");
+    }
+
+    await ctx.db.patch(args.metricId, {
+      name: args.name,
+      colour: args.colour,
+      unit: args.unit,
+      increment: args.increment,
+      valueType: args.valueType,
+      updatedAt: Date.now(),
+    });
+
+    return {
+      ...metric,
+      name: args.name,
+      colour: args.colour,
+      unit: args.unit,
+      increment: args.increment,
+      valueType: args.valueType,
+      updatedAt: Date.now(),
+    };
+  },
+});
+
+// Delete metric mutation
+export const deleteMetric = mutation({
+  args: {
+    metricId: v.id("userMetrics"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) throw new ConvexError("Not authenticated");
+
+    const metric = await ctx.db.get(args.metricId);
+    if (!metric || metric.userId !== userId) {
+      throw new ConvexError("Metric not found or unauthorized");
+    }
+
+    // Delete all metric submissions for this metric
+    const submissions = await ctx.db
+      .query("userMetricSubmissions")
+      .withIndex("by_user_and_metric", (q) =>
+        q.eq("userId", userId).eq("metricId", args.metricId),
+      )
+      .collect();
+
+    for (const submission of submissions) {
+      await ctx.db.delete(submission._id);
+    }
+
+    await ctx.db.delete(args.metricId);
+    return metric;
+  },
+});

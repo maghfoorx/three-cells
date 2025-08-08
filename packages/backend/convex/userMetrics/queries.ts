@@ -320,3 +320,22 @@ export const getMetricsForDate = query({
     return metricsWithDetails.filter((value) => !!value);
   },
 });
+
+export const getSingleMetric = query({
+  args: {
+    id: v.id("userMetrics"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) {
+      throw new ConvexError("You must be logged in to view metrics");
+    }
+
+    const metric = await ctx.db.get(args.id);
+    if (!metric || metric.userId !== userId) {
+      throw new ConvexError("Metric not found or unauthorized");
+    }
+
+    return metric;
+  },
+});
