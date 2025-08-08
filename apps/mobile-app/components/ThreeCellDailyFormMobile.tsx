@@ -71,6 +71,13 @@ const MOOD_OPTIONS = [
 export default function ThreeCellDailyForm({ date }: { date: Date }) {
   const parsedDate = format(date, "yyyy-MM-dd");
 
+  const todayDate = format(new Date(), "yyyy-MM-dd");
+  const isToday = todayDate === parsedDate;
+
+  const navigateToToday = () => {
+    router.replace(`/track/${todayDate}`);
+  };
+
   const data = useQuery(api.threeCells.threeCellForDate, {
     date: parsedDate,
   });
@@ -167,6 +174,17 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
               </Pressable>
             </View>
           </View>
+
+          {!isToday && (
+            <View className="px-6 mb-2">
+              <TouchableOpacity
+                onPress={navigateToToday}
+                className="flex items-center justify-center bg-blue-200/80 py-2"
+              >
+                <Text>Back to today</Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
           <ScrollView
             showsVerticalScrollIndicator={false}
