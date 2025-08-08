@@ -30,7 +30,7 @@ const Checkbox = ({
   <TouchableOpacity
     onPress={onPress}
     disabled={disabled}
-    className={`w-6 h-6 border-2 rounded-lg justify-center items-center ${
+    className={`w-6 h-6 border-2 rounded-md justify-center items-center ${
       checked ? "bg-blue-500 border-blue-500" : "bg-white border-gray-300"
     }`}
     style={{
