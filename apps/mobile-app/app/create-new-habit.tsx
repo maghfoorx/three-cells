@@ -142,7 +142,7 @@ export default function CreateNewHabitPage() {
                   name="name"
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      className="border bg-white border-gray-300 rounded-md p-3 text-base"
+                      className="border bg-white border-gray-300 p-3 rounded-md"
                       placeholder="Workout"
                       onBlur={onBlur}
                       onChangeText={onChange}

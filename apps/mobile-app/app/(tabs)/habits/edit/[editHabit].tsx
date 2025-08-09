@@ -191,7 +191,7 @@ export default function EditHabitPage() {
                   name="name"
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      className="border bg-white border-gray-300 rounded-md p-3 text-base"
+                      className="border bg-white border-gray-300 rounded-md p-3"
                       placeholder="Workout"
                       onBlur={onBlur}
                       onChangeText={onChange}

@@ -137,7 +137,7 @@ export default function CreateNewMetricPage() {
                 name="name"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className="border bg-white border-gray-300 rounded-md p-3 text-base"
+                    className="border bg-white border-gray-300 rounded-md p-3"
                     placeholder="e.g. Weight, Focus Hours"
                     onBlur={onBlur}
                     onChangeText={onChange}
@@ -162,7 +162,7 @@ export default function CreateNewMetricPage() {
                 name="unit"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className="border bg-white border-gray-300 rounded-md p-3 text-base"
+                    className="border bg-white border-gray-300 rounded-md p-3"
                     placeholder="e.g. kg, hours, words"
                     onBlur={onBlur}
                     onChangeText={onChange}
@@ -183,7 +183,7 @@ export default function CreateNewMetricPage() {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
                     keyboardType="numeric"
-                    className="border bg-white border-gray-300 rounded-md p-3 text-base"
+                    className="border bg-white border-gray-300 rounded-md p-3"
                     placeholder="e.g. 1 or 0.1"
                     onBlur={onBlur}
                     onChangeText={onChange}
