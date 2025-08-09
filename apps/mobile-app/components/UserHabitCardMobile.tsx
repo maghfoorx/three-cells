@@ -139,6 +139,9 @@ const HabitDateButton = ({
     isSameDay(new Date(s.dateFor), date),
   );
 
+  // Check if submissions data is still loading
+  const isLoadingSubmissions = submissions === undefined;
+
   return (
     <View className="flex flex-col items-center flex-1">
       <Text className="text-xs font-medium text-gray-500 mb-1">
@@ -148,15 +151,17 @@ const HabitDateButton = ({
 
       <TouchableOpacity
         className={`w-10 h-10 rounded-md items-center justify-center ${
-          isChecked
-            ? "bg-green-50 border-2 border-green-200"
-            : "bg-red-50 border-2 border-red-100"
+          isLoadingSubmissions
+            ? "bg-gray-50 border-2 border-gray-200"
+            : isChecked
+              ? "bg-green-50 border-2 border-green-200"
+              : "bg-red-50 border-2 border-red-100"
         }`}
         onPress={toggleSubmission}
-        disabled={isToggling}
+        disabled={isToggling || isLoadingSubmissions}
         activeOpacity={0.7}
       >
-        {isToggling ? (
+        {isToggling || isLoadingSubmissions ? (
           <ActivityIndicator size="small" color="#6B7280" />
         ) : isChecked ? (
           <CheckIcon size={16} color="#16A34A" />
@@ -168,7 +173,7 @@ const HabitDateButton = ({
   );
 };
 
-UserHabitCard.Skeleton = () => {
+UserHabitCard.Skeleton = (() => {
   return (
     <View className="bg-white rounded-md p-6 border border-gray-100">
       <View className="flex flex-row items-center gap-3 mb-6">
@@ -192,6 +197,6 @@ UserHabitCard.Skeleton = () => {
       </View>
     </View>
   );
-};
+}) as React.FC;
 
 export default UserHabitCard;

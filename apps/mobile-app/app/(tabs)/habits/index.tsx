@@ -20,7 +20,6 @@ export default function HabitsPage() {
               {allUserHabits?.length || 0} active habits
             </Text>
           </View>
-
           <Pressable
             onPress={() => router.navigate("/create-new-habit")}
             className="w-12 h-12 rounded-md bg-white/80 items-center justify-center"
@@ -46,25 +45,38 @@ export default function HabitsPage() {
           }}
         >
           <View className="gap-4">
-            {allUserHabits?.map((habit) => {
-              return <UserHabitCardMobile key={habit._id} habit={habit} />;
-            })}
-          </View>
+            {!allUserHabits ? (
+              // Loading state
+              <>
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <UserHabitCardMobile.Skeleton key={i} />
+                ))}
+              </>
+            ) : (
+              // Loaded content
+              <>
+                {allUserHabits.map((habit) => {
+                  return <UserHabitCardMobile key={habit._id} habit={habit} />;
+                })}
 
-          {/* Empty state */}
-          {allUserHabits?.length === 0 && (
-            <View className="flex-1 items-center justify-center mt-20">
-              <View className="w-16 h-16 rounded-full bg-gray-100 items-center justify-center mb-4">
-                <PlusIcon size={24} color="#6B7280" />
-              </View>
-              <Text className="text-lg font-semibold text-gray-900 mb-2">
-                No habits yet
-              </Text>
-              <Text className="text-gray-500 text-center px-8">
-                Create your first habit to start building better daily routines
-              </Text>
-            </View>
-          )}
+                {/* Empty state */}
+                {allUserHabits.length === 0 && (
+                  <View className="flex-1 items-center justify-center mt-20">
+                    <View className="w-16 h-16 rounded-full bg-gray-100 items-center justify-center mb-4">
+                      <PlusIcon size={24} color="#6B7280" />
+                    </View>
+                    <Text className="text-lg font-semibold text-gray-900 mb-2">
+                      No habits yet
+                    </Text>
+                    <Text className="text-gray-500 text-center px-8">
+                      Create your first habit to start building better daily
+                      routines
+                    </Text>
+                  </View>
+                )}
+              </>
+            )}
+          </View>
         </ScrollView>
       </View>
     </SafeAreaView>
