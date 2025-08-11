@@ -181,7 +181,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
                 onPress={navigateToToday}
                 className="flex items-center justify-center bg-blue-200/80 py-2"
               >
-                <Text>Back to today</Text>
+                <Text>Go to today</Text>
               </TouchableOpacity>
             </View>
           )}
