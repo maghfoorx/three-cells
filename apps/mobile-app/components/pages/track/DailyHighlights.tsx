@@ -60,7 +60,9 @@ const DailyHighlights = ({ date }: DailyHighlightsProps) => {
     <View className="bg-gray-50 rounded-md p-4">
       {completedHabits.length > 0 && (
         <View className="mb-4">
-          <Text className="text-sm font-medium text-gray-700 mb-2">Habits</Text>
+          <Text className="text-sm font-medium text-gray-700 mb-2">
+            Habits completed
+          </Text>
           <View className="flex-row flex-wrap gap-2">
             {completedHabits.map((habit, index) => (
               <View
