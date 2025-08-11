@@ -20,18 +20,18 @@ const AnimatedPath = Animated.createAnimatedComponent(Path);
 interface MetricTrendChartProps {
   metricId: DataModel["userMetrics"]["document"]["_id"];
   metric: DataModel["userMetrics"]["document"];
+  graphWidth: number;
 }
 
-const { width: screenWidth } = Dimensions.get("window");
-const CONTAINER_PADDING = 32; // 16px on each side (px-4)
 const TEXT_PADDING = 30; // Extra padding for value labels
 const VERTICAL_PADDING = 20; // Top and bottom padding for text labels
-const GRAPH_WIDTH = screenWidth - CONTAINER_PADDING;
+// const GRAPH_WIDTH = screenWidth - CONTAINER_PADDING;
 const GRAPH_HEIGHT = 120;
 
 export default function MetricTrendChart({
   metricId,
   metric,
+  graphWidth: GRAPH_WIDTH,
 }: MetricTrendChartProps) {
   const [viewMode, setViewMode] = useState<"7days" | "30days" | "90days">(
     "30days",

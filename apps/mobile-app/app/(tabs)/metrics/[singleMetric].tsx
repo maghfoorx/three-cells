@@ -14,6 +14,7 @@ import {
 import { Feather } from "@expo/vector-icons";
 import MetricTrendChart from "@/components/pages/metrics/MetricTrendChart";
 import MetricStatisticsCards from "@/components/pages/metrics/MetricStatisticsCards";
+import { useState } from "react";
 
 export default function SingleMetricPage() {
   const { singleMetric: singleMetricId } = useLocalSearchParams();
@@ -27,6 +28,15 @@ export default function SingleMetricPage() {
       metricId: metricId,
     },
   );
+
+  const [containerWidth, setContainerWidth] = useState(300); // Default fallback
+  const GRAPH_WIDTH = containerWidth * 0.9;
+
+  // Handle container layout to get actual width
+  const handleLayout = (event: any) => {
+    const { width } = event.nativeEvent.layout;
+    setContainerWidth(width);
+  };
 
   if (singleMetric === undefined) {
     return (
@@ -75,7 +85,7 @@ export default function SingleMetricPage() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white" onLayout={handleLayout}>
       <View className="py-4 flex-grow">
         <View className="px-4 py-2 flex flex-row items-center justify-between">
           <Pressable
@@ -97,6 +107,7 @@ export default function SingleMetricPage() {
             <MetricTrendChart
               metricId={metricId}
               metric={singleMetric.metric}
+              graphWidth={GRAPH_WIDTH}
             />
 
             {/* Statistics Cards */}

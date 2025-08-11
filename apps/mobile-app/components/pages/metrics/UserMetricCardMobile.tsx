@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useRef } from "react";
+import React, { useMemo, useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, Animated, Dimensions } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
 import Svg, { Path, Circle, G, Text as SvgText } from "react-native-svg";
@@ -24,9 +24,6 @@ type UserMetricCardProps = {
 
 const GRAPH_HEIGHT = 120;
 const PADDING = 20;
-
-const { width: screenWidth } = Dimensions.get("window");
-const GRAPH_WIDTH = screenWidth * 0.8; // 85% of screen width
 
 export function UserMetricCardMobile({
   metric,
@@ -70,6 +67,15 @@ export function UserMetricCardMobile({
 
   const addMetricEntryPressed = () => {
     router.navigate(`/metrics/add-metric-entry?metricId=${metric._id}`);
+  };
+
+  const [containerWidth, setContainerWidth] = useState(300); // Default fallback
+  const GRAPH_WIDTH = containerWidth * 0.9;
+
+  // Handle container layout to get actual width
+  const handleLayout = (event: any) => {
+    const { width } = event.nativeEvent.layout;
+    setContainerWidth(width);
   };
 
   const renderGraph = () => {
@@ -236,6 +242,7 @@ export function UserMetricCardMobile({
         elevation: 2,
         backgroundColor: color(metric.colour).mix(color("white"), 0.95).hex(),
       }}
+      onLayout={handleLayout}
     >
       {/* Header */}
       <View className="flex flex-row justify-between items-center mb-4">
