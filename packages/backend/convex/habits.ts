@@ -17,6 +17,9 @@ import {
   subMonths,
   subWeeks,
   startOfDay,
+  startOfYear,
+  subYears,
+  endOfYear,
 } from "date-fns";
 
 export const getAllUserHabits = query({
@@ -627,6 +630,71 @@ export const getMonthlyPerformance = query({
     }
 
     return months;
+  },
+});
+
+export const getYearlyPerformance = query({
+  args: {
+    habitId: v.id("userHabits"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) {
+      throw new ConvexError("You must be logged in to view habits");
+    }
+
+    const now = new Date();
+    const years = [];
+
+    // Get last 5 years of data
+    for (let i = 5; i >= 0; i--) {
+      const yearStart = startOfYear(subYears(now, i));
+      const yearEnd = endOfYear(yearStart);
+
+      const yearStartStr = format(yearStart, "yyyy-MM-dd");
+      const yearEndStr = format(yearEnd, "yyyy-MM-dd");
+
+      // Get submissions for this month
+      const submissions = await ctx.db
+        .query("userHabitSubmissions")
+        .withIndex("by_user_and_habit_and_date", (q) =>
+          q
+            .eq("userId", userId)
+            .eq("habitId", args.habitId)
+            .gte("dateFor", yearStartStr)
+            .lte("dateFor", yearEndStr),
+        )
+        .collect();
+
+      // Calculate completion rate for the month
+      const daysInYear = eachDayOfInterval({
+        start: yearStart,
+        end: yearEnd,
+      });
+      const submittedDates = submissions.map((s) => parseISO(s.dateFor));
+
+      let completedDays = 0;
+      for (const day of daysInYear) {
+        if (day <= now && submittedDates.some((s) => isSameDay(s, day))) {
+          completedDays++;
+        }
+      }
+
+      // Only count days up to today for current month
+      const relevantDays = daysInYear.filter((day) => day <= now);
+      const completionRate =
+        relevantDays.length > 0
+          ? (completedDays / relevantDays.length) * 100
+          : 0;
+
+      years.push({
+        date: yearStart.getTime(),
+        value: Math.round(completionRate),
+        label: format(yearStart, "yyyy"),
+      });
+    }
+
+    return years;
   },
 });
 

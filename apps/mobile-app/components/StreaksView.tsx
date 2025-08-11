@@ -1,11 +1,5 @@
-import React, { useRef, useEffect } from "react";
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  Dimensions,
-  Animated,
-} from "react-native";
+import React, { useRef, useEffect, useState } from "react";
+import { View, Text, ActivityIndicator, Animated } from "react-native";
 import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { DataModel } from "@packages/backend/convex/_generated/dataModel";
@@ -21,21 +15,29 @@ interface StreaksComponentProps {
   habitColor: string;
 }
 
-const { width: screenWidth } = Dimensions.get("window");
-const CONTAINER_PADDING = 32;
+const CONTAINER_PADDING = 16;
 const BAR_PADDING = 8;
 const BAR_HEIGHT = 24;
-const CHART_WIDTH = screenWidth - CONTAINER_PADDING;
 const CHART_HEIGHT = 180; // Enough for 5 bars + spacing
 
 export default function StreaksView({
   habitId,
   habitColor,
 }: StreaksComponentProps) {
+  const [containerWidth, setContainerWidth] = useState(300); // Default fallback
   const animatedValue = useRef(new Animated.Value(0)).current;
   const streaksData = useQuery(api.habits.getStreaksData, { habitId });
 
   const isLoading = streaksData === undefined;
+
+  // Calculate chart width based on actual container width
+  const chartWidth = containerWidth - CONTAINER_PADDING;
+
+  // Handle container layout to get actual width
+  const handleLayout = (event: any) => {
+    const { width } = event.nativeEvent.layout;
+    setContainerWidth(width);
+  };
 
   // Animation effect - trigger when data loads
   useEffect(() => {
@@ -73,14 +75,14 @@ export default function StreaksView({
     const maxStreak = Math.max(...topStreaks.map((s) => s.length));
 
     // Scale for bar widths (leave some padding on the right for labels)
-    const barMaxWidth = CHART_WIDTH - 100;
+    const barMaxWidth = chartWidth - 100;
     const widthScale = d3
       .scaleLinear()
       .domain([0, maxStreak])
       .range([0, barMaxWidth]);
 
     return (
-      <Svg width={CHART_WIDTH} height={CHART_HEIGHT}>
+      <Svg width={chartWidth} height={CHART_HEIGHT}>
         {topStreaks.map((streak, index) => {
           const y = index * (BAR_HEIGHT + BAR_PADDING) + 0;
           const barWidth = widthScale(streak.length);
@@ -141,7 +143,10 @@ export default function StreaksView({
   };
 
   return (
-    <View className="px-4 py-4 bg-gray-50 rounded-lg mx-4 mb-4">
+    <View
+      className="px-4 py-4 bg-gray-50 rounded-lg mx-4 mb-4"
+      onLayout={handleLayout}
+    >
       {/* Header with current streak */}
       <View className="mb-6">
         <Text className="text-base font-semibold text-gray-800 mb-2">

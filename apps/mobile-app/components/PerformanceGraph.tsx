@@ -4,7 +4,6 @@ import {
   Text,
   Pressable,
   ActivityIndicator,
-  Dimensions,
   Animated,
 } from "react-native";
 import { useQuery } from "convex/react";
@@ -21,25 +20,41 @@ interface PerformanceGraphProps {
   habitColor: string;
 }
 
-const { width: screenWidth } = Dimensions.get("window");
-const CONTAINER_PADDING = 32; // 16px on each side (px-4)
-const TEXT_PADDING = 30; // Extra padding for percentage labels
+const CONTAINER_PADDING = 16; // 16px on each side (px-4)
+const TEXT_PADDING = 28; // Extra padding for percentage labels
 const VERTICAL_PADDING = 20; // Top and bottom padding for text labels
-const GRAPH_WIDTH = screenWidth - CONTAINER_PADDING;
 const GRAPH_HEIGHT = 120;
 
 export default function PerformanceGraph({
   habitId,
   habitColor,
 }: PerformanceGraphProps) {
-  const [viewMode, setViewMode] = useState<"weekly" | "monthly">("weekly");
+  const [viewMode, setViewMode] = useState<"weekly" | "monthly" | "yearly">(
+    "weekly",
+  );
+  const [containerWidth, setContainerWidth] = useState(300); // Default fallback
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   const weeklyData = useQuery(api.habits.getWeeklyPerformance, { habitId });
   const monthlyData = useQuery(api.habits.getMonthlyPerformance, { habitId });
+  const yearlyData = useQuery(api.habits.getYearlyPerformance, { habitId });
 
-  const currentData = viewMode === "weekly" ? weeklyData : monthlyData;
+  const currentData =
+    viewMode === "weekly"
+      ? weeklyData
+      : viewMode === "monthly"
+        ? monthlyData
+        : yearlyData;
   const isLoading = currentData === undefined;
+
+  // Calculate graph width based on actual container width
+  const graphWidth = containerWidth - CONTAINER_PADDING;
+
+  // Handle container layout to get actual width
+  const handleLayout = (event: any) => {
+    const { width } = event.nativeEvent.layout;
+    setContainerWidth(width);
+  };
 
   // Animation effect - trigger when data changes or view mode changes
   useEffect(() => {
@@ -78,16 +93,16 @@ export default function PerformanceGraph({
       const singlePoint = currentData[0];
       return (
         <View className="items-center justify-center h-full">
-          <Svg width={GRAPH_WIDTH} height={GRAPH_HEIGHT}>
+          <Svg width={graphWidth} height={GRAPH_HEIGHT}>
             <Circle
-              cx={GRAPH_WIDTH / 2}
+              cx={graphWidth / 2}
               cy={GRAPH_HEIGHT / 2}
               r={6}
               fill={habitColor}
             />
             <G>
               <SvgText
-                x={GRAPH_WIDTH / 2}
+                x={graphWidth / 2}
                 y={GRAPH_HEIGHT / 2 - 20}
                 fontSize="12"
                 fill={color(habitColor).mix(color("black"), 0.4).hex()}
@@ -97,7 +112,7 @@ export default function PerformanceGraph({
                 {singlePoint.value}%
               </SvgText>
               <SvgText
-                x={GRAPH_WIDTH / 2}
+                x={graphWidth / 2}
                 y={GRAPH_HEIGHT / 2 + 30}
                 fontSize="10"
                 fill="#9CA3AF"
@@ -121,7 +136,7 @@ export default function PerformanceGraph({
     const xScale = d3
       .scaleTime()
       .domain(d3.extent(dataWithDates, (d) => d.date) as [Date, Date])
-      .range([TEXT_PADDING, GRAPH_WIDTH - TEXT_PADDING]);
+      .range([TEXT_PADDING, graphWidth - TEXT_PADDING]);
 
     const yScale = d3
       .scaleLinear()
@@ -137,7 +152,7 @@ export default function PerformanceGraph({
     const path = lineGenerator(dataWithDates)!;
 
     return (
-      <Svg width={GRAPH_WIDTH} height={GRAPH_HEIGHT}>
+      <Svg width={graphWidth} height={GRAPH_HEIGHT}>
         <AnimatedPath
           d={path}
           fill="none"
@@ -212,7 +227,10 @@ export default function PerformanceGraph({
   };
 
   return (
-    <View className="px-4 py-3 bg-gray-50 rounded-lg mx-4 mb-4">
+    <View
+      className="px-4 py-3 bg-gray-50 rounded-lg mx-4 mb-4"
+      onLayout={handleLayout}
+    >
       {/* Header with toggle buttons */}
       <View className="flex-row items-center justify-between mb-4">
         <Text className="text-base font-semibold text-gray-800">
@@ -245,6 +263,21 @@ export default function PerformanceGraph({
               }`}
             >
               Monthly
+            </Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => setViewMode("yearly")}
+            className={`px-3 py-1.5 rounded-md ${
+              viewMode === "yearly" ? "bg-gray-100" : ""
+            }`}
+          >
+            <Text
+              className={`text-sm font-medium ${
+                viewMode === "yearly" ? "text-gray-800" : "text-gray-500"
+              }`}
+            >
+              Yearly
             </Text>
           </Pressable>
         </View>
