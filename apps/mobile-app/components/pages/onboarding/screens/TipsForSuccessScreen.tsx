@@ -63,9 +63,12 @@ export default function TipsForSuccessScreen({
             </Text>
           </View>
 
-          <View className="space-y-4">
+          <View className="flex gap-2">
             {tips.map((tip, index) => (
-              <View key={index} className="bg-white rounded-xl p-6 shadow-sm">
+              <View
+                key={index}
+                className="bg-white rounded-md p-6 shadow-sm border border-gray-200"
+              >
                 <View className="flex-row items-start">
                   <View
                     className="rounded-full p-3 mr-4"

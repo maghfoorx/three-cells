@@ -106,7 +106,7 @@ export default function CreateHabitScreen({ onNext }: CreateHabitScreenProps) {
             </Text>
           </View>
 
-          <View className="space-y-6">
+          <View className="flex gap-4">
             {/* Name Field */}
             <View>
               <Text className="text-sm font-medium text-gray-700 mb-2">
@@ -117,7 +117,7 @@ export default function CreateHabitScreen({ onNext }: CreateHabitScreenProps) {
                 name="name"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className="border bg-white border-gray-300 p-4 rounded-xl text-base"
+                    className="border bg-white border-gray-300 p-4 rounded-md"
                     placeholder="e.g., Morning meditation, Daily walk, Read 5 pages"
                     onBlur={onBlur}
                     onChangeText={onChange}
@@ -143,7 +143,7 @@ export default function CreateHabitScreen({ onNext }: CreateHabitScreenProps) {
                   <TouchableOpacity
                     key={habitColour}
                     onPress={() => setValue("colour", habitColour)}
-                    className={clsx("h-12 w-12 rounded-xl border-3", {
+                    className={clsx("h-12 w-12 rounded-md border-3", {
                       "border-gray-900": habitColour === selectedColour,
                       "border-gray-300": habitColour !== selectedColour,
                     })}
@@ -170,7 +170,7 @@ export default function CreateHabitScreen({ onNext }: CreateHabitScreenProps) {
                 name="habitQuestion"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className="border bg-white border-gray-300 rounded-xl p-4 text-base min-h-[100px]"
+                    className="border bg-white border-gray-300 rounded-md p-4 min-h-[100px]"
                     placeholder="e.g., Did I meditate for 5 minutes today? Did I take a 10-minute walk?"
                     multiline
                     textAlignVertical="top"
@@ -188,7 +188,7 @@ export default function CreateHabitScreen({ onNext }: CreateHabitScreenProps) {
               )}
             </View>
 
-            <View className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+            <View className="bg-blue-50 rounded-md p-4 border border-blue-200">
               <Text className="text-sm text-blue-800 font-medium mb-2">
                 💡 Remember
               </Text>

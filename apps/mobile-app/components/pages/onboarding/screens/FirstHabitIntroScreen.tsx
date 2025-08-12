@@ -31,8 +31,8 @@ export default function FirstHabitIntroScreen({
             </Text>
           </View>
 
-          <View className="space-y-6">
-            <View className="bg-white rounded-xl p-6 shadow-sm">
+          <View className="flex gap-3">
+            <View className="bg-white border border-gray-200 rounded-md p-6 shadow-sm">
               <Text className="text-lg font-semibold text-gray-900 mb-3">
                 🎯 Start Small
               </Text>
@@ -43,7 +43,7 @@ export default function FirstHabitIntroScreen({
               </Text>
             </View>
 
-            <View className="bg-white rounded-xl p-6 shadow-sm">
+            <View className="bg-white border border-gray-200 rounded-md p-6 shadow-sm">
               <Text className="text-lg font-semibold text-gray-900 mb-3">
                 🔗 Stack It
               </Text>
@@ -53,7 +53,7 @@ export default function FirstHabitIntroScreen({
               </Text>
             </View>
 
-            <View className="bg-white rounded-xl p-6 shadow-sm">
+            <View className="bg-white border border-gray-200 rounded-md p-6 shadow-sm">
               <Text className="text-lg font-semibold text-gray-900 mb-3">
                 🎉 Celebrate
               </Text>

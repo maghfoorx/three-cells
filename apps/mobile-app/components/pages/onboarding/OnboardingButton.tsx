@@ -24,7 +24,7 @@ export default function OnboardingButton({
     <TouchableOpacity
       onPress={onPress}
       disabled={disabled || loading}
-      className={`rounded-xl p-4 flex-row justify-center items-center ${
+      className={`rounded-md p-4 flex-row justify-center items-center ${
         isPrimary ? "bg-blue-600" : "bg-gray-100 border border-gray-300"
       } ${disabled || loading ? "opacity-50" : ""}`}
     >

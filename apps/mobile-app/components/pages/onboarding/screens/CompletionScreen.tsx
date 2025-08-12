@@ -50,15 +50,15 @@ export default function CompletionScreen({
             </Text>
           </View>
 
-          <View className="space-y-4 w-full">
-            <View className="bg-white rounded-xl p-6 shadow-lg border-2 border-green-200">
+          <View className="flex gap-2 w-full">
+            <View className="bg-white rounded-md p-6 shadow-lg border-2 border-green-200">
               <View className="flex-row items-center justify-center mb-4">
                 <Feather name="target" size={24} color="#10b981" />
                 <Text className="text-lg font-semibold text-green-800 ml-2">
                   Your First Steps
                 </Text>
               </View>
-              <View className="space-y-2">
+              <View className="flex gap-1">
                 <Text className="text-green-700">
                   • Complete your first habit today
                 </Text>
@@ -71,7 +71,7 @@ export default function CompletionScreen({
               </View>
             </View>
 
-            <View className="bg-blue-50 rounded-xl p-6 border border-blue-200">
+            <View className="bg-blue-50 rounded-md p-6 border border-blue-200">
               <Text className="text-blue-800 text-center font-medium mb-2">
                 Remember: Progress, not perfection
               </Text>

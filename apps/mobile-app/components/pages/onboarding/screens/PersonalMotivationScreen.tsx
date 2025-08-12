@@ -40,7 +40,7 @@ export default function PersonalMotivationScreen({
             </Text>
           </View>
 
-          <View className="bg-white rounded-xl p-6 shadow-sm mb-6">
+          <View className="bg-white rounded-md border border-gray-200 p-6 shadow-sm mb-6">
             <Text className="text-lg font-semibold text-gray-900 mb-4">
               Complete this sentence:
             </Text>
@@ -49,7 +49,7 @@ export default function PersonalMotivationScreen({
             </Text>
 
             <TextInput
-              className="border border-gray-300 rounded-lg p-4 text-base min-h-[120px] bg-gray-50"
+              className="border border-gray-300 rounded-md p-4 text-base min-h-[120px] bg-gray-50"
               placeholder="I want to feel more confident, have more energy, be a better role model for my family..."
               multiline
               textAlignVertical="top"
@@ -59,7 +59,7 @@ export default function PersonalMotivationScreen({
             />
           </View>
 
-          <View className="bg-blue-50 rounded-xl p-6 border border-blue-200">
+          <View className="bg-blue-50 rounded-md p-6 border border-blue-200">
             <Text className="text-sm text-blue-800 font-medium mb-2">
               💡 Pro Tip
             </Text>

@@ -97,7 +97,7 @@ export default function HabitCategoriesScreen({
             </Text>
           </View>
 
-          <View className="space-y-3">
+          <View className="flex gap-2">
             {habitCategories.map((category) => (
               <TouchableOpacity
                 key={category.id}

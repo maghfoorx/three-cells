@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Text, Alert } from "react-native";
+import { View, Text, Alert, ScrollView } from "react-native";
 import { BellIcon } from "react-native-heroicons/solid";
 import * as Notifications from "expo-notifications";
 import OnboardingContainer from "../OnboardingContainer";
@@ -89,56 +89,58 @@ export default function NotificationPermissionScreen({
       <View className="flex-1 px-6">
         <ProgressIndicator currentStep={9} totalSteps={12} />
 
-        <View className="flex-1 justify-center">
-          <View className="items-center mb-8">
-            <View className="bg-purple-100 rounded-full p-8 mb-6">
-              <BellIcon color="#7c3aed" size={48} />
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+          <View className="flex-1 justify-center">
+            <View className="items-center mb-8">
+              <View className="bg-purple-100 rounded-full p-8 mb-6">
+                <BellIcon color="#7c3aed" size={48} />
+              </View>
+
+              <Text className="text-3xl font-bold text-gray-900 text-center mb-4">
+                Stay on Track
+              </Text>
+
+              <Text className="text-lg text-gray-600 text-center leading-relaxed mb-8">
+                Gentle reminders can make all the difference in building lasting
+                habits. We'll send you encouraging notifications at just the
+                right moments.
+              </Text>
             </View>
 
-            <Text className="text-3xl font-bold text-gray-900 text-center mb-4">
-              Stay on Track
-            </Text>
+            <View className="flex gap-4">
+              <View className="bg-white rounded-md border border-gray-200 p-6 shadow-sm">
+                <Text className="text-lg font-semibold text-gray-900 mb-3">
+                  📱 Smart Reminders
+                </Text>
+                <Text className="text-gray-700 leading-relaxed">
+                  We'll remind you to check in with your habits, but never
+                  overwhelm you. Our notifications are designed to motivate, not
+                  annoy.
+                </Text>
+              </View>
 
-            <Text className="text-lg text-gray-600 text-center leading-relaxed mb-8">
-              Gentle reminders can make all the difference in building lasting
-              habits. We'll send you encouraging notifications at just the right
-              moments.
-            </Text>
+              <View className="bg-white rounded-md border border-gray-200 p-6 shadow-sm">
+                <Text className="text-lg font-semibold text-gray-900 mb-3">
+                  🎯 Proven Results
+                </Text>
+                <Text className="text-gray-700 leading-relaxed">
+                  Studies show that people who receive habit reminders are 40%
+                  more likely to maintain their streaks and achieve their goals.
+                </Text>
+              </View>
+
+              <View className="bg-white rounded-md border border-gray-200 p-6 shadow-sm">
+                <Text className="text-lg font-semibold text-gray-900 mb-3">
+                  ⚙️ Full Control
+                </Text>
+                <Text className="text-gray-700 leading-relaxed">
+                  You can customize when and how often you receive
+                  notifications, or turn them off completely at any time.
+                </Text>
+              </View>
+            </View>
           </View>
-
-          <View className="space-y-6">
-            <View className="bg-white rounded-xl p-6 shadow-sm">
-              <Text className="text-lg font-semibold text-gray-900 mb-3">
-                📱 Smart Reminders
-              </Text>
-              <Text className="text-gray-700 leading-relaxed">
-                We'll remind you to check in with your habits, but never
-                overwhelm you. Our notifications are designed to motivate, not
-                annoy.
-              </Text>
-            </View>
-
-            <View className="bg-white rounded-xl p-6 shadow-sm">
-              <Text className="text-lg font-semibold text-gray-900 mb-3">
-                🎯 Proven Results
-              </Text>
-              <Text className="text-gray-700 leading-relaxed">
-                Studies show that people who receive habit reminders are 40%
-                more likely to maintain their streaks and achieve their goals.
-              </Text>
-            </View>
-
-            <View className="bg-white rounded-xl p-6 shadow-sm">
-              <Text className="text-lg font-semibold text-gray-900 mb-3">
-                ⚙️ Full Control
-              </Text>
-              <Text className="text-gray-700 leading-relaxed">
-                You can customize when and how often you receive notifications,
-                or turn them off completely at any time.
-              </Text>
-            </View>
-          </View>
-        </View>
+        </ScrollView>
 
         <View className="pb-8 space-y-3">
           <OnboardingButton

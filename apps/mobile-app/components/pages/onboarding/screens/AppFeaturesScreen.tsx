@@ -61,9 +61,12 @@ export default function AppFeaturesScreen({ onNext }: AppFeaturesScreenProps) {
             </Text>
           </View>
 
-          <View className="space-y-4">
+          <View className="flex flex-col gap-4">
             {features.map((feature, index) => (
-              <View key={index} className="bg-white rounded-xl p-6 shadow-sm">
+              <View
+                key={index}
+                className="bg-white rounded-md border border-gray-200 p-6 shadow-sm"
+              >
                 <View className="flex-row items-start">
                   <View
                     className="rounded-full p-3 mr-4"
@@ -88,7 +91,7 @@ export default function AppFeaturesScreen({ onNext }: AppFeaturesScreenProps) {
             ))}
           </View>
 
-          <View className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mt-6 border border-blue-200">
+          <View className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-md p-6 mt-6 border border-blue-200">
             <Text className="text-lg font-semibold text-gray-900 mb-3 text-center">
               🎯 The Three Cells Philosophy
             </Text>

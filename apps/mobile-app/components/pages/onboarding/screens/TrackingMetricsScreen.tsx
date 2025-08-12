@@ -26,8 +26,8 @@ export default function TrackingMetricsScreen({
             </Text>
           </View>
 
-          <View className="space-y-6">
-            <View className="bg-white rounded-xl p-6 shadow-sm">
+          <View className="flex gap-4">
+            <View className="bg-white rounded-md border border-gray-200 p-6 shadow-sm">
               <Text className="text-lg font-semibold text-gray-900 mb-3">
                 📈 The Hawthorne Effect
               </Text>
@@ -38,7 +38,7 @@ export default function TrackingMetricsScreen({
               </Text>
             </View>
 
-            <View className="bg-white rounded-xl p-6 shadow-sm">
+            <View className="bg-white rounded-md border border-gray-200 p-6 shadow-sm">
               <Text className="text-lg font-semibold text-gray-900 mb-3">
                 🎯 Dopamine & Progress
               </Text>
@@ -50,7 +50,7 @@ export default function TrackingMetricsScreen({
               </Text>
             </View>
 
-            <View className="bg-white rounded-xl p-6 shadow-sm">
+            <View className="bg-white rounded-md border border-gray-200 p-6 shadow-sm">
               <Text className="text-lg font-semibold text-gray-900 mb-3">
                 🔍 Data-Driven Insights
               </Text>
