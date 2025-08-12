@@ -73,7 +73,7 @@ export default function CreateHabitScreen({ onNext }: CreateHabitScreenProps) {
   const selectedColour = watch("colour");
 
   const pageColour = useMemo(() => {
-    return color(selectedColour).mix(color("white"), 0.8).hex();
+    return color(selectedColour).mix(color("white"), 0.85).hex();
   }, [selectedColour]);
 
   const handleCreateHabit = async (data: FormSchema) => {
