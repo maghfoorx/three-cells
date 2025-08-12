@@ -24,7 +24,6 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   ],
   callbacks: {
     redirect: async (params: { redirectTo: string }) => {
-      console.log(params.redirectTo, "REDIRECT_TO_PASSED");
       if (params.redirectTo === "http://localhost:8081") {
         return params.redirectTo;
       }

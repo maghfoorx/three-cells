@@ -6,6 +6,15 @@ const schema = defineSchema({
   ...authTables,
   // Your other tables...
 
+  users: defineTable({
+    name: v.optional(v.string()),
+    image: v.optional(v.string()),
+    email: v.optional(v.string()),
+    emailVerificationTime: v.optional(v.number()),
+    isAnonymous: v.optional(v.boolean()),
+    hasCompletedOnboarding: v.optional(v.boolean()),
+  }).index("email", ["email"]),
+
   user_tasks: defineTable({
     userId: v.id("users"),
     category_id: v.optional(v.id("user_tasks_categories")),

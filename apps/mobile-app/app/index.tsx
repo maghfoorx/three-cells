@@ -9,10 +9,11 @@ import {
   Pressable,
   Platform,
 } from "react-native";
-import { useConvexAuth } from "convex/react";
+import { useConvexAuth, useQuery } from "convex/react";
 import SignInWithGoogle from "@/components/SignInWithGoogle";
 import { Redirect } from "expo-router";
 import SignInWithApple from "@/components/SignInWithApple";
+import { api } from "@packages/backend/convex/_generated/api";
 
 const FEATURES = [
   {
@@ -62,6 +63,10 @@ const FEATURES = [
 
 export default function Homepage() {
   const { isAuthenticated, isLoading } = useConvexAuth();
+
+  const user = useQuery(api.auth.viewer);
+
+  console.log(user, isLoading, "IS_USER");
 
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const logoScale = useRef(new Animated.Value(0.8)).current;
@@ -150,13 +155,11 @@ export default function Homepage() {
     animateIn();
   }, []);
 
-  const handleAppleLogin = () => {
-    // Implement Apple login logic
-    console.log("Apple login pressed");
-  };
-
   if (isAuthenticated && !isLoading) {
-    return <Redirect href={"/(tabs)/track"} />;
+    if (!user?.hasCompletedOnboarding) {
+      return <Redirect href="/onboarding" />;
+    }
+    return <Redirect href="/(tabs)/track" />;
   }
 
   return (
