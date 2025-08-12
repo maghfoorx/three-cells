@@ -1,14 +1,13 @@
-import React from "react";
 import { Image } from "expo-image";
 import { View, Text, SafeAreaView, ScrollView } from "react-native";
 import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import SignOutButton from "@/components/SignOutButton";
-import { CakeIcon, HeartIcon } from "react-native-heroicons/solid";
+import { HeartIcon } from "react-native-heroicons/solid";
+import NotificationSettings from "@/components/pages/account/NotificationSettings";
 
 export default function AccountPage() {
   const user = useQuery(api.auth.viewer);
-
   const hasLifeTimeAccess =
     (user != null &&
       user.hasActivePurchase != null &&
@@ -24,12 +23,12 @@ export default function AccountPage() {
             <Text className="text-2xl font-bold text-gray-900">Account</Text>
           </View>
         </View>
-
         <ScrollView
           className="flex-1"
           contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 32 }}
           showsVerticalScrollIndicator={false}
         >
+          {/* User Profile Section */}
           <View className="flex gap-4 bg-gray-100 rounded-md py-4 px-4">
             <View className="flex flex-row gap-4 items-center">
               <Image
@@ -41,11 +40,9 @@ export default function AccountPage() {
                 <Text>{user?.email}</Text>
               </View>
             </View>
-
-            <View>
-              <SignOutButton />
-            </View>
           </View>
+
+          {/* Lifetime Access Section */}
           {hasLifeTimeAccess && (
             <View className="px-4 py-4 bg-green-300 mt-4 rounded-md">
               <View className="flex flex-row gap-1 items-center">
@@ -57,6 +54,12 @@ export default function AccountPage() {
               </Text>
             </View>
           )}
+
+          {/* Notifications Section */}
+          <NotificationSettings className="mt-4" />
+          <View className="mt-4">
+            <SignOutButton />
+          </View>
         </ScrollView>
       </View>
     </SafeAreaView>
