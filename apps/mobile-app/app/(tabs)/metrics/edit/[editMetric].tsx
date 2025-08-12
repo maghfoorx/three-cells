@@ -1,5 +1,9 @@
-import { XMarkIcon, TrashIcon } from "react-native-heroicons/outline";
-import React, { useMemo, useEffect } from "react";
+import {
+  XMarkIcon,
+  TrashIcon,
+  ChevronDownIcon,
+} from "react-native-heroicons/outline";
+import React, { useMemo, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -12,6 +16,7 @@ import {
   SafeAreaView,
   Pressable,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,7 +33,7 @@ const formSchema = z.object({
   name: z.string().min(1, "Metric name is required"),
   colour: z.string().min(1),
   unit: z.string().optional(),
-  increment: z.string().optional(), // input is string, parse to float
+  increment: z.enum(["1", "0.1", "0.01"]).optional(),
 });
 
 type FormSchema = z.output<typeof formSchema>;
@@ -49,7 +54,26 @@ export const metricsFormColourOptions = [
   "#F6A9FF",
 ];
 
+const incrementOptions = [
+  {
+    value: "1",
+    label: "Whole numbers",
+    description: "1, 2, 3, 4...",
+  },
+  {
+    value: "0.1",
+    label: "One decimal place",
+    description: "1.0, 1.1, 1.2...",
+  },
+  {
+    value: "0.01",
+    label: "Two decimal places",
+    description: "1.00, 1.01, 1.02...",
+  },
+];
+
 export default function EditMetricPage() {
+  const [showIncrementModal, setShowIncrementModal] = useState(false);
   const { editMetric: singleMetricId } = useLocalSearchParams();
   const metricId =
     singleMetricId as DataModel["userMetrics"]["document"]["_id"];
@@ -63,7 +87,7 @@ export default function EditMetricPage() {
     defaultValues: {
       name: "",
       unit: "",
-      increment: "",
+      increment: "1",
       colour: "#FF8A8A",
     },
   });
@@ -83,12 +107,19 @@ export default function EditMetricPage() {
   // Reset form when metric data loads
   useEffect(() => {
     if (singleMetricData) {
+      // Convert increment number back to string for the form
+      let incrementValue = "1"; // default
+      if (singleMetricData.increment !== undefined) {
+        if (singleMetricData.increment === 1) incrementValue = "1";
+        else if (singleMetricData.increment === 0.1) incrementValue = "0.1";
+        else if (singleMetricData.increment === 0.01) incrementValue = "0.01";
+        else incrementValue = singleMetricData.increment.toString();
+      }
+
       reset({
         name: singleMetricData.name,
         unit: singleMetricData.unit || "",
-        increment: singleMetricData.increment
-          ? singleMetricData.increment.toString()
-          : "",
+        increment: incrementValue as "1" | "0.1" | "0.01",
         colour: singleMetricData.colour,
       });
     }
@@ -153,11 +184,19 @@ export default function EditMetricPage() {
   };
 
   const selectedColour = watch("colour");
+  const selectedIncrement = watch("increment");
 
   const pageColour = useMemo(() => {
     if (!selectedColour) return "#ffffff";
     return color(selectedColour).mix(color("white"), 0.8).hex();
   }, [selectedColour]);
+
+  const getSelectedIncrementLabel = () => {
+    const option = incrementOptions.find(
+      (opt) => opt.value === selectedIncrement,
+    );
+    return option ? option.label : "Select precision";
+  };
 
   if (!singleMetricData) {
     return (
@@ -251,26 +290,23 @@ export default function EditMetricPage() {
                 />
               </View>
 
-              {/* Increment Field */}
+              {/* Number Precision */}
               <View className="mb-4">
                 <Text className="text-sm font-medium text-gray-700 mb-2">
-                  Increment
+                  Number precision
                 </Text>
-                <Controller
-                  control={control}
-                  name="increment"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      className="border bg-white border-gray-300 rounded-md p-3 text-base"
-                      placeholder="e.g. 1 or 0.1"
-                      keyboardType="numeric"
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      value={value}
-                      autoComplete="off"
-                    />
-                  )}
-                />
+                <TouchableOpacity
+                  onPress={() => setShowIncrementModal(true)}
+                  className="border bg-white border-gray-300 rounded-md p-3 flex-row justify-between items-center"
+                >
+                  <Text className="text-gray-900">
+                    {getSelectedIncrementLabel()}
+                  </Text>
+                  <ChevronDownIcon size={20} color="#6B7280" />
+                </TouchableOpacity>
+                <Text className="text-xs text-gray-500 mt-1">
+                  How precise should your measurements be?
+                </Text>
               </View>
 
               {/* Colour Field */}
@@ -386,6 +422,71 @@ export default function EditMetricPage() {
           </KeyboardAvoidingView>
         </ScrollView>
       </View>
+
+      {/* Increment Selection Modal */}
+      <Modal
+        visible={showIncrementModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowIncrementModal(false)}
+      >
+        <TouchableOpacity
+          className="flex-1 bg-black bg-opacity-50 justify-center items-center"
+          activeOpacity={1}
+          onPress={() => setShowIncrementModal(false)}
+        >
+          <TouchableOpacity
+            className="bg-white mx-6 rounded-xl max-w-sm w-full"
+            activeOpacity={1}
+            onPress={() => {}} // Prevent modal close when tapping inside
+          >
+            <View className="p-6">
+              <Text className="text-lg font-semibold text-gray-900 mb-4">
+                Choose number precision
+              </Text>
+
+              {incrementOptions.map((option) => (
+                <TouchableOpacity
+                  key={option.value}
+                  onPress={() => {
+                    setValue("increment", option.value as "1" | "0.1" | "0.01");
+                    setShowIncrementModal(false);
+                  }}
+                  className={clsx(
+                    "p-4 rounded-lg mb-2 border",
+                    selectedIncrement === option.value
+                      ? "bg-blue-50 border-blue-200"
+                      : "bg-white border-gray-200",
+                  )}
+                >
+                  <View className="flex-row items-center justify-between">
+                    <View className="flex-1">
+                      <Text className="font-medium text-gray-900 mb-1">
+                        {option.label}
+                      </Text>
+                      <Text className="text-sm text-gray-500">
+                        {option.description}
+                      </Text>
+                    </View>
+                    {selectedIncrement === option.value && (
+                      <Feather name="check" size={20} color="#3B82F6" />
+                    )}
+                  </View>
+                </TouchableOpacity>
+              ))}
+
+              <TouchableOpacity
+                onPress={() => setShowIncrementModal(false)}
+                className="mt-4 bg-gray-100 rounded-lg p-3"
+              >
+                <Text className="text-center text-gray-700 font-medium">
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }

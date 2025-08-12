@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { XMarkIcon } from "react-native-heroicons/outline";
+import { XMarkIcon, ChevronDownIcon } from "react-native-heroicons/outline";
 import {
   View,
   Text,
@@ -11,9 +11,10 @@ import {
   ScrollView,
   SafeAreaView,
   Pressable,
+  Modal,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -26,7 +27,7 @@ const formSchema = z.object({
   name: z.string().min(1, "Metric name is required"),
   colour: z.string().min(1),
   unit: z.string().optional(),
-  increment: z.string().optional(), // input is string, parse to float
+  increment: z.enum(["1", "0.1", "0.01"]).optional(),
 });
 
 type FormSchema = z.output<typeof formSchema>;
@@ -47,17 +48,37 @@ const colourOptions = [
   "#F6A9FF",
 ];
 
+const incrementOptions = [
+  {
+    value: "1",
+    label: "Whole numbers",
+    description: "1, 2, 3, 4...",
+  },
+  {
+    value: "0.1",
+    label: "One decimal place",
+    description: "1.0, 1.1, 1.2...",
+  },
+  {
+    value: "0.01",
+    label: "Two decimal places",
+    description: "1.00, 1.01, 1.02...",
+  },
+];
+
 const getRandomColour = () =>
   colourOptions[Math.floor(Math.random() * colourOptions.length)];
 
 export default function CreateNewMetricPage() {
+  const [showIncrementModal, setShowIncrementModal] = useState(false);
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       colour: getRandomColour(),
       unit: "",
-      increment: "",
+      increment: "1", // Default to whole numbers
     },
   });
 
@@ -70,6 +91,8 @@ export default function CreateNewMetricPage() {
   } = form;
 
   const selectedColour = watch("colour");
+  const selectedIncrement = watch("increment");
+
   const pageColour = useMemo(
     () => color(selectedColour).mix(color("white"), 0.8).hex(),
     [selectedColour],
@@ -99,6 +122,13 @@ export default function CreateNewMetricPage() {
     } catch (err) {
       Alert.alert("Error", "Failed to create metric");
     }
+  };
+
+  const getSelectedIncrementLabel = () => {
+    const option = incrementOptions.find(
+      (opt) => opt.value === selectedIncrement,
+    );
+    return option ? option.label : "Select precision";
   };
 
   return (
@@ -172,25 +202,23 @@ export default function CreateNewMetricPage() {
               />
             </View>
 
-            {/* Increment */}
+            {/* Number Precision */}
             <View className="mb-4">
               <Text className="text-sm font-medium text-gray-700 mb-2">
-                Increment
+                Number precision
               </Text>
-              <Controller
-                control={control}
-                name="increment"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    keyboardType="numeric"
-                    className="border bg-white border-gray-300 rounded-md p-3"
-                    placeholder="e.g. 1 or 0.1"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                  />
-                )}
-              />
+              <TouchableOpacity
+                onPress={() => setShowIncrementModal(true)}
+                className="border bg-white border-gray-300 rounded-md p-3 flex-row justify-between items-center"
+              >
+                <Text className="text-gray-900">
+                  {getSelectedIncrementLabel()}
+                </Text>
+                <ChevronDownIcon size={20} color="#6B7280" />
+              </TouchableOpacity>
+              <Text className="text-xs text-gray-500 mt-1">
+                How precise should your measurements be?
+              </Text>
             </View>
 
             {/* Colour Selection */}
@@ -227,6 +255,71 @@ export default function CreateNewMetricPage() {
           </KeyboardAvoidingView>
         </ScrollView>
       </View>
+
+      {/* Increment Selection Modal */}
+      <Modal
+        visible={showIncrementModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowIncrementModal(false)}
+      >
+        <TouchableOpacity
+          className="flex-1 bg-black bg-opacity-50 justify-center items-center"
+          activeOpacity={1}
+          onPress={() => setShowIncrementModal(false)}
+        >
+          <TouchableOpacity
+            className="bg-white mx-6 rounded-xl max-w-sm w-full"
+            activeOpacity={1}
+            onPress={() => {}} // Prevent modal close when tapping inside
+          >
+            <View className="p-6">
+              <Text className="text-lg font-semibold text-gray-900 mb-4">
+                Choose number precision
+              </Text>
+
+              {incrementOptions.map((option) => (
+                <TouchableOpacity
+                  key={option.value}
+                  onPress={() => {
+                    setValue("increment", option.value as "1" | "0.1" | "0.01");
+                    setShowIncrementModal(false);
+                  }}
+                  className={clsx(
+                    "p-4 rounded-lg mb-2 border",
+                    selectedIncrement === option.value
+                      ? "bg-blue-50 border-blue-200"
+                      : "bg-white border-gray-200",
+                  )}
+                >
+                  <View className="flex-row items-center justify-between">
+                    <View className="flex-1">
+                      <Text className="font-medium text-gray-900 mb-1">
+                        {option.label}
+                      </Text>
+                      <Text className="text-sm text-gray-500">
+                        {option.description}
+                      </Text>
+                    </View>
+                    {selectedIncrement === option.value && (
+                      <Feather name="check" size={20} color="#3B82F6" />
+                    )}
+                  </View>
+                </TouchableOpacity>
+              ))}
+
+              <TouchableOpacity
+                onPress={() => setShowIncrementModal(false)}
+                className="mt-4 bg-gray-100 rounded-lg p-3"
+              >
+                <Text className="text-center text-gray-700 font-medium">
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }
