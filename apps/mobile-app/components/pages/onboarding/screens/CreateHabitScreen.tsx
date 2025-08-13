@@ -95,7 +95,7 @@ export default function CreateHabitScreen({ onNext }: CreateHabitScreenProps) {
         <ProgressIndicator currentStep={7} totalSteps={12} />
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-          <View className="items-center mb-8">
+          <View className="items-center my-8">
             <Text className="text-3xl font-bold text-gray-900 text-center mb-4">
               Create Your First Habit
             </Text>
@@ -138,14 +138,14 @@ export default function CreateHabitScreen({ onNext }: CreateHabitScreenProps) {
               <Text className="text-sm font-medium text-gray-700 mb-2">
                 Choose a Color*
               </Text>
-              <View className="flex-row flex-wrap gap-3">
+              <View className="flex-row flex-wrap gap-2">
                 {habitsFormColourOptions.map((habitColour) => (
                   <TouchableOpacity
                     key={habitColour}
                     onPress={() => setValue("colour", habitColour)}
-                    className={clsx("h-12 w-12 rounded-md border-3", {
+                    className={clsx("h-8 w-8 rounded-md border-2", {
                       "border-gray-900": habitColour === selectedColour,
-                      "border-gray-300": habitColour !== selectedColour,
+                      "border-gray-100": habitColour !== selectedColour,
                     })}
                     style={{
                       backgroundColor: habitColour,

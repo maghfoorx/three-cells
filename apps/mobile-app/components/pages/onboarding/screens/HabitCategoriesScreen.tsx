@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import OnboardingContainer from "../OnboardingContainer";
 import OnboardingButton from "../OnboardingButton";
 import ProgressIndicator from "../ProgressIndicator";
@@ -82,11 +82,7 @@ export default function HabitCategoriesScreen({
         <ProgressIndicator currentStep={5} totalSteps={12} />
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-          <View className="items-center mb-8">
-            <View className="bg-purple-100 rounded-full p-8 mb-6">
-              <Text className="text-6xl">🎯</Text>
-            </View>
-
+          <View className="items-center my-8">
             <Text className="text-3xl font-bold text-gray-900 text-center mb-4">
               What Matters Most?
             </Text>

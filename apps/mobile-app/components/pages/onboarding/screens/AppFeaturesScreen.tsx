@@ -24,18 +24,18 @@ const features = [
     color: "#3b82f6",
   },
   {
-    icon: "check-square" as keyof typeof Feather.glyphMap,
-    title: "Smart Todos",
-    description:
-      "Organize your tasks and connect them to your bigger goals and habits.",
-    color: "#8b5cf6",
-  },
-  {
     icon: "trending-up" as keyof typeof Feather.glyphMap,
     title: "Personal Metrics",
     description:
       "Track anything that matters to you - sleep, focus hours, weight, or custom metrics.",
     color: "#f59e0b",
+  },
+  {
+    icon: "check-square" as keyof typeof Feather.glyphMap,
+    title: "Smart Todos",
+    description:
+      "Organize your tasks and connect them to your bigger goals and habits.",
+    color: "#8b5cf6",
   },
 ];
 
@@ -46,11 +46,7 @@ export default function AppFeaturesScreen({ onNext }: AppFeaturesScreenProps) {
         <ProgressIndicator currentStep={10} totalSteps={12} />
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-          <View className="items-center mb-8">
-            <View className="bg-blue-100 rounded-full p-8 mb-6">
-              <Text className="text-6xl">🚀</Text>
-            </View>
-
+          <View className="items-center my-8">
             <Text className="text-3xl font-bold text-gray-900 text-center mb-4">
               Everything You Need
             </Text>

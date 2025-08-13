@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Text, Alert, ScrollView } from "react-native";
+import { View, Text, Alert, ScrollView, Image } from "react-native";
 import { BellIcon } from "react-native-heroicons/solid";
 import * as Notifications from "expo-notifications";
 import OnboardingContainer from "../OnboardingContainer";
@@ -92,8 +92,15 @@ export default function NotificationPermissionScreen({
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
           <View className="flex-1 justify-center">
             <View className="items-center mb-8">
-              <View className="bg-purple-100 rounded-full p-8 mb-6">
-                <BellIcon color="#7c3aed" size={48} />
+              <View className="w-full mb-4">
+                <Image
+                  source={require("../../../../assets/images/stayOnTrack.png")}
+                  style={{
+                    width: "100%",
+                    height: 300, // or adjust based on your image's aspect ratio
+                    objectFit: "contain",
+                  }}
+                />
               </View>
 
               <Text className="text-3xl font-bold text-gray-900 text-center mb-4">

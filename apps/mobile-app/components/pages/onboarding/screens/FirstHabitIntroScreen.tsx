@@ -16,11 +16,7 @@ export default function FirstHabitIntroScreen({
         <ProgressIndicator currentStep={6} totalSteps={12} />
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-          <View className="items-center mb-8">
-            <View className="bg-green-100 rounded-full p-8 mb-6">
-              <Text className="text-6xl">🌟</Text>
-            </View>
-
+          <View className="items-center my-8">
             <Text className="text-3xl font-bold text-gray-900 text-center mb-4">
               Your First Habit
             </Text>

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, Image } from "react-native";
 import OnboardingContainer from "../OnboardingContainer";
 import OnboardingButton from "../OnboardingButton";
 import ProgressIndicator from "../ProgressIndicator";
@@ -16,9 +16,16 @@ export default function TrackingMetricsScreen({
         <ProgressIndicator currentStep={3} totalSteps={12} />
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-          <View className="items-center mb-8">
-            <View className="bg-green-100 rounded-full p-8 mb-6">
-              <Text className="text-6xl">📊</Text>
+          <View className="items-center">
+            <View className="w-full mb-8">
+              <Image
+                source={require("../../../../assets/images/WhyTrackingWorks.png")}
+                style={{
+                  width: "100%",
+                  height: 300, // or adjust based on your image's aspect ratio
+                  objectFit: "contain",
+                }}
+              />
             </View>
 
             <Text className="text-3xl font-bold text-gray-900 text-center mb-4">

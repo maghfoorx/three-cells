@@ -48,11 +48,7 @@ export default function TipsForSuccessScreen({
         <ProgressIndicator currentStep={11} totalSteps={12} />
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-          <View className="items-center mb-8">
-            <View className="bg-yellow-100 rounded-full p-8 mb-6">
-              <Text className="text-6xl">💡</Text>
-            </View>
-
+          <View className="items-center my-8">
             <Text className="text-3xl font-bold text-gray-900 text-center mb-4">
               Tips for Success
             </Text>
@@ -89,7 +85,7 @@ export default function TipsForSuccessScreen({
             ))}
           </View>
 
-          <View className="bg-blue-50 rounded-xl p-6 mt-6 border border-blue-200">
+          <View className="bg-blue-50 rounded-md p-6 mt-6 border border-blue-200">
             <Text className="text-lg font-semibold text-blue-900 mb-3 text-center">
               📚 Recommended Reading
             </Text>
