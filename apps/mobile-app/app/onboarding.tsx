@@ -1,4 +1,13 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { View } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  SlideInRight,
+  SlideOutLeft,
+  Easing,
+} from "react-native-reanimated";
 import ScienceOfHabitsScreen from "@/components/pages/onboarding/screens/ScienceOfHabitsScreen";
 import PowerOfJournalingScreen from "@/components/pages/onboarding/screens/PowerOfJournalingScreen";
 import TrackingMetricsScreen from "@/components/pages/onboarding/screens/TrackingMetricsScreen";
@@ -28,7 +37,23 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
     habitData: null as any,
   });
 
-  const nextStep = () => setCurrentStep((prev) => prev + 1);
+  // Shared values for animations
+  const progressValue = useSharedValue(0);
+  const isTransitioning = useSharedValue(false);
+
+  const nextStep = () => {
+    if (isTransitioning.value) return;
+
+    isTransitioning.value = true;
+
+    // Set next step immediately for UI responsiveness
+    setCurrentStep((prev) => prev + 1);
+
+    // Reset transition flag after animation
+    setTimeout(() => {
+      isTransitioning.value = false;
+    }, 300);
+  };
 
   const handleMotivationNext = (motivation: string) => {
     setOnboardingData((prev) => ({ ...prev, motivation }));
@@ -65,5 +90,22 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
     <CompletionScreen key="completion" onComplete={onComplete} />,
   ];
 
-  return screens[currentStep] || screens[0];
+  const currentScreen = screens[currentStep];
+
+  if (!currentScreen) {
+    return screens[0];
+  }
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Animated.View
+        key={`screen-${currentStep}`}
+        entering={SlideInRight.duration(400).easing(Easing.out(Easing.ease))}
+        exiting={SlideOutLeft.duration(300).easing(Easing.out(Easing.ease))}
+        style={{ flex: 1 }}
+      >
+        {currentScreen}
+      </Animated.View>
+    </View>
+  );
 }
