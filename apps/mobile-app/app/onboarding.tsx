@@ -12,12 +12,15 @@ import AppFeaturesScreen from "@/components/pages/onboarding/screens/AppFeatures
 import TipsForSuccessScreen from "@/components/pages/onboarding/screens/TipsForSuccessScreen";
 import CompletionScreen from "@/components/pages/onboarding/screens/CompletionScreen";
 import WelcomeScreen from "@/components/pages/onboarding/screens/WelcomeScreen";
+import { useQuery } from "convex/react";
+import { api } from "@packages/backend/convex/_generated/api";
 
 interface OnboardingFlowProps {
   onComplete: () => void;
 }
 
 export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
+  const user = useQuery(api.auth.viewer);
   const [currentStep, setCurrentStep] = useState(0);
   const [onboardingData, setOnboardingData] = useState({
     motivation: "",
@@ -43,7 +46,7 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
   };
 
   const screens = [
-    <WelcomeScreen key="welcome" onNext={nextStep} />,
+    <WelcomeScreen key="welcome" onNext={nextStep} user={user} />,
     <ScienceOfHabitsScreen key="science" onNext={nextStep} />,
     <PowerOfJournalingScreen key="journaling" onNext={nextStep} />,
     <TrackingMetricsScreen key="tracking" onNext={nextStep} />,

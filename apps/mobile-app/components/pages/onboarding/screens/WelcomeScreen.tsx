@@ -3,12 +3,14 @@ import { Image } from "expo-image";
 import OnboardingContainer from "../OnboardingContainer";
 import OnboardingButton from "../OnboardingButton";
 import ProgressIndicator from "../ProgressIndicator";
+import { Doc } from "@packages/backend/convex/_generated/dataModel";
 
 interface WelcomeScreenProps {
   onNext: () => void;
+  user: Doc<"users">;
 }
 
-export default function WelcomeScreen({ onNext }: WelcomeScreenProps) {
+export default function WelcomeScreen({ onNext, user }: WelcomeScreenProps) {
   return (
     <OnboardingContainer backgroundColor="#f8fafc">
       <View className="flex-1 px-6">
@@ -25,7 +27,7 @@ export default function WelcomeScreen({ onNext }: WelcomeScreenProps) {
             />
           </View>
           <Text className="text-3xl font-bold text-gray-900 text-center mb-4">
-            Congratulations on Taking the First Step!
+            Congratulations {user?.name?.split(" ")[0]}!
           </Text>
           <Text className="text-lg text-gray-600 text-center mb-8 leading-relaxed">
             You've made an incredible decision to invest in yourself. Your
