@@ -66,8 +66,6 @@ export default function Homepage() {
 
   const user = useQuery(api.auth.viewer);
 
-  console.log(user, isLoading, "IS_USER");
-
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const logoScale = useRef(new Animated.Value(0.8)).current;
   const taglineOpacity = useRef(new Animated.Value(0)).current;

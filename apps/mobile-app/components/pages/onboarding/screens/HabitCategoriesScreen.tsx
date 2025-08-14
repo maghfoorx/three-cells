@@ -77,7 +77,7 @@ export default function HabitCategoriesScreen({
   };
 
   return (
-    <OnboardingContainer backgroundColor="#faf5ff">
+    <OnboardingContainer backgroundColor="#FFFF">
       <View className="flex-1 px-6">
         <ProgressIndicator currentStep={5} totalSteps={12} />
 
@@ -100,7 +100,7 @@ export default function HabitCategoriesScreen({
                 onPress={() => toggleCategory(category.id)}
                 className={`bg-white rounded-xl p-4 border-2 ${
                   selectedCategories.includes(category.id)
-                    ? "border-purple-500 bg-purple-50"
+                    ? "border-blue-500 bg-blue-50"
                     : "border-gray-200"
                 }`}
               >
@@ -115,7 +115,7 @@ export default function HabitCategoriesScreen({
                     </Text>
                   </View>
                   {selectedCategories.includes(category.id) && (
-                    <View className="bg-purple-500 rounded-full w-6 h-6 items-center justify-center">
+                    <View className="bg-blue-500 rounded-full w-6 h-6 items-center justify-center">
                       <Text className="text-white text-xs font-bold">✓</Text>
                     </View>
                   )}
