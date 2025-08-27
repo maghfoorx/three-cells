@@ -1,14 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Image } from "expo-image";
 import { Feather } from "@expo/vector-icons";
-import {
-  View,
-  Text,
-  Animated,
-  SafeAreaView,
-  Pressable,
-  Platform,
-} from "react-native";
+import { View, Text, Animated, SafeAreaView, Platform } from "react-native";
 import { useConvexAuth, useQuery } from "convex/react";
 import SignInWithGoogle from "@/components/SignInWithGoogle";
 import { Redirect } from "expo-router";

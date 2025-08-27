@@ -7,23 +7,11 @@ import {
   ScrollView,
   Image,
 } from "react-native";
-import ConfettiCannon from "react-native-confetti-cannon";
+import LottieView from "lottie-react-native"; // ✅ use this instead of @lottiefiles/lottie-player
 import { TrophyIcon } from "react-native-heroicons/outline";
 import OnboardingContainer from "../OnboardingContainer";
 import OnboardingButton from "../OnboardingButton";
 import ProgressIndicator from "../ProgressIndicator";
-
-const confettiCannons = [
-  {
-    autoStartDelay: 100,
-  },
-  {
-    autoStartDelay: 500,
-  },
-  {
-    autoStartDelay: 750,
-  },
-];
 
 interface HabitSuccessScreenProps {
   onNext: () => void;
@@ -36,6 +24,7 @@ export default function HabitSuccessScreen({
 }: HabitSuccessScreenProps) {
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const confettiRef = useRef<LottieView>(null);
 
   useEffect(() => {
     // Start vibration
@@ -55,6 +44,9 @@ export default function HabitSuccessScreen({
           useNativeDriver: true,
         }),
       ]).start();
+
+      // Play confetti
+      confettiRef.current?.play();
     }, 200);
   }, [scaleAnim, fadeAnim]);
 
@@ -70,8 +62,8 @@ export default function HabitSuccessScreen({
                 source={require("../../../../assets/images/habitCelebrate.png")}
                 style={{
                   width: "100%",
-                  height: 300, // or adjust based on your image's aspect ratio
-                  objectFit: "contain",
+                  height: 300,
+                  resizeMode: "contain",
                 }}
               />
             </View>
@@ -111,8 +103,7 @@ export default function HabitSuccessScreen({
           </View>
         </ScrollView>
 
-        {/* CTA Button */}
-        <View className="pb-8 px-2">
+        <View className="pb-8 px-2 z-40">
           <OnboardingButton
             title="Continue My Journey"
             onPress={onNext}
@@ -120,27 +111,20 @@ export default function HabitSuccessScreen({
           />
         </View>
 
-        {/* Confetti Cannons - Moved to the end so they render on top */}
-        {confettiCannons.map((cannon, index) => (
-          <ConfettiCannon
-            key={index}
-            count={80}
-            origin={{ x: -10, y: 0 }}
-            autoStart={true}
-            fadeOut={true}
-            colors={[
-              "#10B981",
-              "#34D399",
-              "#6EE7B7",
-              "#FFD700",
-              "#FFA500",
-              "#FF69B4",
-            ]}
-            explosionSpeed={350}
-            fallSpeed={2000}
-            autoStartDelay={cannon.autoStartDelay}
-          />
-        ))}
+        <LottieView
+          ref={confettiRef}
+          source={require("../../../../assets/animations/Confetti.json")}
+          autoPlay={false}
+          loop={false}
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            top: 0,
+            left: 0,
+          }}
+          resizeMode="cover"
+        />
       </View>
     </OnboardingContainer>
   );
