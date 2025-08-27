@@ -123,7 +123,6 @@ export default function HabitSuccessScreen({
             top: 0,
             left: 0,
           }}
-          resizeMode="cover"
         />
       </View>
     </OnboardingContainer>
