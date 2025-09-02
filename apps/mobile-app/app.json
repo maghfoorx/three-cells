@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.threecells.iosapp"
+      "bundleIdentifier": "com.threecells.iosapp",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -52,8 +55,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "7a9a9232-eee6-439b-8a65-e4e799ad3419"
+        "projectId": "7149718a-b562-4b8a-bf57-a3105a08d58d"
       }
-    }
+    },
+    "owner": "maghfoor"
   }
 }
