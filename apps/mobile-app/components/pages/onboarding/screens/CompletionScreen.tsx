@@ -44,10 +44,21 @@ export default function PricingScreen({
 
     setLoading(true);
     try {
-      const packageToPurchase =
-        selectedPackage === "lifetime"
-          ? offerings.current.lifetime
-          : offerings.current.weekly;
+      let packageToPurchase;
+
+      if (selectedPackage === "lifetime") {
+        packageToPurchase = offerings.current.lifetime;
+      } else {
+        // For weekly, choose based on free trial toggle
+        if (freeTrialEnabled) {
+          packageToPurchase = offerings.current.weekly; // Has intro price/trial
+        } else {
+          // Find the weekly_notrial package from availablePackages
+          packageToPurchase = offerings.current.availablePackages.find(
+            (pkg) => pkg.identifier === "weekly_notrial",
+          );
+        }
+      }
 
       if (!packageToPurchase) {
         Alert.alert("Error", "Selected package not available");
@@ -78,7 +89,20 @@ export default function PricingScreen({
     return freeTrialEnabled ? "Try 3 Days Free" : "Start Weekly Plan";
   };
 
-  const weeklyPackage = offerings?.current?.weekly;
+  // Get the appropriate weekly package based on trial toggle
+  const getWeeklyPackage = () => {
+    if (!offerings?.current) return null;
+
+    if (freeTrialEnabled) {
+      return offerings.current.weekly; // Has intro price
+    } else {
+      return offerings.current.availablePackages.find(
+        (pkg) => pkg.identifier === "weekly_notrial",
+      );
+    }
+  };
+
+  const weeklyPackage = getWeeklyPackage();
   const lifetimePackage = offerings?.current?.lifetime;
 
   return (
