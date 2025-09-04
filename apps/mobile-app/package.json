@@ -51,6 +51,8 @@
     "react-native-css-interop": "^0.1.22",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-heroicons": "^4.0.0",
+    "react-native-purchases": "^9.2.2",
+    "react-native-purchases-ui": "^9.2.2",
     "react-native-reanimated": "~3.17.5",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",

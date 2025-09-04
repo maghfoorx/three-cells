@@ -149,7 +149,7 @@ export default function NotificationPermissionScreen({
           </View>
         </ScrollView>
 
-        <View className="pb-8 space-y-3">
+        <View className="pb-8 flex gap-2">
           <OnboardingButton
             title={
               permissionGranted

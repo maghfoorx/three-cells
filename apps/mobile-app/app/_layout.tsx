@@ -3,6 +3,7 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import Purchases, { LOG_LEVEL } from "react-native-purchases";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -10,10 +11,11 @@ import "react-native-reanimated";
 import "../global.css";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { Text, View } from "react-native";
+import { Platform, Text, View } from "react-native";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import * as SecureStore from "expo-secure-store";
 import { ConvexReactClient } from "convex/react";
+import { useEffect } from "react";
 
 const convex = new ConvexReactClient(
   process.env.EXPO_PUBLIC_CONVEX_URL as string,
@@ -36,6 +38,23 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
+
+  useEffect(() => {
+    Purchases.setLogLevel(LOG_LEVEL.ERROR);
+
+    if (Platform.OS === "ios") {
+      Purchases.configure({ apiKey: "appl_xqjpqZdQqdKCdKTTPdKUoSCkxmN" });
+    } else if (Platform.OS === "android") {
+      Purchases.configure({ apiKey: "" });
+    }
+
+    getProducts();
+  }, []);
+
+  async function getProducts() {
+    const products = await Purchases.getOfferings();
+    console.log(JSON.stringify(products, null, 2), "ARE_PRODUCTS🏆🏆🏆🏆🏆");
+  }
 
   if (!loaded) {
     // Async font loading only occurs in development.

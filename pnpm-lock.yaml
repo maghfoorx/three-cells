@@ -130,6 +130,12 @@ importers:
       react-native-heroicons:
         specifier: ^4.0.0
         version: 4.0.0(react-native-svg@15.11.2(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react@19.0.0)
+      react-native-purchases:
+        specifier: ^9.2.2
+        version: 9.2.2(react-native-web@0.20.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      react-native-purchases-ui:
+        specifier: ^9.2.2
+        version: 9.2.2(react-native-purchases@9.2.2(react-native-web@0.20.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-web@0.20.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react-native-reanimated:
         specifier: ~3.17.5
         version: 3.17.5(@babel/core@7.27.7)(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -2450,6 +2456,18 @@ packages:
     hasBin: true
     peerDependencies:
       react-router: 7.6.3
+
+  '@revenuecat/purchases-js-hybrid-mappings@16.2.1':
+    resolution: {integrity: sha512-TXYw6lh5rg/kGI44kayU4TGSXKDcc35TdB0vBuZfllSokY1tnyYmP8Pm2eZamLN8ycrTuCysoPxknW2Klh1H1g==}
+
+  '@revenuecat/purchases-js@1.11.1':
+    resolution: {integrity: sha512-P0jxwUBWOIFSZQ1/NIMpbOXG3brraNDGYoCnES1r5w97yonhAw1brpKwhFKUhlq+DvAUDCG1q1d8FdTzI+MgXg==}
+
+  '@revenuecat/purchases-typescript-internal@16.2.1':
+    resolution: {integrity: sha512-g7FhNA6nxr9686klimlfueMQqQl34pHUHXeCKXqeuaPJOOsFc7qcOGhGZdyLGulIAgpkctrvcAbeDyBk7t5QRg==}
+
+  '@revenuecat/purchases-typescript-internal@16.2.2':
+    resolution: {integrity: sha512-+fLbgE6OUaHG0n98v/MO8faaR8asSIDvbOWH4LH58kbLcBxaeXr3LP46Sc2GdWhksYSCZMEXyMuvIA6aRFVd2g==}
 
   '@rollup/rollup-android-arm-eabi@4.44.1':
     resolution: {integrity: sha512-JAcBr1+fgqx20m7Fwe1DxPUl/hPkee6jA6Pl7n1v2EFiktAHenTaXl5aIFjUIEsfn9w3HE4gK1lEgNGMzBDs1w==}
@@ -6298,6 +6316,27 @@ packages:
       react: '*'
       react-native: '*'
 
+  react-native-purchases-ui@9.2.2:
+    resolution: {integrity: sha512-/txUVORPId8+oP6+5PCLSmwL1fXv8D1g/zWlZ4mD7ZB9nGp7yBAF0qmEn1rkzCcPz545y46hNTe2gKLcT18CnQ==}
+    peerDependencies:
+      react: '*'
+      react-native: '>= 0.73.0'
+      react-native-purchases: 9.2.2
+      react-native-web: '*'
+    peerDependenciesMeta:
+      react-native-web:
+        optional: true
+
+  react-native-purchases@9.2.2:
+    resolution: {integrity: sha512-j376mva8G6SLA2HPTROpUGoivfLMZVWPM7mj2bcgTS8y6NzbyQJ20Npe8V3nWc0N5YFTuknTF8pl0tWc6FqYbA==}
+    peerDependencies:
+      react: '>= 16.6.3'
+      react-native: '>= 0.73.0'
+      react-native-web: '*'
+    peerDependenciesMeta:
+      react-native-web:
+        optional: true
+
   react-native-reanimated@3.17.5:
     resolution: {integrity: sha512-SxBK7wQfJ4UoWoJqQnmIC7ZjuNgVb9rcY5Xc67upXAFKftWg0rnkknTw6vgwnjRcvYThrjzUVti66XoZdDJGtw==}
     peerDependencies:
@@ -9875,6 +9914,16 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - typescript
+
+  '@revenuecat/purchases-js-hybrid-mappings@16.2.1':
+    dependencies:
+      '@revenuecat/purchases-js': 1.11.1
+
+  '@revenuecat/purchases-js@1.11.1': {}
+
+  '@revenuecat/purchases-typescript-internal@16.2.1': {}
+
+  '@revenuecat/purchases-typescript-internal@16.2.2': {}
 
   '@rollup/rollup-android-arm-eabi@4.44.1':
     optional: true
@@ -14240,6 +14289,24 @@ snapshots:
     dependencies:
       react: 19.0.0
       react-native: 0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0)
+
+  react-native-purchases-ui@9.2.2(react-native-purchases@9.2.2(react-native-web@0.20.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-web@0.20.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
+    dependencies:
+      '@revenuecat/purchases-typescript-internal': 16.2.2
+      react: 19.0.0
+      react-native: 0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0)
+      react-native-purchases: 9.2.2(react-native-web@0.20.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+    optionalDependencies:
+      react-native-web: 0.20.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+
+  react-native-purchases@9.2.2(react-native-web@0.20.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
+    dependencies:
+      '@revenuecat/purchases-js-hybrid-mappings': 16.2.1
+      '@revenuecat/purchases-typescript-internal': 16.2.1
+      react: 19.0.0
+      react-native: 0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0)
+    optionalDependencies:
+      react-native-web: 0.20.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
 
   react-native-reanimated@3.17.5(@babel/core@7.27.7)(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
     dependencies:
