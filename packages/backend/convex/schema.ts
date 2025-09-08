@@ -180,6 +180,12 @@ const schema = defineSchema({
     .index("by_user_and_metric", ["userId", "metricId"])
     .index("by_user_metric_date", ["userId", "metricId", "dateFor"]) // enforce one per day
     .index("by_user_date", ["userId", "dateFor"]),
+
+  user_onboarding_answers: defineTable({
+    userId: v.id("users"),
+    motivationReason: v.string(),
+    selectedCateogires: v.array(v.string()),
+  }),
 });
 
 export default schema;

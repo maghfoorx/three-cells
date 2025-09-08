@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import InAppReview from "react-native-in-app-review";
 import {
   View,
   Text,
@@ -7,7 +8,7 @@ import {
   ScrollView,
   Image,
 } from "react-native";
-import LottieView from "lottie-react-native"; // ✅ use this instead of @lottiefiles/lottie-player
+import LottieView from "lottie-react-native";
 import { TrophyIcon } from "react-native-heroicons/outline";
 import OnboardingContainer from "../OnboardingContainer";
 import OnboardingButton from "../OnboardingButton";
@@ -47,6 +48,20 @@ export default function HabitSuccessScreen({
 
       // Play confetti
       confettiRef.current?.play();
+
+      // ask for app review
+      if (InAppReview.isAvailable()) {
+        InAppReview.RequestInAppReview()
+          .then((hasFlowFinishedSuccessfully) => {
+            console.log(
+              "In-app review flow completed:",
+              hasFlowFinishedSuccessfully,
+            );
+          })
+          .catch((error) => {
+            console.warn("In-app review error:", error);
+          });
+      }
     }, 200);
   }, [scaleAnim, fadeAnim]);
 

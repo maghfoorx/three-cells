@@ -36,9 +36,7 @@ export default function OnboardingFlow() {
 
   const completeUserOnboarding = useMutation(api.auth.completeUserOnboarding);
 
-  const onComplete = async () => {
-    await completeUserOnboarding();
-  };
+  const onComplete = async () => {};
 
   const isTransitioning = useSharedValue(false);
 
@@ -85,7 +83,17 @@ export default function OnboardingFlow() {
     />,
     <NotificationPermissionScreen key="notifications" onNext={nextStep} />,
     <AppFeaturesScreen key="features" onNext={nextStep} />,
-    <TipsForSuccessScreen key="tips" onNext={nextStep} />,
+    <TipsForSuccessScreen
+      key="tips"
+      onNext={async () => {
+        console.log("Tips for success screen COMPLETING ONBOARDING");
+        await completeUserOnboarding({
+          motivationReason: onboardingData.motivation,
+          selectedCategories: onboardingData.selectedCategories,
+        });
+        nextStep();
+      }}
+    />,
     <CompletionScreen key="completion" onComplete={onComplete} />,
   ];
 

@@ -73,22 +73,7 @@ export default function Homepage() {
   const isLoading = authLoading || loadingData;
   const user = useQuery(api.auth.viewer);
 
-  useEffect(() => {
-    checkAccess();
-    preloadImages();
-  }, []);
-
-  async function preloadImages() {
-    try {
-      // This returns an array of loaded Asset objects
-      const loaded = await Promise.all(
-        imagesToPrefetch.map((img) => Asset.fromModule(img).downloadAsync()),
-      );
-      console.log("Local images preloaded!", loaded);
-    } catch (err) {
-      console.error("Error preloading local images:", err);
-    }
-  }
+  console.log(user, "IS_USER");
 
   async function checkAccess() {
     try {
@@ -194,6 +179,7 @@ export default function Homepage() {
     };
 
     animateIn();
+    checkAccess();
   }, []);
 
   const navigateToOnboarding =
@@ -216,12 +202,10 @@ export default function Homepage() {
   }
 
   if (navigateToOnboarding) {
-    return <Redirect href="/(tabs)/track" />;
     return <Redirect href="/onboarding" />;
   } else if (navigateToHomePage) {
     return <Redirect href="/(tabs)/track" />;
   } else if (navigateToSubscribePage) {
-    return <Redirect href="/(tabs)/track" />;
     return <Redirect href="/subscribe" />;
   }
 

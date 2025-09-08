@@ -15,6 +15,8 @@ import color from "color";
 import OnboardingContainer from "../OnboardingContainer";
 import OnboardingButton from "../OnboardingButton";
 import ProgressIndicator from "../ProgressIndicator";
+import { useMutation } from "convex/react";
+import { api } from "@packages/backend/convex/_generated/api";
 
 const formSchema = z.object({
   name: z.string().min(1, "Habit name is required"),
@@ -51,6 +53,7 @@ interface CreateHabitScreenProps {
 }
 
 export default function CreateHabitScreen({ onNext }: CreateHabitScreenProps) {
+  const createNewHabit = useMutation(api.habits.createNewUserHabit);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FormSchema>({
@@ -79,8 +82,11 @@ export default function CreateHabitScreen({ onNext }: CreateHabitScreenProps) {
   const handleCreateHabit = async (data: FormSchema) => {
     setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await createNewHabit({
+      name: data.name,
+      habitQuestion: data.habitQuestion,
+      colour: data.colour,
+    });
 
     // Trigger vibration for success feedback
     Vibration.vibrate([100, 50, 100]);

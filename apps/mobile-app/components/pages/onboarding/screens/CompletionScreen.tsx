@@ -11,6 +11,8 @@ import { Feather } from "@expo/vector-icons";
 import Purchases, { PurchasesOfferings } from "react-native-purchases";
 import OnboardingContainer from "../OnboardingContainer";
 import OnboardingButton from "../OnboardingButton";
+import { router } from "expo-router";
+import LoadingScreen from "@/components/LoadingScreen";
 
 interface PricingScreenProps {
   onComplete: () => void;
@@ -25,10 +27,28 @@ export default function PricingScreen({
   const [freeTrialEnabled, setFreeTrialEnabled] = useState<boolean>(true);
   const [offerings, setOfferings] = useState<PurchasesOfferings | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [accessLoading, setAccessLoading] = useState<boolean>(false);
 
   useEffect(() => {
     loadOfferings();
+    checkAccess();
   }, []);
+
+  async function checkAccess() {
+    try {
+      setAccessLoading(true);
+      const customerInfo = await Purchases.getCustomerInfo();
+
+      if (customerInfo.entitlements.active["three-cells-subscriptions"]) {
+        console.log("✅ User has subscription access");
+        router.replace("/(tabs)/track");
+      }
+    } catch (e) {
+      console.error("Error fetching customer info", e);
+    } finally {
+      setAccessLoading(false);
+    }
+  }
 
   const loadOfferings = async () => {
     try {
@@ -104,6 +124,10 @@ export default function PricingScreen({
 
   const weeklyPackage = getWeeklyPackage();
   const lifetimePackage = offerings?.current?.lifetime;
+
+  if (accessLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <OnboardingContainer backgroundColor="#fafafa">

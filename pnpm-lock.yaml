@@ -136,6 +136,9 @@ importers:
       react-native-heroicons:
         specifier: ^4.0.0
         version: 4.0.0(react-native-svg@15.11.2(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react@19.0.0)
+      react-native-in-app-review:
+        specifier: ^4.4.2
+        version: 4.4.2
       react-native-purchases:
         specifier: ^9.2.2
         version: 9.2.2(react-native-web@0.20.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -6351,6 +6354,9 @@ packages:
     peerDependencies:
       react: '>=16.8'
       react-native-svg: '>=9'
+
+  react-native-in-app-review@4.4.2:
+    resolution: {integrity: sha512-iUoZnP4cgpbiNMLpqPgK40AcT7xluJhlwEPKFEfcCZsWT4MzGygS8p1dxf6e1NH/LUgUEtjsZQ8ka/SbF1pE8Q==}
 
   react-native-is-edge-to-edge@1.1.7:
     resolution: {integrity: sha512-EH6i7E8epJGIcu7KpfXYXiV2JFIYITtq+rVS8uEb+92naMRBdxhTuS8Wn2Q7j9sqyO0B+Xbaaf9VdipIAmGW4w==}
@@ -14377,6 +14383,8 @@ snapshots:
     dependencies:
       react: 19.0.0
       react-native-svg: 15.11.2(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+
+  react-native-in-app-review@4.4.2: {}
 
   react-native-is-edge-to-edge@1.1.7(react-native@0.79.4(@babel/core@7.27.7)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
     dependencies:

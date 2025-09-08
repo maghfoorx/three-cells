@@ -2,7 +2,7 @@ import Google from "@auth/core/providers/google";
 import Apple from "@auth/core/providers/apple";
 import { convexAuth, getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
-import { ConvexError } from "convex/values";
+import { ConvexError, v } from "convex/values";
 
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [
@@ -70,16 +70,26 @@ export const viewer = query({
 });
 
 export const completeUserOnboarding = mutation({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    motivationReason: v.string(),
+    selectedCategories: v.array(v.string()),
+  },
+  handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       throw new ConvexError("You must be logged in to create a metric");
     }
 
+    console.log("PATCHING_USER_TO_COMPLETE_ONBOARDING");
     await ctx.db.patch(userId, {
       hasCompletedOnboarding: true,
+    });
+
+    await ctx.db.insert("user_onboarding_answers", {
+      userId: userId,
+      motivationReason: args.motivationReason,
+      selectedCateogires: args.selectedCategories,
     });
 
     const user = await ctx.db.get(userId);
