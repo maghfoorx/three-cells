@@ -100,7 +100,13 @@ export default function CreateHabitScreen({ onNext }: CreateHabitScreenProps) {
       <View className="flex-1 px-6">
         <ProgressIndicator currentStep={7} totalSteps={12} />
 
-        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <ScrollView
+          className="flex-1"
+          showsVerticalScrollIndicator={false}
+          style={{
+            paddingBottom: 54,
+          }}
+        >
           <View className="items-center my-8">
             <Text className="text-3xl font-bold text-gray-900 text-center mb-4">
               Create Your First Habit

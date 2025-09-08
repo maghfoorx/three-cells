@@ -19,7 +19,7 @@ export default function PowerOfJournalingScreen({
           <View className="items-center">
             <View className="w-full mb-8">
               <Image
-                source={require("../../../../assets/images/powerOfJournaling.png")}
+                source={require("../../../../assets/images/tracking-page-loading.png")}
                 style={{
                   width: "100%",
                   height: 300, // or adjust based on your image's aspect ratio

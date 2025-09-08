@@ -1,5 +1,13 @@
 import React, { useMemo, useEffect, useRef, useState } from "react";
-import { View, Text, Pressable, Animated, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  Animated,
+  Dimensions,
+  NativeSyntheticEvent,
+  NativeTouchEvent,
+} from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
 import Svg, { Path, Circle, G, Text as SvgText } from "react-native-svg";
 import * as d3 from "d3";
@@ -65,7 +73,10 @@ export function UserMetricCardMobile({
     }
   }, [last7Entries, animatedValue]);
 
-  const addMetricEntryPressed = () => {
+  const addMetricEntryPressed = (
+    event: NativeSyntheticEvent<NativeTouchEvent>,
+  ) => {
+    event.stopPropagation();
     router.navigate(`/metrics/add-metric-entry?metricId=${metric._id}`);
   };
 
@@ -232,7 +243,8 @@ export function UserMetricCardMobile({
   };
 
   return (
-    <View
+    <Pressable
+      onPress={() => router.push(`/metrics/${metric._id}`)}
       className="rounded-md p-5 border border-gray-200"
       style={{
         shadowColor: "#000",
@@ -246,8 +258,8 @@ export function UserMetricCardMobile({
     >
       {/* Header */}
       <View className="flex flex-row justify-between items-center mb-4">
-        <Link href={`/metrics/${metric._id}`} asChild>
-          <Pressable className="flex flex-row items-center gap-3 flex-1">
+        <View>
+          <View className="flex flex-row items-center gap-3 flex-1">
             <View
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: metric.colour }}
@@ -260,8 +272,8 @@ export function UserMetricCardMobile({
                 <Text className="text-xs text-gray-500">({metric.unit})</Text>
               )}
             </View>
-          </Pressable>
-        </Link>
+          </View>
+        </View>
 
         <Pressable
           onPress={addMetricEntryPressed}
@@ -300,7 +312,7 @@ export function UserMetricCardMobile({
           </View>
         )}
       </View>
-    </View>
+    </Pressable>
   );
 }
 

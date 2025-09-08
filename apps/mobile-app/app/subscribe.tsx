@@ -13,6 +13,7 @@ import Purchases, { PurchasesOfferings } from "react-native-purchases";
 import OnboardingContainer from "@/components/pages/onboarding/OnboardingContainer";
 import OnboardingButton from "@/components/pages/onboarding/OnboardingButton";
 import LoadingScreen from "@/components/LoadingScreen";
+import { openLink } from "@/utils/openLink";
 
 export default function PricingScreen() {
   const [selectedPackage, setSelectedPackage] = useState<string>("weekly");
@@ -244,16 +245,29 @@ export default function PricingScreen() {
           </View>
 
           {/* Terms and Privacy */}
-          <View className="mb-6">
-            <Text className="text-xs text-gray-500 text-center leading-relaxed">
-              By continuing, you agree to our Terms of Service and Privacy
-              Policy. Cancel anytime. No commitments.
-            </Text>
-          </View>
         </ScrollView>
 
         {/* Action Buttons */}
         <View className="pb-8">
+          <View className="mb-6">
+            <Text className="text-xs text-gray-500 text-center leading-relaxed">
+              By continuing, you agree to our{" "}
+              <Text
+                className="underline"
+                onPress={() => openLink("https://three-cells.com/terms")}
+              >
+                Terms of Service
+              </Text>{" "}
+              and{" "}
+              <Text
+                className="underline"
+                onPress={() => openLink("https://three-cells.com/privacy")}
+              >
+                Privacy Policy
+              </Text>
+              . Cancel anytime. No commitments.
+            </Text>
+          </View>
           <OnboardingButton
             title={getButtonText()}
             onPress={handlePurchase}

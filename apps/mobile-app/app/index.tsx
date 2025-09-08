@@ -10,12 +10,14 @@ import { api } from "@packages/backend/convex/_generated/api";
 import Purchases from "react-native-purchases";
 import LoadingScreen from "@/components/LoadingScreen";
 import { Asset } from "expo-asset";
+import { openLink } from "@/utils/openLink";
 
 const FEATURES = [
   {
     id: 1,
     title: "Daily Journaling",
     subtitle: "Find your success pattern",
+    image: require("../assets/images/analysing.png"),
     description: "Just 3 questions. 2 minutes daily. Life-changing insights.",
     icon: "edit-3",
     color: "#3B82F6",
@@ -30,6 +32,7 @@ const FEATURES = [
     id: 2,
     title: "Habit Tracking",
     subtitle: "Build unstoppable momentum",
+    image: require("../assets/images/running.png"),
     description: "One click. Visual progress. Motivation that lasts.",
     icon: "target",
     color: "#10B981",
@@ -44,6 +47,7 @@ const FEATURES = [
     id: 3,
     title: "Task management",
     subtitle: "Focus without overwhelm",
+    image: require("../assets/images/meditating.png"),
     description:
       "Clean. Simple. Satisfying. Everything you need, nothing you don't.",
     icon: "check-square",
@@ -221,14 +225,14 @@ export default function Homepage() {
           className="items-center"
         >
           {/* Three Cells Logo */}
-          <View className="flex-row items-center justify-center">
+          <View className="flex-row items-center justify-center mt-4">
             <Image
-              source={require("../assets/images/three-cells-logo.svg")}
+              source={require("../assets/images/icon.png")}
               contentFit="contain"
               transition={1000}
               style={{
-                width: 100,
-                height: 100,
+                width: 120,
+                height: 120,
               }}
             />
           </View>
@@ -243,29 +247,30 @@ export default function Homepage() {
           className="items-center"
         >
           <Text className="text-5xl font-bold text-gray-900 text-center leading-tight">
-            Habits, journaling and tasks in one place
+            Finally become <Text>THAT</Text> person
           </Text>
         </Animated.View>
 
         {/* Feature Cards */}
-        <View className="flex-1 flex-col gap-4 w-full mt-6">
+        <View className="flex-1 flex-col items-center justify-center gap-4 w-full mt-6">
           {FEATURES.map((feature, index) => (
             <Animated.View
               key={feature.id}
-              className="flex-row items-center rounded-md gap-4 p-6 mx-6"
+              className="flex-row items-center rounded-md gap-8 p-4 mx-10"
               style={{
-                backgroundColor: feature.backgroundColor,
+                // backgroundColor: feature.backgroundColor,
                 opacity: featureAnimations[index].opacity,
                 transform: [
                   { translateY: featureAnimations[index].translateY },
                 ],
               }}
             >
-              <View
-                className="w-12 h-12 rounded-full items-center justify-center"
-                style={{ backgroundColor: feature.color }}
-              >
-                <Feather name={feature.icon as any} size={20} color="white" />
+              <View className="w-12 h-12 rounded-full items-center justify-center">
+                <Image
+                  source={feature.image}
+                  style={{ width: 90, height: 90 }}
+                  transition={300}
+                />
               </View>
               <Text className="text-lg font-semibold text-gray-900 flex-1">
                 {feature.subtitle}
@@ -291,9 +296,23 @@ export default function Homepage() {
           </View>
           {/* Terms Text */}
           <Text className="text-center text-gray-500 text-sm mt-6 leading-relaxed">
-            By continuing, you agree to our{"\n"}
-            <Text className="underline">Terms of Service</Text> and{" "}
-            <Text className="underline">Privacy Policy</Text>
+            <Text className="text-xs text-gray-500 text-center leading-relaxed">
+              By continuing, you agree to our{" "}
+              <Text
+                className="underline"
+                onPress={() => openLink("https://three-cells.com/terms")}
+              >
+                Terms of Service
+              </Text>{" "}
+              and{" "}
+              <Text
+                className="underline"
+                onPress={() => openLink("https://three-cells.com/privacy")}
+              >
+                Privacy Policy
+              </Text>
+              . Cancel anytime. No commitments.
+            </Text>
           </Text>
         </Animated.View>
       </View>

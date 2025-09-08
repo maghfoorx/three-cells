@@ -18,8 +18,10 @@ import {
   TouchableOpacity,
   Pressable,
   ActivityIndicator,
+  NativeSyntheticEvent,
+  NativeTouchEvent,
 } from "react-native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { handleHookMutationError } from "@/utils/handleHookMutationError";
 
 export function UserHabitCard({
@@ -45,7 +47,10 @@ export function UserHabitCard({
   });
 
   return (
-    <View
+    <Pressable
+      onPress={() => {
+        router.push(`/habits/${habit._id}`);
+      }}
       className="rounded-md p-6 border border-gray-200"
       style={{
         shadowColor: "#000",
@@ -57,18 +62,14 @@ export function UserHabitCard({
       }}
     >
       {/* Header */}
-      <View className="flex flex-row justify-between items-center mb-6">
-        <Link href={`/habits/${habit._id}`} asChild>
-          <Pressable className="flex flex-row items-center gap-3">
-            <View
-              className="w-4 h-4 rounded-full"
-              style={{ backgroundColor: habit.colour }}
-            />
-            <Text className="text-lg font-semibold text-gray-900">
-              {habit.name}
-            </Text>
-          </Pressable>
-        </Link>
+      <View className="flex flex-row gap-2 items-center mb-2">
+        <View
+          className="w-4 h-4 rounded-full"
+          style={{ backgroundColor: habit.colour }}
+        />
+        <Text className="text-lg font-semibold text-gray-900">
+          {habit.name}
+        </Text>
       </View>
 
       {/* Week Grid */}
@@ -101,7 +102,7 @@ export function UserHabitCard({
             </View>
           </View>
         )}
-    </View>
+    </Pressable>
   );
 }
 
@@ -122,18 +123,22 @@ const HabitDateButton = ({
     api.habits.toggleYesNoHabitSubmission,
   );
 
-  const toggleSubmission = useCallback(async () => {
-    setIsToggling(true);
+  const toggleSubmission = useCallback(
+    async (event: NativeSyntheticEvent<NativeTouchEvent>) => {
+      event.stopPropagation();
+      setIsToggling(true);
 
-    try {
-      const formattedDate = format(date, "yyyy-MM-dd");
-      await toggleYesNoHabitSubmission({ habitId, dateFor: formattedDate });
-    } catch (err) {
-      handleHookMutationError(err);
-    } finally {
-      setIsToggling(false);
-    }
-  }, [date, habitId, toggleYesNoHabitSubmission]);
+      try {
+        const formattedDate = format(date, "yyyy-MM-dd");
+        await toggleYesNoHabitSubmission({ habitId, dateFor: formattedDate });
+      } catch (err) {
+        handleHookMutationError(err);
+      } finally {
+        setIsToggling(false);
+      }
+    },
+    [date, habitId, toggleYesNoHabitSubmission],
+  );
 
   const isChecked = submissions?.some((s) =>
     isSameDay(new Date(s.dateFor), date),

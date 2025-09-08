@@ -16,10 +16,10 @@ export default function ScienceOfHabitsScreen({
         <ProgressIndicator currentStep={1} totalSteps={12} />
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-          <View className="items-center mb-8">
-            <View className="w-full mb-8">
+          <View className="items-center">
+            <View className="w-full">
               <Image
-                source={require("../../../../assets/images/scienceOfHabits.png")}
+                source={require("../../../../assets/images/scientist.png")}
                 style={{
                   width: "100%",
                   height: 300, // or adjust based on your image's aspect ratio

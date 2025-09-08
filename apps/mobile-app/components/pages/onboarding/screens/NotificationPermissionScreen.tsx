@@ -91,10 +91,10 @@ export default function NotificationPermissionScreen({
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
           <View className="flex-1 justify-center">
-            <View className="items-center mb-8">
-              <View className="w-full mb-4">
+            <View className="items-center">
+              <View className="w-full">
                 <Image
-                  source={require("../../../../assets/images/stayOnTrack.png")}
+                  source={require("../../../../assets/images/notification.png")}
                   style={{
                     width: "100%",
                     height: 300, // or adjust based on your image's aspect ratio

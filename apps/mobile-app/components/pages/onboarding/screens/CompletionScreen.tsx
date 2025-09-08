@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Switch,
   Alert,
+  Linking,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import Purchases, { PurchasesOfferings } from "react-native-purchases";
@@ -88,8 +89,8 @@ export default function PricingScreen({
       const { customerInfo } =
         await Purchases.purchasePackage(packageToPurchase);
 
-      if (customerInfo.entitlements.active["pro"]) {
-        onComplete();
+      if (customerInfo.entitlements.active["three-cells-subscriptions"]) {
+        router.replace("/");
       }
     } catch (error: any) {
       if (error.userCancelled) {
@@ -270,8 +271,23 @@ export default function PricingScreen({
           {/* Terms and Privacy */}
           <View className="mb-6">
             <Text className="text-xs text-gray-500 text-center leading-relaxed">
-              By continuing, you agree to our Terms of Service and Privacy
-              Policy. Cancel anytime. No commitments.
+              By continuing, you agree to our{" "}
+              <Text
+                className="underline"
+                onPress={() => Linking.openURL("https://three-cells.com/terms")}
+              >
+                Terms of Service
+              </Text>{" "}
+              and{" "}
+              <Text
+                className="underline"
+                onPress={() =>
+                  Linking.openURL("https://three-cells.com/privacy")
+                }
+              >
+                Privacy Policy
+              </Text>
+              . Cancel anytime. No commitments.
             </Text>
           </View>
         </ScrollView>

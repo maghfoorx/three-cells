@@ -74,7 +74,7 @@ export default function HabitSuccessScreen({
           <View className="flex-1 flex justify-center items-center gap-8">
             <View className="w-full">
               <Image
-                source={require("../../../../assets/images/habitCelebrate.png")}
+                source={require("../../../../assets/images/celebrating.png")}
                 style={{
                   width: "100%",
                   height: 300,
