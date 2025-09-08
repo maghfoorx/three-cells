@@ -151,6 +151,25 @@ export default function AccountPage() {
           {/* Notifications Section */}
           <NotificationSettings className="mt-4" />
 
+          <View className="px-4 py-4 bg-blue-50 mt-4 rounded-md">
+            <Text className="text-xl font-semibold mb-2">Contact Us</Text>
+            <Text className="mb-4">
+              Have questions or need support? Reach out to us at{" "}
+              <Text className="underline text-blue-700">
+                hello@three-cells.com
+              </Text>
+              .
+            </Text>
+            <TouchableOpacity
+              onPress={() => Linking.openURL("mailto:hello@three-cells.com")}
+              className="bg-blue-400 py-3 px-4 rounded-md"
+            >
+              <Text className="text-white font-semibold text-center">
+                Send Email
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           {/* Sign Out */}
           <View className="mt-4">
             <SignOutButton />
