@@ -5,6 +5,7 @@ import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { router } from "expo-router";
 import UserMetricCardMobile from "@/components/pages/metrics/UserMetricCardMobile";
+import LoadingScreen from "@/components/LoadingScreen";
 
 export default function MetricsPage() {
   const allSubmissions = useQuery(
@@ -17,13 +18,7 @@ export default function MetricsPage() {
   const renderContent = () => {
     if (!allSubmissions) {
       // Loading state
-      return (
-        <View className="gap-4">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <UserMetricCardMobile.Skeleton key={i} />
-          ))}
-        </View>
-      );
+      return <LoadingScreen pictureName="habits-loading.png" />;
     }
 
     if (allSubmissions.length === 0) {
@@ -66,7 +61,7 @@ export default function MetricsPage() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1">
         {/* Header */}
         <View className="px-6 py-4 flex flex-row justify-between items-center bg-white">

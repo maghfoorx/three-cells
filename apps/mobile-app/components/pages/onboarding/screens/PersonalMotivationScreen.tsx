@@ -5,7 +5,7 @@ import OnboardingButton from "../OnboardingButton";
 import ProgressIndicator from "../ProgressIndicator";
 
 interface PersonalMotivationScreenProps {
-  onNext: () => void;
+  onNext: (motivation: string) => void;
 }
 
 export default function PersonalMotivationScreen({
@@ -14,8 +14,7 @@ export default function PersonalMotivationScreen({
   const [motivation, setMotivation] = useState("");
 
   const handleNext = () => {
-    // Store motivation for later use
-    onNext();
+    onNext(motivation);
   };
 
   return (

@@ -1,7 +1,6 @@
 import { useLocalSearchParams } from "expo-router";
 import { parse, isValid } from "date-fns";
 import ThreeCellDailyForm from "@/components/ThreeCellDailyFormMobile";
-import DailyHighlights from "@/components/pages/track/DailyHighlights";
 
 export default function TrackPage() {
   const { date } = useLocalSearchParams();

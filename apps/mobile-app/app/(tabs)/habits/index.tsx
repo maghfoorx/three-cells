@@ -5,19 +5,24 @@ import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import UserHabitCardMobile from "@/components/UserHabitCardMobile";
 import { router } from "expo-router";
+import LoadingScreen from "@/components/LoadingScreen";
 
 export default function HabitsPage() {
   const allUserHabits = useQuery(api.habits.getAllUserHabits);
 
+  if (allUserHabits === undefined) {
+    return <LoadingScreen pictureName="habits-loading.png" />;
+  }
+
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1">
         {/* Header */}
         <View className="px-6 py-4 flex flex-row justify-between items-center bg-white">
           <View>
             <Text className="text-2xl font-bold text-gray-900">Habits</Text>
             <Text className="text-base text-gray-500 mt-1">
-              {allUserHabits?.length || 0} active habits
+              {allUserHabits.length} active habits
             </Text>
           </View>
           <Pressable
@@ -45,36 +50,24 @@ export default function HabitsPage() {
           }}
         >
           <View className="gap-4">
-            {!allUserHabits ? (
-              // Loading state
-              <>
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <UserHabitCardMobile.Skeleton key={i} />
-                ))}
-              </>
-            ) : (
-              // Loaded content
-              <>
-                {allUserHabits.map((habit) => {
-                  return <UserHabitCardMobile key={habit._id} habit={habit} />;
-                })}
+            {allUserHabits.map((habit) => {
+              return <UserHabitCardMobile key={habit._id} habit={habit} />;
+            })}
 
-                {/* Empty state */}
-                {allUserHabits.length === 0 && (
-                  <View className="flex-1 items-center justify-center mt-20">
-                    <View className="w-16 h-16 rounded-full bg-gray-100 items-center justify-center mb-4">
-                      <PlusIcon size={24} color="#6B7280" />
-                    </View>
-                    <Text className="text-lg font-semibold text-gray-900 mb-2">
-                      No habits yet
-                    </Text>
-                    <Text className="text-gray-500 text-center px-8">
-                      Create your first habit to start building better daily
-                      routines
-                    </Text>
-                  </View>
-                )}
-              </>
+            {/* Empty state */}
+            {allUserHabits.length === 0 && (
+              <View className="flex-1 items-center justify-center mt-20">
+                <View className="w-16 h-16 rounded-full bg-gray-100 items-center justify-center mb-4">
+                  <PlusIcon size={24} color="#6B7280" />
+                </View>
+                <Text className="text-lg font-semibold text-gray-900 mb-2">
+                  No habits yet
+                </Text>
+                <Text className="text-gray-500 text-center px-8">
+                  Create your first habit to start building better daily
+                  routines
+                </Text>
+              </View>
             )}
           </View>
         </ScrollView>

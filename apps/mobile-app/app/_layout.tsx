@@ -11,7 +11,7 @@ import "react-native-reanimated";
 import "../global.css";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { Platform, Text, View } from "react-native";
+import { Platform } from "react-native";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import * as SecureStore from "expo-secure-store";
 import { ConvexReactClient } from "convex/react";
@@ -47,14 +47,7 @@ export default function RootLayout() {
     } else if (Platform.OS === "android") {
       Purchases.configure({ apiKey: "" });
     }
-
-    getProducts();
   }, []);
-
-  async function getProducts() {
-    const products = await Purchases.getOfferings();
-    console.log(JSON.stringify(products, null, 2), "ARE_PRODUCTS🏆🏆🏆🏆🏆");
-  }
 
   if (!loaded) {
     // Async font loading only occurs in development.
@@ -73,6 +66,7 @@ export default function RootLayout() {
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+          <Stack.Screen name="subscribe" options={{ headerShown: false }} />
           <Stack.Screen
             name="yearly-view"
             options={{ headerShown: false, presentation: "modal" }}

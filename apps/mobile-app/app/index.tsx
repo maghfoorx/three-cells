@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Image } from "expo-image";
 import { Feather } from "@expo/vector-icons";
 import { View, Text, Animated, SafeAreaView, Platform } from "react-native";
@@ -7,6 +7,9 @@ import SignInWithGoogle from "@/components/SignInWithGoogle";
 import { Redirect } from "expo-router";
 import SignInWithApple from "@/components/SignInWithApple";
 import { api } from "@packages/backend/convex/_generated/api";
+import Purchases from "react-native-purchases";
+import LoadingScreen from "@/components/LoadingScreen";
+import { Asset } from "expo-asset";
 
 const FEATURES = [
   {
@@ -54,10 +57,57 @@ const FEATURES = [
   },
 ];
 
-export default function Homepage() {
-  const { isAuthenticated, isLoading } = useConvexAuth();
+const imagesToPrefetch = [
+  require("../assets/images/terrible.png"),
+  require("../assets/images/bad.png"),
+  require("../assets/images/okay.png"),
+  require("../assets/images/good.png"),
+  require("../assets/images/amazing.png"),
+];
 
+export default function Homepage() {
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
+  const [loadingData, setLoadingData] = useState(false);
+
+  const isLoading = authLoading || loadingData;
   const user = useQuery(api.auth.viewer);
+
+  useEffect(() => {
+    checkAccess();
+    preloadImages();
+  }, []);
+
+  async function preloadImages() {
+    try {
+      // This returns an array of loaded Asset objects
+      const loaded = await Promise.all(
+        imagesToPrefetch.map((img) => Asset.fromModule(img).downloadAsync()),
+      );
+      console.log("Local images preloaded!", loaded);
+    } catch (err) {
+      console.error("Error preloading local images:", err);
+    }
+  }
+
+  async function checkAccess() {
+    try {
+      setLoadingData(true);
+      const customerInfo = await Purchases.getCustomerInfo();
+
+      if (customerInfo.entitlements.active["three-cells-subscriptions"]) {
+        console.log("✅ User has subscription access");
+        setIsSubscribed(true);
+      } else {
+        console.log("❌ User does not have subscription access");
+        setIsSubscribed(false);
+      }
+    } catch (e) {
+      console.error("Error fetching customer info", e);
+    } finally {
+      setLoadingData(false);
+    }
+  }
 
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const logoScale = useRef(new Animated.Value(0.8)).current;
@@ -146,11 +196,33 @@ export default function Homepage() {
     animateIn();
   }, []);
 
-  if (isAuthenticated && !isLoading) {
-    if (!user?.hasCompletedOnboarding) {
-      return <Redirect href="/onboarding" />;
-    }
+  const navigateToOnboarding =
+    !isLoading && isAuthenticated && !user?.hasCompletedOnboarding;
+
+  const navigateToHomePage =
+    !isLoading &&
+    isAuthenticated &&
+    isSubscribed &&
+    user?.hasCompletedOnboarding;
+
+  const navigateToSubscribePage =
+    !isLoading &&
+    isAuthenticated &&
+    !isSubscribed &&
+    user?.hasCompletedOnboarding;
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (navigateToOnboarding) {
     return <Redirect href="/(tabs)/track" />;
+    return <Redirect href="/onboarding" />;
+  } else if (navigateToHomePage) {
+    return <Redirect href="/(tabs)/track" />;
+  } else if (navigateToSubscribePage) {
+    return <Redirect href="/(tabs)/track" />;
+    return <Redirect href="/subscribe" />;
   }
 
   return (
@@ -232,17 +304,6 @@ export default function Homepage() {
               <SignInWithGoogle />
               {Platform.OS === "ios" && <SignInWithApple />}
             </View>
-            {/* Apple Login Button */}
-            {/* <TouchableOpacity
-              onPress={handleAppleLogin}
-              className="w-full bg-black rounded-sm py-4 px-6 flex-row items-center gap-2 justify-center"
-              activeOpacity={0.8}
-            >
-              <AntDesign name="apple1" size={20} color="#FFFF" />
-              <Text className="text-white font-semibold text-lg">
-                Continue with Apple
-              </Text>
-            </TouchableOpacity> */}
           </View>
           {/* Terms Text */}
           <Text className="text-center text-gray-500 text-sm mt-6 leading-relaxed">

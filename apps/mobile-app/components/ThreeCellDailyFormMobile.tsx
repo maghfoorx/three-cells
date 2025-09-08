@@ -16,17 +16,18 @@ import {
   SafeAreaView,
   Pressable,
   Keyboard,
-  TouchableWithoutFeedback,
 } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { format } from "date-fns";
 import { router } from "expo-router";
 import { SCORE_COLORS } from "@/utils/types";
 import DailyHighlights from "./pages/track/DailyHighlights";
+import LoadingScreen from "./LoadingScreen";
+import { Image } from "expo-image";
 
 const formSchema = z.object({
   summary: z.string().min(1, "Summary is required"),
@@ -39,30 +40,40 @@ const MOOD_OPTIONS = [
   {
     value: -2,
     emoji: "😭",
+    icon: require("../assets/images/terrible.png"),
+    blurHash: "LFE1?Y%M00R*00R*R*R*R*R*R*", // mostly white with red hint
     color: SCORE_COLORS["-2"],
     label: "Terrible",
   },
   {
     value: -1,
     emoji: "😞",
+    icon: require("../assets/images/bad.png"),
+    blurHash: "LFF2?Y%M00R*00R*R*R*R*R*R*", // mostly white with orange hint
     color: SCORE_COLORS["-1"],
     label: "Bad",
   },
   {
     value: 0,
     emoji: "😐",
+    icon: require("../assets/images/okay.png"),
+    blurHash: "LFE3?Y%M00R*00R*R*R*R*R*R*", // mostly white with yellow hint
     color: SCORE_COLORS["0"],
     label: "Okay",
   },
   {
     value: 1,
     emoji: "😊",
+    icon: require("../assets/images/good.png"),
+    blurHash: "LFF4?Y%M00R*00R*R*R*R*R*R*", // mostly white with green hint
     color: SCORE_COLORS["1"],
     label: "Good",
   },
   {
     value: 2,
     emoji: "😁",
+    icon: require("../assets/images/amazing.png"),
+    blurHash: "LFE5?Y%M00R*00R*R*R*R*R*R*", // mostly white with bright green hint
     color: SCORE_COLORS["2"],
     label: "Amazing",
   },
@@ -138,6 +149,10 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
     .rgb()
     .string();
 
+  if (data === undefined) {
+    return <LoadingScreen pictureName="tracking-page-loading.png" />;
+  }
+
   return (
     <SafeAreaView
       className="flex-1"
@@ -188,8 +203,6 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
         <ScrollView
           showsVerticalScrollIndicator={false}
           className="flex-1"
-          keyboardShouldPersistTaps="handled" // This allows taps to dismiss keyboard
-          keyboardDismissMode="on-drag" // Dismisses keyboard when scrolling
           contentContainerStyle={{
             paddingHorizontal: 24,
             paddingBottom: 32,
@@ -212,42 +225,55 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
                     const isSelected = field?.value === mood?.value;
 
                     return (
-                      <TouchableOpacity
+                      <View
                         key={mood.value}
-                        onPress={() => {
-                          field.onChange(mood.value);
-                        }}
-                        className={clsx(
-                          "flex-1 items-center py-2 px-1 rounded-md border-2 justify-center",
-                        )}
+                        className=""
                         style={{
-                          borderColor: isSelected ? mood.color : "#F3F4F6",
-                          backgroundColor: isSelected ? mood.color : "#FAFAFA",
-                          shadowColor: isSelected ? mood.color : "#000",
-                          shadowOffset: {
-                            width: 0,
-                            height: isSelected ? 4 : 2,
-                          },
-                          shadowOpacity: isSelected ? 0.2 : 0.05,
-                          shadowRadius: isSelected ? 8 : 4,
-                          elevation: isSelected ? 6 : 2,
+                          minHeight: 70,
                         }}
                       >
-                        <Text className="text-2xl mb-2">{mood.emoji}</Text>
+                        <TouchableOpacity
+                          onPress={() => {
+                            field.onChange(mood.value);
+                          }}
+                          className={clsx(
+                            "flex-1 items-center pt-2 px-1 rounded-md border-2 justify-center",
+                          )}
+                          style={{
+                            borderColor: isSelected ? mood.color : "#F3F4F6",
+                            backgroundColor: isSelected
+                              ? mood.color
+                              : "#FAFAFA",
+                            shadowColor: isSelected ? mood.color : "#000",
+                            shadowOffset: {
+                              width: 0,
+                              height: isSelected ? 4 : 2,
+                            },
+                            shadowOpacity: isSelected ? 0.2 : 0.05,
+                            shadowRadius: isSelected ? 8 : 4,
+                            elevation: isSelected ? 6 : 2,
+                            minWidth: 60,
+                            minHeight: 60,
+                            height: 60,
+                          }}
+                        >
+                          <Image
+                            source={mood.icon}
+                            style={{ width: 50, height: 50 }}
+                            placeholder={{ blurhash: mood.blurHash }}
+                            transition={200}
+                            placeholderContentFit="contain"
+                          />
+                        </TouchableOpacity>
+
                         <Text
-                          className={`text-xs text-center font-semibold leading-tight ${
-                            isSelected
-                              ? color(mood.color).isLight()
-                                ? "text-gray-800"
-                                : "text-white"
-                              : "text-gray-500"
-                          }`}
+                          className={`mt-1 text-xs text-center font-semibold leading-tight`}
                           numberOfLines={1}
                           adjustsFontSizeToFit
                         >
                           {mood.label}
                         </Text>
-                      </TouchableOpacity>
+                      </View>
                     );
                   })}
                 </View>

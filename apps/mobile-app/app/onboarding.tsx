@@ -21,15 +21,12 @@ import AppFeaturesScreen from "@/components/pages/onboarding/screens/AppFeatures
 import TipsForSuccessScreen from "@/components/pages/onboarding/screens/TipsForSuccessScreen";
 import CompletionScreen from "@/components/pages/onboarding/screens/CompletionScreen";
 import WelcomeScreen from "@/components/pages/onboarding/screens/WelcomeScreen";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
+import { Doc } from "@packages/backend/convex/_generated/dataModel";
 
-interface OnboardingFlowProps {
-  onComplete: () => void;
-}
-
-export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
-  const user = useQuery(api.auth.viewer);
+export default function OnboardingFlow() {
+  const user = useQuery(api.auth.viewer) as Doc<"users">;
   const [currentStep, setCurrentStep] = useState(0);
   const [onboardingData, setOnboardingData] = useState({
     motivation: "",
@@ -37,8 +34,12 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
     habitData: null as any,
   });
 
-  // Shared values for animations
-  const progressValue = useSharedValue(0);
+  const completeUserOnboarding = useMutation(api.auth.completeUserOnboarding);
+
+  const onComplete = async () => {
+    await completeUserOnboarding();
+  };
+
   const isTransitioning = useSharedValue(false);
 
   const nextStep = () => {
@@ -46,10 +47,8 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
 
     isTransitioning.value = true;
 
-    // Set next step immediately for UI responsiveness
     setCurrentStep((prev) => prev + 1);
 
-    // Reset transition flag after animation
     setTimeout(() => {
       isTransitioning.value = false;
     }, 300);
