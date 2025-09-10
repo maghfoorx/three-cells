@@ -40,6 +40,8 @@ export default function AddMetricEntryPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  const [tempDate, setTempDate] = useState(new Date());
+
   const metric = useQuery(api.userMetrics.queries.getMetricById, {
     metricId: metricId as Id<"userMetrics">,
   });
@@ -124,6 +126,26 @@ export default function AddMetricEntryPage() {
         Alert.alert("Invalid Date", "You cannot add entries for future dates.");
       }
     }
+  };
+
+  const handleDateChangeTemp = (_: any, date?: Date) => {
+    if (date) {
+      setTempDate(date); // only update temp date, don't commit yet
+    }
+  };
+
+  const confirmDate = () => {
+    // Prevent future dates
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+
+    if (tempDate <= today) {
+      setSelectedDate(tempDate); // commit when Done is pressed
+    } else {
+      Alert.alert("Invalid Date", "You cannot add entries for future dates.");
+    }
+
+    setShowDatePicker(false);
   };
 
   const handleCreateEntry = async (data: FormSchema) => {
@@ -213,7 +235,7 @@ export default function AddMetricEntryPage() {
                     <TouchableWithoutFeedback
                       onPress={(e) => e.stopPropagation()}
                     >
-                      <View className="bg-white rounded-2xl p-4 mx-4 shadow-lg">
+                      <View className="bg-white rounded-md p-4 mx-4 shadow-lg">
                         <View className="flex-row justify-between items-center mb-4">
                           <TouchableOpacity
                             onPress={() => setShowDatePicker(false)}
@@ -225,22 +247,19 @@ export default function AddMetricEntryPage() {
                           <Text className="font-semibold text-gray-900">
                             Select Date
                           </Text>
-                          <TouchableOpacity
-                            onPress={() => setShowDatePicker(false)}
-                          >
+                          <TouchableOpacity onPress={confirmDate}>
                             <Text className="text-blue-500 font-medium">
                               Done
                             </Text>
                           </TouchableOpacity>
                         </View>
                         <DateTimePicker
-                          value={selectedDate}
+                          value={tempDate}
                           mode="date"
                           display="spinner"
-                          onChange={handleDateChange}
-                          maximumDate={new Date()} // Prevent future dates
+                          onChange={handleDateChangeTemp}
+                          maximumDate={new Date()}
                           themeVariant="light"
-                          style={{ backgroundColor: "transparent" }}
                         />
                       </View>
                     </TouchableWithoutFeedback>
