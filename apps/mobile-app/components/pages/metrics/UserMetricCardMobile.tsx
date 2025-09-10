@@ -258,23 +258,18 @@ export function UserMetricCardMobile({
     >
       {/* Header */}
       <View className="flex flex-row justify-between items-center mb-4">
-        <View>
-          <View className="flex flex-row items-center gap-3 flex-1">
-            <View
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: metric.colour }}
-            />
-            <View className="flex-1 flex flex-row gap-1 items-center">
-              <Text className="text-base font-semibold text-gray-900">
-                {metric.name}
-              </Text>
-              {metric.unit && (
-                <Text className="text-xs text-gray-500">({metric.unit})</Text>
-              )}
-            </View>
-          </View>
+        <View className="flex flex-row items-center gap-3 flex-1">
+          <View
+            className="w-3 h-3 rounded-full"
+            style={{ backgroundColor: metric.colour }}
+          />
+          <Text className="text-base font-semibold text-gray-900">
+            {metric.name}
+          </Text>
+          {metric.unit && (
+            <Text className="text-xs text-gray-500">({metric.unit})</Text>
+          )}
         </View>
-
         <Pressable
           onPress={addMetricEntryPressed}
           className="w-8 h-8 rounded-md items-center justify-center"
