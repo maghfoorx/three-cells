@@ -210,6 +210,7 @@ export default function Homepage() {
   } else if (navigateToHomePage) {
     return <Redirect href="/(tabs)/track" />;
   } else if (navigateToSubscribePage) {
+    return <Redirect href="/(tabs)/track" />;
     return <Redirect href="/subscribe" />;
   }
 

@@ -11,7 +11,6 @@ import {
   Platform,
   SafeAreaView,
   Pressable,
-  Vibration,
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
@@ -26,6 +25,7 @@ import color from "color";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 import { formatValueByIncrement } from "@/utils/numbers";
 import DualValuePicker from "@/components/pages/metrics/DualWheelPicker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const formSchema = z.object({
   value: z.number().min(0, "Value must be positive"),
@@ -37,14 +37,25 @@ type FormSchema = z.output<typeof formSchema>;
 export default function AddMetricEntryPage() {
   const { metricId } = useLocalSearchParams();
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const metric = useQuery(api.userMetrics.queries.getMetricById, {
     metricId: metricId as Id<"userMetrics">,
   });
 
+  // Updated to fetch entry for the selected date
   const latestEntry = useQuery(api.userMetrics.queries.latestMetricEntry, {
     metricId: metricId as Id<"userMetrics">,
   });
+
+  const entryForSelectedDate = useQuery(
+    api.userMetrics.queries.getEntryForSelectedDate,
+    {
+      metricId: metricId as Id<"userMetrics">,
+      date: format(selectedDate, "yyyy-MM-dd"), // Pass the selected date
+    },
+  );
 
   const createMetricEntry = useMutation(
     api.userMetrics.mutations.createMetricEntry,
@@ -69,16 +80,50 @@ export default function AddMetricEntryPage() {
   const currentValue = watch("value");
 
   const increment = metric?.increment || 1;
-  const today = format(new Date(), "yyyy-MM-dd");
+  const selectedDateString = format(selectedDate, "yyyy-MM-dd");
+
+  const isToday =
+    format(selectedDate, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
 
   useEffect(() => {
-    if (latestEntry?.value !== undefined && latestEntry.value > 0) {
-      setValue("value", latestEntry.value);
+    if (isToday) {
+      // For today's date, use the latest entry to pre-fill the form
+      if (latestEntry?.value !== undefined && latestEntry.value > 0) {
+        setValue("value", latestEntry.value);
+      } else {
+        setValue("value", 0);
+      }
+    } else {
+      // For previous dates, use the entry for that specific date
+      if (
+        entryForSelectedDate?.value !== undefined &&
+        entryForSelectedDate.value > 0
+      ) {
+        setValue("value", entryForSelectedDate.value);
+      } else {
+        // If no entry exists for the selected date, set to 0
+        setValue("value", 0);
+      }
     }
-  }, [latestEntry, setValue]);
+  }, [latestEntry, entryForSelectedDate, setValue, isToday]);
 
   const handleDirectEdit = () => {
     setIsEditing(true);
+  };
+
+  const handleDateChange = (event: any, date?: Date) => {
+    setShowDatePicker(false);
+    if (date) {
+      // Ensure the date is not in the future
+      const today = new Date();
+      today.setHours(23, 59, 59, 999); // Set to end of today
+
+      if (date <= today) {
+        setSelectedDate(date);
+      } else {
+        Alert.alert("Invalid Date", "You cannot add entries for future dates.");
+      }
+    }
   };
 
   const handleCreateEntry = async (data: FormSchema) => {
@@ -86,7 +131,7 @@ export default function AddMetricEntryPage() {
       await createMetricEntry({
         metricId: metricId as Id<"userMetrics">,
         value: data.value,
-        dateFor: today,
+        dateFor: selectedDateString,
         note: data.note,
       });
 
@@ -134,12 +179,86 @@ export default function AddMetricEntryPage() {
             className="flex-1 mt-4"
           >
             <View className="flex-1 px-6">
-              {/* Metric Info */}
+              {/* Date Selector */}
               <View className="items-center">
-                <Text className="text-gray-500">
-                  {format(new Date(), "EEEE, MMMM do")}
-                </Text>
+                <TouchableOpacity
+                  onPress={() => setShowDatePicker(true)}
+                  className="flex-row items-center gap-2 py-2 px-4 rounded-lg"
+                  style={{
+                    backgroundColor: color(metric.colour)
+                      .mix(color("white"), 0.95)
+                      .hex(),
+                  }}
+                >
+                  <Feather name="calendar" size={16} color="#6B7280" />
+                  <Text className="text-gray-700 font-medium">
+                    {isToday ? "Today" : format(selectedDate, "EEEE, MMMM do")}
+                  </Text>
+                  <Feather name="chevron-down" size={16} color="#6B7280" />
+                </TouchableOpacity>
+
+                {!isToday && (
+                  <Text className="text-xs text-gray-500 mt-1">
+                    {format(selectedDate, "yyyy")}
+                  </Text>
+                )}
               </View>
+
+              {/* Date Picker Modal */}
+              {showDatePicker && Platform.OS === "ios" && (
+                <TouchableWithoutFeedback
+                  onPress={() => setShowDatePicker(false)}
+                >
+                  <View className="absolute inset-0 bg-black/50 flex-1 justify-center items-center z-50">
+                    <TouchableWithoutFeedback
+                      onPress={(e) => e.stopPropagation()}
+                    >
+                      <View className="bg-white rounded-2xl p-4 mx-4 shadow-lg">
+                        <View className="flex-row justify-between items-center mb-4">
+                          <TouchableOpacity
+                            onPress={() => setShowDatePicker(false)}
+                          >
+                            <Text className="text-blue-500 font-medium">
+                              Cancel
+                            </Text>
+                          </TouchableOpacity>
+                          <Text className="font-semibold text-gray-900">
+                            Select Date
+                          </Text>
+                          <TouchableOpacity
+                            onPress={() => setShowDatePicker(false)}
+                          >
+                            <Text className="text-blue-500 font-medium">
+                              Done
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
+                        <DateTimePicker
+                          value={selectedDate}
+                          mode="date"
+                          display="spinner"
+                          onChange={handleDateChange}
+                          maximumDate={new Date()} // Prevent future dates
+                          themeVariant="light"
+                          style={{ backgroundColor: "transparent" }}
+                        />
+                      </View>
+                    </TouchableWithoutFeedback>
+                  </View>
+                </TouchableWithoutFeedback>
+              )}
+
+              {/* Android Date Picker */}
+              {showDatePicker && Platform.OS === "android" && (
+                <DateTimePicker
+                  value={selectedDate}
+                  mode="date"
+                  display="default"
+                  onChange={handleDateChange}
+                  maximumDate={new Date()} // Prevent future dates
+                  themeVariant="light"
+                />
+              )}
 
               {/* Value Selector */}
               <View className="flex-1 items-center justify-center">

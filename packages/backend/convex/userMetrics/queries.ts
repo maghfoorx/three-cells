@@ -143,6 +143,38 @@ export const latestMetricEntry = query({
   },
 });
 
+export const getEntryForSelectedDate = query({
+  args: {
+    metricId: v.id("userMetrics"),
+    date: v.string(), // e.g., "2025-07-17"
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId == null) {
+      throw new ConvexError("You must be logged in to view metric entries");
+    }
+
+    // First, try to find an entry for the specific date
+    const entryForDate = await ctx.db
+      .query("userMetricSubmissions")
+      .withIndex("by_user_metric_date", (q) =>
+        q
+          .eq("userId", userId)
+          .eq("metricId", args.metricId)
+          .eq("dateFor", args.date),
+      )
+      .unique();
+
+    if (entryForDate) {
+      return entryForDate;
+    }
+
+    // If no entry exists for the specific date, return null
+    // This allows the frontend to start with a default value (like 0)
+    return null;
+  },
+});
+
 export const getMetricTrendData = query({
   args: {
     metricId: v.id("userMetrics"),
