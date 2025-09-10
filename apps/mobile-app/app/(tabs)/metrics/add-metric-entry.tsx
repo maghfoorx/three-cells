@@ -299,67 +299,15 @@ export default function AddMetricEntryPage() {
                       <Controller
                         control={control}
                         name="value"
-                        render={({ field: { onChange, onBlur, value } }) => {
-                          const [inputText, setInputText] = useState(
-                            value?.toString() || "",
-                          );
-
-                          const maxDecimals =
-                            increment < 1 ? Math.abs(Math.log10(increment)) : 0;
-
-                          const validateAndUpdate = (text: string) => {
-                            // Empty input
-                            if (text === "") {
-                              setInputText("");
-                              return;
-                            }
-
-                            // Only allow valid decimal inputs
-                            if (!/^\d*\.?\d*$/.test(text)) return;
-
-                            const [_, decimal = ""] = text.split(".");
-                            if (decimal.length > maxDecimals) return;
-
-                            setInputText(text);
-                          };
-
-                          const commitValue = () => {
-                            const parsed = parseFloat(inputText);
-                            console.log(parsed, "IS_PARSED_VALUE");
-                            if (!isNaN(parsed) && parsed >= 0) {
-                              const rounded = formatValueByIncrement(
-                                parsed,
-                                increment,
-                              );
-                              setValue("value", parsed);
-                              setInputText(parsed.toString());
-                            } else {
-                              setInputText("0");
-                              setValue("value", 0);
-                            }
-                            setIsEditing(false);
-                          };
-
-                          return (
-                            <TextInput
-                              value={inputText}
-                              onChangeText={validateAndUpdate}
-                              onBlur={commitValue}
-                              onSubmitEditing={commitValue}
-                              keyboardType="decimal-pad"
-                              autoFocus
-                              selectTextOnFocus
-                              className="font-bold text-center"
-                              style={{
-                                color: color(metric.colour)
-                                  .mix(color("black"), 0.1)
-                                  .hex(),
-                                fontSize: 40,
-                                lineHeight: 48,
-                              }}
-                            />
-                          );
-                        }}
+                        render={({ field: { onChange, value } }) => (
+                          <ValueInput
+                            value={value}
+                            onChange={onChange}
+                            increment={increment}
+                            colorHex={metric.colour}
+                            setIsEditing={setIsEditing}
+                          />
+                        )}
                       />
                     ) : (
                       <Pressable onPress={handleDirectEdit}>
@@ -450,3 +398,72 @@ export default function AddMetricEntryPage() {
     </TouchableWithoutFeedback>
   );
 }
+
+type ValueInputProps = {
+  value: number;
+  onChange: (val: number) => void;
+  increment: number;
+  colorHex: string;
+  setIsEditing: (editing: boolean) => void;
+};
+
+const ValueInput: React.FC<ValueInputProps> = ({
+  value,
+  onChange,
+  increment,
+  colorHex,
+  setIsEditing,
+}) => {
+  const [inputText, setInputText] = useState(value.toString());
+
+  // Only update inputText when value changes externally AND not editing
+  useEffect(() => {
+    setInputText(value.toString());
+  }, [value]);
+
+  const maxDecimals = increment < 1 ? Math.abs(Math.log10(increment)) : 0;
+
+  const validateAndUpdate = (text: string) => {
+    // Allow empty input
+    if (text === "") {
+      setInputText("");
+      return;
+    }
+
+    // Allow only numbers + decimal
+    if (!/^\d*\.?\d*$/.test(text)) return;
+
+    const [_, decimal = ""] = text.split(".");
+    if (decimal.length > maxDecimals) return;
+
+    setInputText(text);
+  };
+
+  const commitValue = () => {
+    // Only parse and round on commit
+    let parsed = parseFloat(inputText);
+    if (isNaN(parsed) || parsed < 0) parsed = 0;
+    const rounded = formatValueByIncrement(parsed, increment);
+    onChange(rounded as any);
+    setInputText(rounded.toString());
+    setIsEditing(false);
+  };
+
+  return (
+    <TextInput
+      value={inputText}
+      onChangeText={validateAndUpdate}
+      onBlur={commitValue}
+      onSubmitEditing={commitValue}
+      keyboardType="decimal-pad"
+      autoFocus
+      selectTextOnFocus
+      className="font-bold text-center"
+      style={{
+        color: color(colorHex).mix(color("black"), 0.1).hex(),
+        fontSize: 40,
+        lineHeight: 48,
+      }}
+    />
+  );
+};
