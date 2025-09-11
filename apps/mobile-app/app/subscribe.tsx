@@ -34,6 +34,7 @@ export default function PricingScreen({
   const [processingPayment, setProcessingPayment] = useState<boolean>(false);
 
   const user = useQuery(api.auth.viewer);
+  console.log(user, "IS_USER_ONSUBSCRIBE");
   const updateUserSubscription = useMutation(api.revenuecat.addSusbscription);
 
   useEffect(() => {
@@ -80,8 +81,6 @@ export default function PricingScreen({
         return;
       }
 
-      console.log(selectedPackage, "SELECTED_PACKAGE");
-      console.log(packageToPurchase, "PACKAGE_TO_PURCHASE🧧");
       const { customerInfo } =
         await Purchases.purchasePackage(packageToPurchase);
 

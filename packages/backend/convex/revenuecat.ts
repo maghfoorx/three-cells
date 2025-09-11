@@ -27,7 +27,6 @@ export const fulfillRevenueCat = internalAction({
       const userId = event?.app_user_id as Id<"users">;
       if (!userId) throw new Error("Missing app_user_id in payload");
 
-      // Handle subscription events
       switch (event.type) {
         case "INITIAL_PURCHASE":
         case "RENEWAL":
@@ -42,9 +41,15 @@ export const fulfillRevenueCat = internalAction({
           );
           break;
 
-        case "CANCELLATION":
         case "EXPIRED":
         case "ENTITLEMENT_REVOKED":
+          await ctx.runMutation(
+            internal.internal.payments.unsubscribeRevenueCatSubscription,
+            {
+              userId,
+              productId,
+            },
+          );
           break;
 
         default:

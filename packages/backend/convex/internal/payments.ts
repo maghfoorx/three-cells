@@ -68,3 +68,32 @@ export const updateRevenueCatSubscription = internalMutationGeneric({
     }
   },
 });
+
+export const unsubscribeRevenueCatSubscription = internalMutationGeneric({
+  args: {
+    userId: v.id("users"),
+    productId: v.union(
+      v.literal("com.threecells.weekly"),
+      v.literal("com.threecells.weekly.notrial"),
+      v.literal("com.threecells.lifetime"),
+    ),
+  },
+  handler: async (ctx, args) => {
+    const userId = args.userId;
+
+    if (args.productId === "com.threecells.lifetime") {
+      await ctx.db.patch(userId, {
+        hasLifetimeAccess: false,
+      });
+    } else if (
+      ["com.threecells.weekly", "com.threecells.weekly.notrial"].includes(
+        args.productId,
+      )
+    ) {
+      await ctx.db.patch(userId, {
+        isSubscribed: false,
+        subscriptionExpiresAt: null,
+      });
+    }
+  },
+});

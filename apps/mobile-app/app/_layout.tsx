@@ -16,6 +16,7 @@ import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import * as SecureStore from "expo-secure-store";
 import { ConvexReactClient } from "convex/react";
 import { useEffect } from "react";
+import MonitorUserLoggedInAndSubscription from "@/components/MonitorUserLoggedInAndSubscription";
 
 const convex = new ConvexReactClient(
   process.env.EXPO_PUBLIC_CONVEX_URL as string,
@@ -91,6 +92,7 @@ export default function RootLayout() {
           <Stack.Screen name="logged-out" />
         </Stack>
         <StatusBar style="auto" />
+        <MonitorUserLoggedInAndSubscription />
       </ThemeProvider>
     </ConvexAuthProvider>
   );
