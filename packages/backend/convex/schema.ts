@@ -43,7 +43,6 @@ const schema = defineSchema({
     userId: v.id("users"),
     dateFor: v.string(),
     summary: v.string(),
-    focusedHours: v.optional(v.float64()),
     score: v.float64(),
 
     updatedAt: v.number(),
