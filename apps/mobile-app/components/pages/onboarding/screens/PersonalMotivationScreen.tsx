@@ -67,6 +67,11 @@ export default function PersonalMotivationScreen({
         </ScrollView>
 
         <View className="pb-8">
+          {motivation.trim().length < 10 && (
+            <Text className="text-center text-gray-600 mb-1">
+              {10 - motivation.trim().length} characters remaining
+            </Text>
+          )}
           <OnboardingButton
             title="Continue"
             onPress={handleNext}
