@@ -12,7 +12,12 @@ const schema = defineSchema({
     email: v.optional(v.string()),
     emailVerificationTime: v.optional(v.number()),
     isAnonymous: v.optional(v.boolean()),
+
+    // Derived fields
     hasCompletedOnboarding: v.optional(v.boolean()),
+    isSubscribed: v.optional(v.boolean()), // true if they have an active subscription
+    hasLifetimeAccess: v.optional(v.boolean()), // true if they ever bought lifetime
+    subscriptionExpiresAt: v.optional(v.number()), // timestamp for current sub expiry
   }).index("email", ["email"]),
 
   user_tasks: defineTable({

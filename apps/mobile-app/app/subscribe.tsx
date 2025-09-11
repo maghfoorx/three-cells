@@ -14,12 +14,27 @@ import OnboardingContainer from "@/components/pages/onboarding/OnboardingContain
 import OnboardingButton from "@/components/pages/onboarding/OnboardingButton";
 import LoadingScreen from "@/components/LoadingScreen";
 import { openLink } from "@/utils/openLink";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@packages/backend/convex/_generated/api";
 
-export default function PricingScreen() {
+type ProductIdentifier =
+  | "com.threecells.weekly"
+  | "com.threecells.weekly.notrial"
+  | "com.threecells.lifetime";
+
+export default function PricingScreen({
+  onComplete,
+}: {
+  onComplete?: () => void;
+}) {
   const [selectedPackage, setSelectedPackage] = useState<string>("weekly");
   const [freeTrialEnabled, setFreeTrialEnabled] = useState<boolean>(true);
   const [offerings, setOfferings] = useState<PurchasesOfferings | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [processingPayment, setProcessingPayment] = useState<boolean>(false);
+
+  const user = useQuery(api.auth.viewer);
+  const updateUserSubscription = useMutation(api.revenuecat.addSusbscription);
 
   useEffect(() => {
     loadOfferings();
@@ -27,18 +42,23 @@ export default function PricingScreen() {
 
   const loadOfferings = async () => {
     try {
+      setLoading(true);
       const offerings = await Purchases.getOfferings();
+      console.log(JSON.stringify(offerings, null, 2), "OFFERINGS");
       setOfferings(offerings);
     } catch (error) {
       console.error("Error loading offerings:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handlePurchase = async () => {
-    if (!offerings?.current) return;
+    if (!offerings?.current || user?._id == null) return;
 
-    setLoading(true);
+    setProcessingPayment(true);
     try {
+      await Purchases.logIn(user._id);
       let packageToPurchase;
 
       if (selectedPackage === "lifetime") {
@@ -60,12 +80,25 @@ export default function PricingScreen() {
         return;
       }
 
+      console.log(selectedPackage, "SELECTED_PACKAGE");
+      console.log(packageToPurchase, "PACKAGE_TO_PURCHASE🧧");
       const { customerInfo } =
         await Purchases.purchasePackage(packageToPurchase);
 
-      console.log(customerInfo, "CUSTOMER_INFO");
+      console.log("CUSTOMER_INFO", JSON.stringify(customerInfo, null, 2));
 
-      if (customerInfo.entitlements.active["three-cells-subscriptions"]) {
+      const entitlement =
+        customerInfo.entitlements.active["three-cells-subscriptions"];
+
+      const productIdentifier =
+        entitlement.productIdentifier as ProductIdentifier;
+
+      const result = await updateUserSubscription({
+        productId: productIdentifier as any,
+        expiresAt: entitlement.expirationDateMillis,
+      });
+
+      if (result?.isSubscribed || result?.hasLifetimeAccess) {
         router.replace("/");
       }
     } catch (error: any) {
@@ -75,18 +108,21 @@ export default function PricingScreen() {
       }
       Alert.alert("Error", "Failed to complete purchase. Please try again.");
     } finally {
-      setLoading(false);
+      setProcessingPayment(false);
     }
   };
 
   const getButtonText = () => {
-    if (selectedPackage === "lifetime") {
-      return "Get Lifetime Access";
+    if (processingPayment) {
+      return "Processing...";
     }
-    return freeTrialEnabled ? "Try 3 Days Free" : "Start Weekly Plan";
+
+    if (selectedPackage === "lifetime") {
+      return "Get Lifetime Access 🙌";
+    }
+    return freeTrialEnabled ? "Try 7 Days Free 🙌" : "Start Weekly Plan 🙌";
   };
 
-  // Get the appropriate weekly package based on trial toggle
   const getWeeklyPackage = () => {
     if (!offerings?.current) return null;
 
@@ -191,7 +227,7 @@ export default function PricingScreen() {
                 <View className="flex-row items-center justify-between mt-2">
                   <View className="flex-1">
                     <Text className="text-lg font-bold text-gray-900">
-                      {freeTrialEnabled ? "3-Day Trial" : "Weekly Plan"}
+                      {freeTrialEnabled ? "7-Day Trial" : "Weekly Plan"}
                     </Text>
                     <Text className="text-sm text-gray-600 mb-2">
                       {freeTrialEnabled
@@ -229,7 +265,7 @@ export default function PricingScreen() {
                     </Text>
                     <Text className="text-xs text-gray-600">
                       {freeTrialEnabled
-                        ? "Start with 3 days free, then continue with weekly billing"
+                        ? "Start with 7 days free, then continue with weekly billing"
                         : "Start immediately with weekly billing"}
                     </Text>
                   </View>
@@ -271,8 +307,7 @@ export default function PricingScreen() {
           <OnboardingButton
             title={getButtonText()}
             onPress={handlePurchase}
-            icon="unlock"
-            disabled={loading}
+            disabled={processingPayment || loading || user == null}
           />
         </View>
       </View>

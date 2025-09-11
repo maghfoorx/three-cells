@@ -19,7 +19,7 @@ import HabitSuccessScreen from "@/components/pages/onboarding/screens/HabitSucce
 import NotificationPermissionScreen from "@/components/pages/onboarding/screens/NotificationPermissionScreen";
 import AppFeaturesScreen from "@/components/pages/onboarding/screens/AppFeaturesScreen";
 import TipsForSuccessScreen from "@/components/pages/onboarding/screens/TipsForSuccessScreen";
-import CompletionScreen from "@/components/pages/onboarding/screens/CompletionScreen";
+import CompletionScreen from "./subscribe";
 import WelcomeScreen from "@/components/pages/onboarding/screens/WelcomeScreen";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";

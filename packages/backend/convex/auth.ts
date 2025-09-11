@@ -42,6 +42,24 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 
       return process.env.SITE_URL!;
     },
+    async createOrUpdateUser(ctx, args) {
+      if (args.existingUserId) {
+        return args.existingUserId;
+      }
+
+      console.log(args, "ARE_ARGS_FN_createOrUpdateUser");
+      const userId = await ctx.db.insert("users", {
+        email: args.profile.email,
+        name: args.profile.name ?? "Anonymous",
+        image: args.profile?.image ?? args.profile?.image ?? undefined,
+
+        isSubscribed: false,
+        hasLifetimeAccess: false,
+        hasCompletedOnboarding: false,
+      });
+
+      return userId;
+    },
   },
 });
 
@@ -52,20 +70,7 @@ export const viewer = query({
 
     if (!userId) return null;
 
-    const user = await ctx.db.get(userId);
-
-    const purchases = await ctx.db
-      .query("userPurchases")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
-      .collect();
-
-    const activePurchase = purchases.find((p) => p.isActive);
-
-    return {
-      ...user,
-      hasActivePurchase: !!activePurchase,
-      activePurchase,
-    };
+    return await ctx.db.get(userId);
   },
 });
 

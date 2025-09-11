@@ -61,42 +61,17 @@ const FEATURES = [
   },
 ];
 
-const imagesToPrefetch = [
-  require("../assets/images/terrible.png"),
-  require("../assets/images/bad.png"),
-  require("../assets/images/okay.png"),
-  require("../assets/images/good.png"),
-  require("../assets/images/amazing.png"),
-];
+type SubscriptionProductId =
+  | "com.threecells.lifetime"
+  | "com.threecells.weekly"
+  | "com.threecells.weekly.notrial";
 
 export default function Homepage() {
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
-  const [loadingData, setLoadingData] = useState(false);
-
-  const isLoading = authLoading || loadingData;
   const user = useQuery(api.auth.viewer);
+  const isAuthenticated = user?._id != null;
+  const isLoading = user === undefined;
 
-  console.log(user, "IS_USER");
-
-  async function checkAccess() {
-    try {
-      setLoadingData(true);
-      const customerInfo = await Purchases.getCustomerInfo();
-
-      if (customerInfo.entitlements.active["three-cells-subscriptions"]) {
-        console.log("✅ User has subscription access");
-        setIsSubscribed(true);
-      } else {
-        console.log("❌ User does not have subscription access");
-        setIsSubscribed(false);
-      }
-    } catch (e) {
-      console.error("Error fetching customer info", e);
-    } finally {
-      setLoadingData(false);
-    }
-  }
+  console.log(JSON.stringify(user, null, 2), "IS_USER");
 
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const logoScale = useRef(new Animated.Value(0.8)).current;
@@ -183,7 +158,6 @@ export default function Homepage() {
     };
 
     animateIn();
-    checkAccess();
   }, []);
 
   const navigateToOnboarding =
@@ -192,13 +166,13 @@ export default function Homepage() {
   const navigateToHomePage =
     !isLoading &&
     isAuthenticated &&
-    isSubscribed &&
+    user?.isSubscribed &&
     user?.hasCompletedOnboarding;
 
   const navigateToSubscribePage =
     !isLoading &&
     isAuthenticated &&
-    !isSubscribed &&
+    !user?.isSubscribed &&
     user?.hasCompletedOnboarding;
 
   if (isLoading) {
@@ -210,7 +184,6 @@ export default function Homepage() {
   } else if (navigateToHomePage) {
     return <Redirect href="/(tabs)/track" />;
   } else if (navigateToSubscribePage) {
-    return <Redirect href="/(tabs)/track" />;
     return <Redirect href="/subscribe" />;
   }
 

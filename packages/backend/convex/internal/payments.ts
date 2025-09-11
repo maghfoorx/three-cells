@@ -19,6 +19,13 @@ export const savePurchase = internalMutationGeneric({
       },
       "VARIABLES",
     );
+
+    await ctx.db.patch(args.userId, {
+      ...(args.product === "lifetime"
+        ? { hasLifetimeAccess: true }
+        : { isSubscribed: true }),
+    });
+
     await ctx.db.insert("userPurchases", {
       userId: args.userId as Id<"users">,
       product: args.product,
@@ -28,5 +35,36 @@ export const savePurchase = internalMutationGeneric({
       purchasedAt: Date.now(),
       isActive: true,
     });
+  },
+});
+
+export const updateRevenueCatSubscription = internalMutationGeneric({
+  args: {
+    userId: v.id("users"),
+    productId: v.union(
+      v.literal("com.threecells.weekly"),
+      v.literal("com.threecells.weekly.notrial"),
+      v.literal("com.threecells.lifetime"),
+    ),
+    expiresAt: v.union(v.number(), v.null()),
+  },
+  handler: async (ctx, args) => {
+    const userId = args.userId;
+
+    if (args.productId === "com.threecells.lifetime") {
+      await ctx.db.patch(userId, {
+        hasLifetimeAccess: true,
+      });
+    } else if (
+      ["com.threecells.weekly", "com.threecells.weekly.notrial"].includes(
+        args.productId,
+      )
+    ) {
+      await ctx.db.patch(userId, {
+        isSubscribed: true,
+        subscriptionExpiresAt:
+          args.expiresAt != null ? args.expiresAt : undefined,
+      });
+    }
   },
 });
