@@ -160,19 +160,21 @@ export default function Homepage() {
     animateIn();
   }, []);
 
+  const hasAccessToApp = user?.isSubscribed || user?.hasLifetimeAccess;
+
   const navigateToOnboarding =
     !isLoading && isAuthenticated && !user?.hasCompletedOnboarding;
 
   const navigateToHomePage =
     !isLoading &&
     isAuthenticated &&
-    user?.isSubscribed &&
+    hasAccessToApp &&
     user?.hasCompletedOnboarding;
 
   const navigateToSubscribePage =
     !isLoading &&
     isAuthenticated &&
-    !user?.isSubscribed &&
+    !hasAccessToApp &&
     user?.hasCompletedOnboarding;
 
   if (isLoading) {
