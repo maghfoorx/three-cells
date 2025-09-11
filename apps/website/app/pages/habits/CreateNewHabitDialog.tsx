@@ -50,11 +50,9 @@ export default function CreateNewHabitDialog() {
 
   const viewer = useQuery(api.auth.viewer);
 
-  const hasLifeTimeAccess =
-    (viewer != null &&
-      viewer.hasActivePurchase != null &&
-      viewer.hasActivePurchase) ??
-    false;
+  const hasAccess = useMemo(() => {
+    return viewer?.isSubscribed || viewer?.hasLifetimeAccess;
+  }, [viewer]);
 
   const handleDialogOpenChange = (open: boolean) => {
     setDialogOpen(open);
@@ -87,7 +85,7 @@ export default function CreateNewHabitDialog() {
   return (
     <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
       <DialogTrigger asChild>
-        <Button variant={"outline"} disabled={!hasLifeTimeAccess}>
+        <Button variant={"outline"} disabled={!hasAccess}>
           <CircleFadingPlus />
         </Button>
       </DialogTrigger>

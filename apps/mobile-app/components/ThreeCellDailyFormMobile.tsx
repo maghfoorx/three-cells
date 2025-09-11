@@ -31,7 +31,6 @@ import { Image } from "expo-image";
 
 const formSchema = z.object({
   summary: z.string().min(1, "Summary is required"),
-  focused_hours: z.number().min(0).max(24),
   score: z.number().min(-2).max(2),
   date_for: z.string().min(1),
 });
@@ -103,7 +102,6 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       summary: "",
-      focused_hours: 0,
       score: 1,
       date_for: parsedDate,
     },
@@ -113,14 +111,12 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
     if (data) {
       reset({
         summary: data.summary,
-        focused_hours: data.focusedHours,
         score: data.score,
         date_for: data.dateFor,
       });
     } else {
       reset({
         summary: "",
-        focused_hours: 0,
         score: 0,
         date_for: parsedDate,
       });
@@ -134,7 +130,6 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
       await submitThreeCellEntry({
         input: {
           summary: values.summary,
-          focused_hours: values.focused_hours,
           score: values.score,
           date_for: format(values.date_for, "yyyy-MM-dd"),
         },

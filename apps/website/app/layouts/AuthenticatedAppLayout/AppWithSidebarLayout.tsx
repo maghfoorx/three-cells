@@ -9,6 +9,10 @@ export default function AppSidebarLayout({
 }: PropsWithChildren<{ breadcrumbs?: BreadcrumbItem[] }>) {
   const viewer = useQuery(api.auth.viewer);
 
+  const hasAccess = useMemo(() => {
+    return viewer?.isSubscribed || viewer?.hasLifetimeAccess;
+  }, [viewer]);
+
   if (viewer === undefined) {
     return <FullscreenSpinner />;
   }
@@ -18,7 +22,7 @@ export default function AppSidebarLayout({
   }
 
   // if user unsubscribed then show something else.
-  if (!viewer.hasActivePurchase) {
+  if (!hasAccess) {
     return (
       <AppShell variant="sidebar">
         <AppSidebar />

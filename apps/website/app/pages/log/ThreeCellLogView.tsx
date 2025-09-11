@@ -10,7 +10,7 @@ import FullscreenSpinner from "~/components/FullscreenSpinner";
 import { api } from "@packages/backend/convex/_generated/api";
 import type { DataModel } from "@packages/backend/convex/_generated/dataModel";
 
-type SortOption = "latest" | "score" | "focused_hours";
+type SortOption = "latest" | "score";
 
 export default function ThreeCellLogView() {
   const navigate = useNavigate();
@@ -32,8 +32,6 @@ export default function ThreeCellLogView() {
     switch (sortBy) {
       case "score":
         return logs.sort((a, b) => b.score - a.score);
-      case "focused_hours":
-        return logs.sort((a, b) => b.focusedHours - a.focusedHours);
       case "latest":
       default:
         return logs.sort(
@@ -60,10 +58,6 @@ export default function ThreeCellLogView() {
             <RadioGroupItem value="score" id="score" />
             <Label htmlFor="score">Score</Label>
           </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="focused_hours" id="focused_hours" />
-            <Label htmlFor="focused_hours">Focused hours</Label>
-          </div>
         </RadioGroup>
       </div>
 
@@ -85,9 +79,6 @@ export default function ThreeCellLogView() {
                   <span className="text-xs text-muted-foreground">
                     ({entry.score})
                   </span>
-                </div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  {entry.focusedHours}h focused
                 </div>
                 <div className="mt-2 text-sm">{entry.summary}</div>
               </div>

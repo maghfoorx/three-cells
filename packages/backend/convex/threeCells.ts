@@ -14,7 +14,7 @@ export const threeCellForDate = query({
     const result = await ctx.db
       .query("three_cells")
       .withIndex("by_userId_date_for", (q) =>
-        q.eq("userId", userId).eq("dateFor", date)
+        q.eq("userId", userId).eq("dateFor", date),
       )
       .unique();
 
@@ -41,7 +41,6 @@ export const submitThreeCellEntry = mutation({
     input: v.object({
       date_for: v.string(),
       summary: v.string(),
-      focused_hours: v.float64(),
       score: v.float64(),
     }),
   },
@@ -54,14 +53,13 @@ export const submitThreeCellEntry = mutation({
     const existing = await ctx.db
       .query("three_cells")
       .withIndex("by_userId_date_for", (q) =>
-        q.eq("userId", userId).eq("dateFor", input.date_for)
+        q.eq("userId", userId).eq("dateFor", input.date_for),
       )
       .unique();
 
     if (existing) {
       await ctx.db.patch(existing._id, {
         summary: input.summary,
-        focusedHours: input.focused_hours,
         score: input.score,
         updatedAt: Date.now(),
       });
@@ -72,7 +70,6 @@ export const submitThreeCellEntry = mutation({
       userId,
       dateFor: input.date_for,
       summary: input.summary,
-      focusedHours: input.focused_hours,
       score: input.score,
       updatedAt: Date.now(),
     });

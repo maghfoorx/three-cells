@@ -6,7 +6,7 @@ import {
   SidebarMenuItem,
 } from "~/components/ui/sidebar";
 import { type NavItem } from "~/types";
-import { type ComponentPropsWithoutRef } from "react";
+import { useMemo, type ComponentPropsWithoutRef } from "react";
 import { Icon } from "~/components/Icon";
 import { useQuery } from "convex/react";
 import { Check } from "lucide-react";
@@ -21,11 +21,9 @@ export function NavFooter({
 }) {
   const viewer = useQuery(api.auth.viewer);
 
-  const hasLifeTimeAccess =
-    (viewer != null &&
-      viewer.hasActivePurchase != null &&
-      viewer.hasActivePurchase) ??
-    false;
+  const hasAccess = useMemo(() => {
+    return viewer?.hasLifetimeAccess;
+  }, [viewer]);
 
   return (
     <SidebarGroup
@@ -33,7 +31,7 @@ export function NavFooter({
       className={`group-data-[collapsible=icon]:p-0 ${className || ""}`}
     >
       <SidebarGroupContent>
-        {hasLifeTimeAccess && (
+        {hasAccess && (
           <div className="bg-linear-30 from-white to-blue-300 rounded-md px-4 py-2">
             <div className="font-semibold flex flex-row gap-1 items-center">
               <Check size={16} /> <span>Lifetime Access</span>

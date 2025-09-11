@@ -36,7 +36,6 @@ import { api } from "@packages/backend/convex/_generated/api";
 // Add validation schema
 const formSchema = z.object({
   summary: z.string().min(1, "Summary is required"),
-  focused_hours: z.number().min(0).max(24),
   score: z.number().min(-2).max(2),
   date_for: z.date(),
 });
@@ -52,19 +51,6 @@ const FIELD_EXPLANATIONS = {
         Capture your day in one line! What made today special? Maybe you
         finished a big project, had a great conversation, or just needed a
         reset. This helps spot patterns in your best days.
-      </p>
-    </div>
-  ),
-  focused_hours: (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2">
-        <span className="text-lg">🎯</span>
-        <h3 className="font-semibold">In the Zone</h3>
-      </div>
-      <p className="text-sm">
-        How many hours were you laser-focused? Count only deep work sessions
-        where time flew by. Don't count meetings or distractions! This helps
-        find your sweet spot for productivity.
       </p>
     </div>
   ),
@@ -105,7 +91,6 @@ export default function ThreeCellDailyForm() {
     defaultValues: {
       date_for: parsedDate,
       summary: "",
-      focused_hours: 0,
       score: 0,
     },
   });
@@ -114,7 +99,6 @@ export default function ThreeCellDailyForm() {
     if (data != null) {
       const threeCellForDate = {
         summary: data.summary,
-        focused_hours: data.focusedHours,
         score: data.score,
         date_for: parse(data.dateFor, "yyyy-MM-dd", new Date()),
       };
@@ -126,7 +110,6 @@ export default function ThreeCellDailyForm() {
       form.reset({
         date_for: parsedDate,
         summary: "",
-        focused_hours: 0,
         score: 0,
       });
     }
@@ -138,7 +121,6 @@ export default function ThreeCellDailyForm() {
     try {
       const input = {
         summary: values.summary,
-        focused_hours: values.focused_hours,
         score: values.score,
         date_for: format(values.date_for, "yyyy-MM-dd"),
       };
@@ -178,43 +160,12 @@ export default function ThreeCellDailyForm() {
                   />
                   <FormControl>
                     {data === undefined ? (
-                      <Skeleton className="h-20 w-full bg-sky-100" />
+                      <Skeleton className="h-32 w-full bg-sky-100" />
                     ) : (
                       <Textarea
                         {...field}
                         placeholder="Describe your day..."
-                        className="min-h-[80px]"
-                      />
-                    )}
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="focused_hours"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabelWithInfo
-                    id="focused_hours"
-                    label="Focused work hours"
-                    information={FIELD_EXPLANATIONS.focused_hours}
-                  />
-                  <FormControl>
-                    {data === undefined ? (
-                      <Skeleton className="h-9 w-full bg-sky-100" />
-                    ) : (
-                      <Input
-                        {...field}
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        max="24"
-                        onChange={(e) =>
-                          field.onChange(parseFloat(e.target.value))
-                        }
+                        className="min-h-[128px]"
                       />
                     )}
                   </FormControl>

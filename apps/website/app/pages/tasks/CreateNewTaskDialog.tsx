@@ -56,11 +56,9 @@ export default function CreateNewTaskDialog() {
 
   const viewer = useQuery(api.auth.viewer);
 
-  const hasLifeTimeAccess =
-    (viewer != null &&
-      viewer.hasActivePurchase != null &&
-      viewer.hasActivePurchase) ??
-    false;
+  const hasAccess = React.useMemo(() => {
+    return viewer?.isSubscribed || viewer?.hasLifetimeAccess;
+  }, [viewer]);
 
   const createNewTask = useMutation(api.tasks.createUserTask);
 
@@ -116,7 +114,7 @@ export default function CreateNewTaskDialog() {
                 <Button
                   variant={"outline"}
                   onClick={() => setDialogOpen(true)}
-                  disabled={!hasLifeTimeAccess}
+                  disabled={!hasAccess}
                 >
                   <ClipboardPlus />
                 </Button>

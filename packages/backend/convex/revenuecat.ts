@@ -2,7 +2,7 @@ import { ConvexError, v } from "convex/values";
 import { internalAction, mutation } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { internal } from "./_generated/api";
-import { Id } from "./_generated/dataModel";
+import { type Id } from "./_generated/dataModel";
 
 type ProductIdentifier =
   | "com.threecells.weekly"

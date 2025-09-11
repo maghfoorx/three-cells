@@ -44,7 +44,6 @@ export const SCORE_COLORS: { [key: string]: string } = {
 
 export interface ThreeCellDailyFormType {
   summary: string;
-  focused_hours: string;
   score: string;
 }
 
@@ -53,7 +52,6 @@ export type ThreeCellModel = {
   user_id: string;
   date_for: string;
   summary: string;
-  focused_hours: string;
   score: string;
 };
 

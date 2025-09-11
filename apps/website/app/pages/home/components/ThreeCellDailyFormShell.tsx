@@ -45,19 +45,6 @@ const FIELD_EXPLANATIONS = {
       </p>
     </div>
   ),
-  focused_hours: (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2">
-        <span className="text-lg">🎯</span>
-        <h3 className="font-semibold">In the Zone</h3>
-      </div>
-      <p className="text-sm">
-        How many hours were you laser-focused? Count only deep work sessions
-        where time flew by. Don't count meetings or distractions! This helps
-        find your sweet spot for productivity.
-      </p>
-    </div>
-  ),
   score: (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
@@ -88,7 +75,7 @@ export function ThreeCellDailyFormShell() {
   };
 
   const cardColor = color(
-    (SCORE_COLORS[score?.toString()] as string) ?? "#ffffff"
+    (SCORE_COLORS[score?.toString()] as string) ?? "#ffffff",
   )
     .fade(0.9)
     .rgb()
@@ -120,15 +107,6 @@ export function ThreeCellDailyFormShell() {
                 value="A productive day working on new features"
                 readOnly
               />
-            </div>
-
-            {/* Focused Hours */}
-            <div className="flex-1 space-y-1">
-              <FormLabelWithInfo
-                label="Focused hours"
-                information={FIELD_EXPLANATIONS.focused_hours}
-              />
-              <Input type="number" value="4.5" className="bg-white" readOnly />
             </div>
 
             {/* Score Selector */}
