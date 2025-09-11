@@ -71,8 +71,6 @@ export default function Homepage() {
   const isAuthenticated = user?._id != null;
   const isLoading = user === undefined;
 
-  console.log(JSON.stringify(user, null, 2), "IS_USER");
-
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const logoScale = useRef(new Animated.Value(0.8)).current;
   const taglineOpacity = useRef(new Animated.Value(0)).current;

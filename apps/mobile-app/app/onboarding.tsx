@@ -86,7 +86,6 @@ export default function OnboardingFlow() {
     <TipsForSuccessScreen
       key="tips"
       onNext={async () => {
-        console.log("Tips for success screen COMPLETING ONBOARDING");
         await completeUserOnboarding({
           motivationReason: onboardingData.motivation,
           selectedCategories: onboardingData.selectedCategories,

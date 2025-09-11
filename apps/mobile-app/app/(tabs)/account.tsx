@@ -34,11 +34,6 @@ export default function AccountPage() {
 
         const customerInfo = await Purchases.getCustomerInfo();
 
-        console.log(
-          JSON.stringify(customerInfo.entitlements, null, 2),
-          "ENTITLEMENTS",
-        );
-
         if (customerInfo.entitlements.active["three-cells-subscriptions"]) {
           // Look at active product identifiers
           const activeProductIds = Object.values(

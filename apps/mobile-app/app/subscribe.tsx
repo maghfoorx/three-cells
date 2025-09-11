@@ -34,7 +34,6 @@ export default function PricingScreen({
   const [processingPayment, setProcessingPayment] = useState<boolean>(false);
 
   const user = useQuery(api.auth.viewer);
-  console.log(user, "IS_USER_ONSUBSCRIBE");
   const updateUserSubscription = useMutation(api.revenuecat.addSusbscription);
 
   useEffect(() => {
@@ -45,7 +44,6 @@ export default function PricingScreen({
     try {
       setLoading(true);
       const offerings = await Purchases.getOfferings();
-      console.log(JSON.stringify(offerings, null, 2), "OFFERINGS");
       setOfferings(offerings);
     } catch (error) {
       console.error("Error loading offerings:", error);
