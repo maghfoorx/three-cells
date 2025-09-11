@@ -40,13 +40,21 @@ export default function PricingScreen({
     loadOfferings();
   }, []);
 
+  useEffect(() => {
+    if (user?._id != null) {
+      if (user?.isSubscribed || user?.hasLifetimeAccess) {
+        router.replace("/");
+      }
+    }
+  }, [user?._id]);
+
   const loadOfferings = async () => {
     try {
       setLoading(true);
       const offerings = await Purchases.getOfferings();
       setOfferings(offerings);
     } catch (error) {
-      console.error("Error loading offerings:", error);
+      console.error("Error loading offerings:", JSON.stringify(error, null, 2));
     } finally {
       setLoading(false);
     }
@@ -99,6 +107,7 @@ export default function PricingScreen({
         router.replace("/");
       }
     } catch (error: any) {
+      console.log(JSON.stringify(error, null, 2), "PURCHASE_ERROR");
       if (error.userCancelled) {
         // User cancelled, no need to show error
         return;

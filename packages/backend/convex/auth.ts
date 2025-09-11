@@ -86,7 +86,6 @@ export const completeUserOnboarding = mutation({
       throw new ConvexError("You must be logged in to create a metric");
     }
 
-    console.log("PATCHING_USER_TO_COMPLETE_ONBOARDING");
     await ctx.db.patch(userId, {
       hasCompletedOnboarding: true,
     });

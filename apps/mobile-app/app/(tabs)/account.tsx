@@ -13,48 +13,15 @@ import SignOutButton from "@/components/SignOutButton";
 import { HeartIcon } from "react-native-heroicons/solid";
 import NotificationSettings from "@/components/pages/account/NotificationSettings";
 import LoadingScreen from "@/components/LoadingScreen";
-import { useEffect, useState } from "react";
-import Purchases from "react-native-purchases";
 import { router } from "expo-router";
 
 export default function AccountPage() {
   const user = useQuery(api.auth.viewer);
-  const [revenueCatLoading, setRevenueCatLoading] = useState(true);
 
-  const isLoading = revenueCatLoading || user === undefined;
+  const hasLifetimeAccess = user?.hasLifetimeAccess === true;
+  const hasActiveSubscription = user?.isSubscribed === true;
 
-  const [subscriptionType, setSubscriptionType] = useState<
-    "lifetime" | "weekly" | null
-  >(null);
-
-  useEffect(() => {
-    const fetchCustomerInfo = async () => {
-      try {
-        setRevenueCatLoading(true);
-
-        const customerInfo = await Purchases.getCustomerInfo();
-
-        if (customerInfo.entitlements.active["three-cells-subscriptions"]) {
-          // Look at active product identifiers
-          const activeProductIds = Object.values(
-            customerInfo.entitlements.active,
-          ).map((ent) => ent.productIdentifier);
-
-          if (activeProductIds.includes("com.threecells.lifetime")) {
-            setSubscriptionType("lifetime");
-          } else if (activeProductIds.includes("com.threecells.weekly")) {
-            setSubscriptionType("weekly");
-          }
-        }
-      } catch (e) {
-        console.error("Error fetching customer info", e);
-      } finally {
-        setRevenueCatLoading(false);
-      }
-    };
-
-    fetchCustomerInfo();
-  }, []);
+  const isLoading = user === undefined;
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -88,7 +55,7 @@ export default function AccountPage() {
           </View>
 
           {/* Subscription Section */}
-          {subscriptionType === "lifetime" && (
+          {hasLifetimeAccess && (
             <View className="px-4 py-4 bg-green-300 mt-4 rounded-md">
               <View className="flex flex-row gap-1 items-center">
                 <HeartIcon color={"red"} size={24} />
@@ -100,7 +67,7 @@ export default function AccountPage() {
             </View>
           )}
 
-          {subscriptionType === "weekly" && (
+          {hasActiveSubscription && (
             <View className="px-4 py-4 bg-yellow-100 mt-4 rounded-md">
               <Text className="text-xl font-semibold mb-2">Weekly Plan</Text>
               <Text className="mb-4">
@@ -122,7 +89,7 @@ export default function AccountPage() {
             </View>
           )}
 
-          {subscriptionType === null && !isLoading && (
+          {!hasActiveSubscription && !hasLifetimeAccess && !isLoading && (
             <View className="px-4 py-4 bg-yellow-100 mt-4 rounded-md">
               <Text className="text-xl font-semibold mb-2">
                 No Subscription

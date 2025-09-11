@@ -6,6 +6,7 @@ import { api } from "@packages/backend/convex/_generated/api";
 import { router } from "expo-router";
 import UserMetricCardMobile from "@/components/pages/metrics/UserMetricCardMobile";
 import LoadingScreen from "@/components/LoadingScreen";
+import { Image } from "expo-image";
 
 export default function MetricsPage() {
   const allSubmissions = useQuery(
@@ -26,8 +27,16 @@ export default function MetricsPage() {
       return (
         <View className="flex-1 items-center justify-center py-20">
           <View className="items-center">
-            <View className="w-16 h-16 rounded-full bg-gray-100 items-center justify-center mb-4">
-              <PlusIcon size={24} color="#9CA3AF" />
+            <View className="w-[200px] h-[200px] rounded-full bg-gray-100 items-center justify-center mb-4">
+              <Image
+                source={require("../../../assets/images/habits-loading.png")}
+                transition={300}
+                contentFit="contain"
+                style={{
+                  width: 200,
+                  height: 200,
+                }}
+              />
             </View>
             <Text className="text-xl font-semibold text-gray-900 mb-2">
               No metrics yet

@@ -3,10 +3,10 @@ import { View, Text, SafeAreaView, ScrollView, Pressable } from "react-native";
 import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import UserTaskTile from "@/components/UserTaskTileMobile";
-import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { PlusIcon } from "react-native-heroicons/outline";
 import LoadingScreen from "@/components/LoadingScreen";
+import { Image } from "expo-image";
 
 export default function TasksPage() {
   const userTasks = useQuery(api.tasks.getAllUserTasks);
@@ -103,8 +103,16 @@ export default function TasksPage() {
           {/* Empty State */}
           {userTasks.length === 0 && (
             <View className="flex-1 items-center justify-center mt-20">
-              <View className="w-20 h-20 rounded-full bg-blue-100 items-center justify-center mb-6">
-                <Feather name="check-circle" size={32} color="#3B82F6" />
+              <View className="w-[200px] h-[200px] rounded-full bg-gray-100 items-center justify-center mb-4">
+                <Image
+                  source={require("../../../assets/images/todos-loading.png")}
+                  transition={300}
+                  contentFit="contain"
+                  style={{
+                    width: 200,
+                    height: 200,
+                  }}
+                />
               </View>
               <Text className="text-xl font-bold text-gray-900 mb-2">
                 No tasks yet
@@ -112,6 +120,13 @@ export default function TasksPage() {
               <Text className="text-gray-600 text-center mb-8 px-8">
                 Create your first task to get started with organizing your day
               </Text>
+
+              <Pressable
+                onPress={() => router.navigate("/create-new-task")}
+                className="bg-blue-600 px-6 py-3 rounded-lg"
+              >
+                <Text className="text-white font-semibold">Create Task</Text>
+              </Pressable>
             </View>
           )}
         </ScrollView>

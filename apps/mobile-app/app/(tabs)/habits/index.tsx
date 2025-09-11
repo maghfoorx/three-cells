@@ -6,9 +6,11 @@ import { api } from "@packages/backend/convex/_generated/api";
 import UserHabitCardMobile from "@/components/UserHabitCardMobile";
 import { router } from "expo-router";
 import LoadingScreen from "@/components/LoadingScreen";
+import { Image } from "expo-image";
 
 export default function HabitsPage() {
-  const allUserHabits = useQuery(api.habits.getAllUserHabits);
+  // const allUserHabits = useQuery(api.habits.getAllUserHabits);
+  const allUserHabits = [];
 
   if (allUserHabits === undefined) {
     return <LoadingScreen pictureName="habits-loading.png" />;
@@ -57,8 +59,16 @@ export default function HabitsPage() {
             {/* Empty state */}
             {allUserHabits.length === 0 && (
               <View className="flex-1 items-center justify-center mt-20">
-                <View className="w-16 h-16 rounded-full bg-gray-100 items-center justify-center mb-4">
-                  <PlusIcon size={24} color="#6B7280" />
+                <View className="w-[200px] h-[200px] rounded-full bg-gray-100 items-center justify-center mb-4">
+                  <Image
+                    source={require("../../../assets/images/habits-loading.png")}
+                    transition={300}
+                    contentFit="contain"
+                    style={{
+                      width: 200,
+                      height: 200,
+                    }}
+                  />
                 </View>
                 <Text className="text-lg font-semibold text-gray-900 mb-2">
                   No habits yet
@@ -67,6 +77,13 @@ export default function HabitsPage() {
                   Create your first habit to start building better daily
                   routines
                 </Text>
+
+                <Pressable
+                  onPress={() => router.navigate("/create-new-habit")}
+                  className="mt-2 bg-blue-600 px-6 py-3 rounded-lg"
+                >
+                  <Text className="text-white font-semibold">Create Habit</Text>
+                </Pressable>
               </View>
             )}
           </View>
