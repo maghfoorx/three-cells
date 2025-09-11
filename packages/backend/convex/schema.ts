@@ -14,9 +14,9 @@ const schema = defineSchema({
     isAnonymous: v.optional(v.boolean()),
 
     // Derived fields
-    hasCompletedOnboarding: v.optional(v.boolean()),
-    isSubscribed: v.optional(v.boolean()), // true if they have an active subscription
-    hasLifetimeAccess: v.optional(v.boolean()), // true if they ever bought lifetime
+    hasCompletedOnboarding: v.boolean(),
+    isSubscribed: v.boolean(), // true if they have an active subscription
+    hasLifetimeAccess: v.boolean(), // true if they ever bought lifetime
     subscriptionExpiresAt: v.optional(v.number()), // timestamp for current sub expiry
   }).index("email", ["email"]),
 
@@ -43,7 +43,7 @@ const schema = defineSchema({
     userId: v.id("users"),
     dateFor: v.string(),
     summary: v.string(),
-    focusedHours: v.optional(v.float64()),
+    // focusedHours: v.optional(v.float64()),
     score: v.float64(),
 
     updatedAt: v.number(),
