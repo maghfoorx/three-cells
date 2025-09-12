@@ -88,8 +88,8 @@ export default function RootLayout() {
             name="create-new-metric"
             options={{ headerShown: false, presentation: "modal" }}
           />
-          <Stack.Screen name="+not-found" />
-          <Stack.Screen name="logged-out" />
+          <Stack.Screen name="+not-found" options={{ headerShown: false }} />
+          <Stack.Screen name="logged-out" options={{ headerShown: false }} />
         </Stack>
         <StatusBar style="auto" />
         <MonitorUserLoggedInAndSubscription />
