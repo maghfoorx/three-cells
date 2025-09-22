@@ -101,3 +101,73 @@ export const completeUserOnboarding = mutation({
     return user;
   },
 });
+
+export const deleteUserAccount = mutation({
+  args: {},
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      throw new ConvexError("You must be logged in to delete your account");
+    }
+
+    const tablesToDelete = [
+      "user_tasks",
+      "user_tasks_categories",
+      "three_cells",
+      "userHabits",
+      "userHabitSubmissions",
+      "userPurchases",
+      "userMetrics",
+      "userMetricSubmissions",
+      "user_onboarding_answers",
+    ];
+
+    // Delete user-related records in custom tables
+    for (const table of tablesToDelete) {
+      const docs = await ctx.db
+        .query(table as any)
+        .withIndex("by_user", (q) => q.eq("userId", userId))
+        .collect()
+        .catch(() => []); // some tables may not have "by_user" index
+
+      for (const doc of docs) {
+        await ctx.db.delete(doc._id);
+      }
+    }
+
+    // Delete authAccounts
+    const authAccounts = await ctx.db
+      .query("authAccounts")
+      .withIndex("userIdAndProvider", (q) => q.eq("userId", userId))
+      .collect();
+
+    for (const account of authAccounts) {
+      await ctx.db.delete(account._id);
+    }
+
+    // Delete authSessions
+    const authSessions = await ctx.db
+      .query("authSessions")
+      .withIndex("userId", (q) => q.eq("userId", userId))
+      .collect();
+
+    for (const session of authSessions) {
+      // Delete refresh tokens linked to this session
+      const refreshTokens = await ctx.db
+        .query("authRefreshTokens")
+        .withIndex("sessionId", (q) => q.eq("sessionId", session._id))
+        .collect();
+
+      for (const token of refreshTokens) {
+        await ctx.db.delete(token._id);
+      }
+
+      // Now delete the session itself
+      await ctx.db.delete(session._id);
+    }
+
+    // Finally, delete the user
+    await ctx.db.delete(userId);
+  },
+});

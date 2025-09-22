@@ -47,8 +47,8 @@ const schema = defineSchema({
 
     updatedAt: v.number(),
   })
-    .index("by_userId_date_for", ["userId", "dateFor"])
-    .index("by_userId", ["userId"]),
+    .index("by_user", ["userId"])
+    .index("by_userId_date_for", ["userId", "dateFor"]),
 
   userHabits: defineTable({
     userId: v.id("users"),
@@ -121,6 +121,7 @@ const schema = defineSchema({
     // Track updates
     updatedAt: v.optional(v.number()),
   })
+    .index("by_user", ["userId"])
     .index("by_user_and_habit", ["userId", "habitId"])
     .index("by_user_and_habit_and_date", ["userId", "habitId", "dateFor"])
     .index("by_user_date", ["userId", "dateFor"]),
@@ -181,6 +182,7 @@ const schema = defineSchema({
 
     updatedAt: v.optional(v.number()),
   })
+    .index("by_user", ["userId"])
     .index("by_user_and_metric", ["userId", "metricId"])
     .index("by_user_metric_date", ["userId", "metricId", "dateFor"]) // enforce one per day
     .index("by_user_date", ["userId", "dateFor"]),
@@ -189,7 +191,7 @@ const schema = defineSchema({
     userId: v.id("users"),
     motivationReason: v.string(),
     selectedCateogires: v.array(v.string()),
-  }),
+  }).index("by_user", ["userId"]),
 });
 
 export default schema;

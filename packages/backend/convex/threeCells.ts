@@ -30,7 +30,7 @@ export const allThreeCellEntries = query({
 
     return await ctx.db
       .query("three_cells")
-      .withIndex("by_userId", (q) => q.eq("userId", userId))
+      .withIndex("by_user", (q) => q.eq("userId", userId))
       .order("desc") // orders by _creationTime
       .collect();
   },

@@ -6,20 +6,52 @@ import {
   ScrollView,
   TouchableOpacity,
   Linking,
+  Alert,
 } from "react-native";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import SignOutButton from "@/components/SignOutButton";
 import { HeartIcon } from "react-native-heroicons/solid";
 import NotificationSettings from "@/components/pages/account/NotificationSettings";
 import LoadingScreen from "@/components/LoadingScreen";
 import { router } from "expo-router";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 export default function AccountPage() {
   const user = useQuery(api.auth.viewer);
 
   const hasLifetimeAccess = user?.hasLifetimeAccess === true;
   const hasActiveSubscription = user?.isSubscribed === true;
+  const deleteAccount = useMutation(api.auth.deleteUserAccount);
+
+  const { signOut } = useAuthActions();
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Delete Account",
+      "Deleting your account will permanently erase your data. Any active subscription will remain active and must be managed through the Apple App Store.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await signOut();
+              router.replace("/logged-out");
+              await deleteAccount();
+              // Optionally sign the user out or redirect after deletion
+            } catch (error) {
+              console.error("Failed to delete account:", error);
+            }
+          },
+        },
+      ],
+    );
+  };
 
   const isLoading = user === undefined;
 
@@ -128,6 +160,26 @@ export default function AccountPage() {
             >
               <Text className="text-white font-semibold text-center">
                 Send Email
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Danger Zone */}
+          <View className="px-4 py-4 bg-red-50 mt-8 rounded-md border border-red-300">
+            <Text className="text-xl font-semibold text-red-700 mb-2">
+              Danger Zone
+            </Text>
+            <Text className="mb-4 text-red-600">
+              Deleting your account will permanently erase your data. Any active
+              subscription will remain active and must be managed through the
+              Apple App Store.
+            </Text>
+            <TouchableOpacity
+              onPress={handleDeleteAccount}
+              className="bg-red-600 py-3 px-4 rounded-md"
+            >
+              <Text className="text-white font-semibold text-center">
+                Delete Account
               </Text>
             </TouchableOpacity>
           </View>

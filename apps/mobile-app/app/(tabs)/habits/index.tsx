@@ -9,8 +9,7 @@ import LoadingScreen from "@/components/LoadingScreen";
 import { Image } from "expo-image";
 
 export default function HabitsPage() {
-  // const allUserHabits = useQuery(api.habits.getAllUserHabits);
-  const allUserHabits = [];
+  const allUserHabits = useQuery(api.habits.getAllUserHabits);
 
   if (allUserHabits === undefined) {
     return <LoadingScreen pictureName="habits-loading.png" />;

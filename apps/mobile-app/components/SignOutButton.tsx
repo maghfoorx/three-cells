@@ -13,10 +13,10 @@ export default function SignOutButton() {
   return (
     <TouchableOpacity
       onPress={handleLogout}
-      className="w-full bg-red-500 border border-gray-200 rounded-md py-4 px-6 flex-row items-center gap-2 justify-center shadow-sm"
+      className="w-full border border-gray-200 rounded-md py-4 px-6 flex-row items-center gap-2 justify-center shadow-sm"
       activeOpacity={1}
     >
-      <Text className="font-semibold text-lg text-white">Sign out</Text>
+      <Text className="font-semibold text-red-500">Sign out</Text>
     </TouchableOpacity>
   );
 }
