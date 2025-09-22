@@ -223,28 +223,21 @@ export default function PricingScreen({
               }`}
             >
               <View className="p-5 relative">
-                {/* Short Term Badge */}
-                <View className="absolute -top-2 left-4 bg-blue-500 px-3 py-1 rounded-full">
-                  <Text className="text-xs font-bold text-white">
-                    SHORT TERM
-                  </Text>
-                </View>
-
                 <View className="flex-row items-center justify-between mt-2">
                   <View className="flex-1">
                     <Text className="text-lg font-bold text-gray-900">
-                      {freeTrialEnabled ? "7-Day Trial" : "Weekly Plan"}
+                      Weekly Plan
                     </Text>
-                    <Text className="text-sm text-gray-600 mb-2">
-                      {freeTrialEnabled
-                        ? `then ${weeklyPackage?.product.priceString || "$2.99"} per week`
-                        : `${weeklyPackage?.product.priceString || "$2.99"} per week`}
+                    {/* Most prominent price */}
+                    <Text className="text-2xl font-extrabold text-gray-900 mb-1">
+                      {weeklyPackage?.product.priceString || "$2.99"}
                     </Text>
-                    <Text className="text-2xl font-bold text-gray-900">
-                      {freeTrialEnabled
-                        ? "Free"
-                        : weeklyPackage?.product.priceString || "$2.99"}
-                    </Text>
+                    {/* Subordinate trial info */}
+                    {freeTrialEnabled && (
+                      <Text className="text-sm text-gray-500">
+                        7-day free trial, then weekly billing
+                      </Text>
+                    )}
                   </View>
                   <View
                     className={`w-6 h-6 rounded-md border-2 ${
