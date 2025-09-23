@@ -50,7 +50,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         {/* Static Meta Tags for SEO and Social */}
-        <title>Three Cells</title>
+        <title>Daily journal, habits & tasks app that actually works</title>
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
         <meta

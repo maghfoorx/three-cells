@@ -1,622 +1,336 @@
-import type React from "react";
-import { Button } from "~/components/ui/button";
-import { Link } from "react-router";
-
+import AppleLogo from "~/components/AppleLogo";
 import { cn } from "~/lib/utils";
-import LoggedOutHeader from "~/components/LoggedOutHeader";
-import LoggedOutFooter from "~/components/LoggedOutFooter";
-import {
-  Check,
-  CheckSquare,
-  Calendar,
-  Target,
-  ArrowRight,
-  Users,
-  Star,
-} from "lucide-react";
-import BuyThreeCellsCard from "~/components/PriceCard";
-import TraditionalApproachCard from "~/components/TraditionalApproachCard";
 
 export default function Home() {
   return (
-    <main className="flex flex-col items-center w-full flex-1">
-      <LoggedOutHeader />
+    <main className="bg-white">
       <HeroSection />
-      <SocialProofSection />
-      <TikTokBridgeSection />
-      <VideoShowcaseSection />
-      <WhyAllInOneMattersSection />
-      <FeaturesOverviewSection />
+      {/*<ProblemSection />*/}
+      <SolutionSection />
+      {/*<HowItWorksSection />*/}
       <TestimonialsSection />
-      <PricingSection />
       <FinalCTASection />
-      <LoggedOutFooter />
     </main>
   );
 }
 
-const Section = ({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
+const HeroSection = () => {
   return (
-    <section className={cn("mx-auto w-full lg:max-w-6xl px-4", className)}>
-      {children}
+    <section className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
+      <div className="grid lg:grid-cols-2 gap-4 lg:gap-16 items-center">
+        <div className="flex flex-col gap-2 text-center lg:text-left">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-gray-900">
+            Your days are slipping away. Take them back.
+          </h1>
+          <div className="">
+            <h2 className="text-lg sm:text-xl md:text-2xl text-gray-600">
+              Daily journal, habits & tasks app that actually works
+            </h2>
+            <p className="text-base sm:text-lg text-gray-600 mt-2">
+              Built by someone who tried everything else first
+            </p>
+          </div>
+          <div>
+            <AppStoreButton />
+          </div>
+        </div>
+        <div className="flex justify-center">
+          <img
+            src="/main-app.png"
+            alt="Three Cells daily productivity app interface showing journal, habits, and tasks"
+            className="w-72 sm:w-80 h-auto max-w-full"
+          />
+        </div>
+      </div>
     </section>
   );
 };
 
-const VideoPlayer = ({
-  src,
-  alt,
-  className = "",
-}: {
-  src: string;
-  alt: string;
-  className?: string;
-}) => {
+const ProblemSection = () => {
   return (
-    <div
-      className={cn(
-        "relative rounded-lg overflow-hidden shadow-lg border-2 border-gray-100",
-        className
-      )}
-    >
-      <video
-        src={src}
-        className="w-full h-auto"
-        controls={false}
-        autoPlay
-        preload="metadata"
-        muted
-        playsInline
-        aria-label={alt}
-        loop
-      >
-        <source src={src} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-    </div>
-  );
-};
-
-const HeroSection = () => {
-  return (
-    <Section>
-      <div className="flex flex-col items-center justify-between gap-8">
-        <div className="flex flex-col items-center gap-6 text-center">
-          {/* Urgency Badge */}
-          <div className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            <span>
-              Join people who simplified their productivity this month
-            </span>
-          </div>
-
-          {/* Pain-Focused Headline */}
-          <h1 className="text-5xl font-bold md:text-6xl leading-tight">
-            Stop juggling{" "}
-            <span className="text-red-600 line-through">6 different apps</span>
-            <br />
-            <span className="underline italic font-black text-green-600">
-              Start winning daily
-            </span>
-          </h1>
-
-          {/* Clear Value Prop */}
-          <div className="text-xl text-muted-foreground max-w-2xl">
-            The only productivity system you'll ever need: Journaling, Habits &
-            Tasks united in one beautiful app
-          </div>
-
-          {/* Strong CTA with Risk Reduction */}
-          <div className="mx-auto flex flex-col items-center gap-3">
-            <CleanCTAButton />
-            {/* <p className="text-sm text-muted-foreground">
-              ✅ Free to start • ✅ No credit card required • ✅ 5-minute setup
-            </p> */}
-          </div>
-
-          {/* Specific Outcome Promise */}
-          <div className="text-lg max-w-3xl bg-blue-50 p-4 rounded-lg border border-blue-200">
-            Identify the 2-3 habits that create your best days, track what
-            matters most, and finally stop feeling scattered across multiple
-            apps.
-          </div>
+    <section className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
+      <div className="text-center">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-gray-900">
+          You know the drill
+        </h2>
+        <div className="space-y-4 sm:space-y-6 text-lg sm:text-xl text-gray-700 max-w-3xl mx-auto">
+          <p>Monday: "This is it. I'm getting organized."</p>
+          <p>
+            Download Notion for journaling. Streaks for habits. Todoist for
+            tasks.
+          </p>
+          <p>Tuesday: Spend 20 minutes finding the right app.</p>
+          <p>Wednesday: Forget to check two of them.</p>
+          <p className="font-semibold text-black text-xl sm:text-2xl pt-4">
+            Sound familiar?
+          </p>
         </div>
       </div>
-    </Section>
+    </section>
   );
 };
 
-const TikTokBridgeSection = () => {
+const SolutionSection = () => {
   return (
-    <div className="bg-gradient-to-r from-orange-100 to-orange-200 w-full">
-      <Section className="py-12">
+    <section className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
+      <div className="text-center mb-12 sm:mb-16">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 text-gray-900">
+          One app. Three things. Actually stick to it.
+        </h2>
+        <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
+          The only productivity system you'll actually use every day
+        </p>
+      </div>
+
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-12">
         <div className="text-center">
-          <h2 className="text-3xl font-bold mb-4">
-            🎵 Came here from TikTok? You're in the right place!
-          </h2>
-          <p className="text-lg max-w-2xl mx-auto">
-            Hey! 👋 This is exactly the app that helps you build good habits,
-            journal and keep your tasks in one place.
-          </p>
-        </div>
-      </Section>
-    </div>
-  );
-};
-
-const SocialProofSection = () => {
-  return (
-    <Section className="py-16">
-      <div className="text-center mb-8">
-        <h2 className="text-4xl font-bold mb-4">
-          Backed by the world's top thinkers
-        </h2>
-        <p className="text-xl text-muted-foreground">
-          This isn't another productivity fad. It's the method used by
-          bestselling authors and peak performers.
-        </p>
-      </div>
-
-      <div className="flex flex-col md:flex-row gap-8 md:items-center md:justify-center">
-        <div className="flex flex-col items-center text-center max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
-          <img
-            src={"/cal-newport.webp"}
-            alt="Cal Newport"
-            className="w-32 h-32 object-cover rounded-full mb-4 border-4 border-gray-200"
-          />
-          <h3 className="text-xl font-semibold">Cal Newport</h3>
-          <p className="text-sm text-blue-600 font-medium mb-2">
-            Author of "Deep Work" (500K+ copies sold)
-          </p>
-          <p className="text-base">
-            "This tracking method is essential for maintaining focus, producing
-            great work, and building an intentional life."
-          </p>
-        </div>
-
-        <div className="flex flex-col items-center text-center max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
-          <img
-            src={"/jim-collins.webp"}
-            alt="Jim Collins"
-            className="w-32 h-32 object-cover rounded-full mb-4 border-4 border-green-200"
-          />
-          <h3 className="text-xl font-semibold">Jim Collins</h3>
-          <p className="text-sm text-green-600 font-medium mb-2">
-            Author of "Good to Great" (4M+ copies sold)
-          </p>
-          <p className="text-base">
-            Uses daily tracking to understand what makes good days great. "This
-            method helps me stay focused and do my best work."
-          </p>
-        </div>
-      </div>
-    </Section>
-  );
-};
-
-const VideoShowcaseSection = () => {
-  return (
-    <div className="bg-gray-50 w-full">
-      <Section className="py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">
-            See it in action (3 quick demos)
-          </h2>
-          <p className="text-xl text-muted-foreground">
-            Watch how simple it is to transform your daily routine
-          </p>
-        </div>
-
-        <div className="space-y-16">
-          {/* Journaling Demo */}
-          <div className="flex flex-col lg:flex-row gap-12 items-center">
-            <div className="flex-1">
-              <div className="bg-gray-50 p-2 rounded-lg w-fit mb-4">
-                <Calendar className="h-8 w-8 text-gray-600" />
-              </div>
-              <h3 className="text-3xl font-bold mb-4">
-                Daily Journaling: Find Your Success Pattern
-              </h3>
-              <div className="space-y-4 text-lg">
-                <p className="font-medium text-gray-800">
-                  Just 3 questions. 2 minutes daily. Life-changing insights.
-                </p>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2">
-                    <Check className="h-5 w-5 text-green-600" />
-                    Identify what makes your best days great
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-5 w-5 text-green-600" />
-                    Spot patterns you never noticed before
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-5 w-5 text-green-600" />
-                    Make small changes for massive improvements
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="flex-1">
-              <VideoPlayer
-                src="/demo-videos/three-cells.mp4"
-                alt="Three cells daily journaling demo"
-                className="max-w-lg mx-auto"
-              />
-            </div>
+          <div className="mb-6 sm:mb-8">
+            <img
+              src="/main-app.png"
+              alt="Daily journaling feature with three simple reflection questions"
+              className="w-48 sm:w-64 h-auto mx-auto max-w-full"
+            />
           </div>
-
-          {/* Habits Demo */}
-          <div className="flex flex-col-reverse lg:flex-row gap-12 items-center">
-            <div className="flex-1">
-              <VideoPlayer
-                src="/demo-videos/habits.mp4"
-                alt="Habit tracking demo with heatmaps"
-                className="max-w-lg mx-auto"
-              />
-            </div>
-            <div className="flex-1">
-              <div className="bg-green-50 p-2 rounded-lg w-fit mb-4">
-                <Target className="h-8 w-8 text-green-600" />
-              </div>
-              <h3 className="text-3xl font-bold mb-4">
-                Habit Tracking: Build Unstoppable Momentum
-              </h3>
-              <div className="space-y-4 text-lg">
-                <p className="font-medium text-green-800">
-                  One click. Visual progress. Motivation that lasts.
-                </p>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2">
-                    <Check className="h-5 w-5 text-green-600" />
-                    Gorgeous yearly heatmaps show your progress
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-5 w-5 text-green-600" />
-                    Color-coded streaks keep you motivated
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-5 w-5 text-green-600" />
-                    Weekly insights reveal your patterns
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          {/* Tasks Demo */}
-          <div className="flex flex-col lg:flex-row gap-12 items-center">
-            <div className="flex-1">
-              <div className="bg-gray-50 p-2 rounded-lg w-fit mb-4">
-                <CheckSquare className="h-8 w-8 text-gray-600" />
-              </div>
-              <h3 className="text-3xl font-bold mb-4">
-                Task Management: Focus Without Overwhelm
-              </h3>
-              <div className="space-y-4 text-lg">
-                <p className="font-medium text-gray-800">
-                  Clean. Simple. Satisfying. Everything you need, nothing you
-                  don't.
-                </p>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2">
-                    <Check className="h-5 w-5 text-green-600" />
-                    Edit tasks inline - no popup windows
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-5 w-5 text-green-600" />
-                    Satisfying completion animations
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-5 w-5 text-green-600" />
-                    Keyboard shortcuts for power users
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="flex-1">
-              <VideoPlayer
-                src="/demo-videos/tasks.mp4"
-                alt="Task management demo"
-                className="max-w-lg mx-auto"
-              />
-            </div>
-          </div>
-        </div>
-      </Section>
-    </div>
-  );
-};
-
-const WhyAllInOneMattersSection = () => {
-  return (
-    <Section className="py-16">
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold md:text-5xl mb-4">
-          Why "all-in-one" changes everything
-        </h2>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Ever forgot to journal because you were busy checking habits in
-          another app? Or lost track of your goals while switching between
-          Todoist, Streaks, and Notes?
-        </p>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-12">
-        <div className="p-8 bg-red-50 rounded-xl border-2 border-red-200">
-          <h3 className="text-2xl font-bold text-red-800 mb-4 flex items-center gap-2">
-            😫 The scattered way
+          <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-900">
+            Journal
           </h3>
-          <ul className="space-y-3 text-red-700 text-lg">
-            <li>• Switching between 6+ different apps daily</li>
-            <li>• Losing context every time you switch</li>
-            <li>• Forgetting to check half your tools</li>
-            <li>• No connection between habits and outcomes</li>
-            <li>• Feeling overwhelmed by complexity</li>
-            <li>• Never seeing the full picture of your progress</li>
-          </ul>
+          <p className="text-gray-600 leading-relaxed">
+            Two questions. One minute.
+            <br className="hidden sm:block" />
+            <span className="font-medium">
+              Finally understand what makes you tick.
+            </span>
+          </p>
         </div>
 
-        <div className="p-8 bg-green-50 rounded-xl border-2 border-green-200">
-          <h3 className="text-2xl font-bold text-green-800 mb-4 flex items-center gap-2">
-            ✨ The Three Cells way
+        <div className="text-center">
+          <div className="mb-6 sm:mb-8">
+            <img
+              src="/habits-ss.png"
+              alt="Beautiful habit tracking with visual heatmaps and progress streaks"
+              className="w-48 sm:w-64 h-auto mx-auto max-w-full"
+            />
+          </div>
+          <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-900">
+            Habits
           </h3>
-          <ul className="space-y-3 text-green-700 text-lg">
-            <li>• One beautiful, unified interface</li>
-            <li>• See how your habits affect your best days</li>
-            <li>• Complete daily routine in less than 5 minutes</li>
-            <li>• Everything connects and makes sense</li>
-            <li>• Lightning-fast keyboard shortcuts</li>
-            <li>• Finally understand what drives your success</li>
-          </ul>
+          <p className="text-gray-600 leading-relaxed">
+            One tap tracking. Addictive heatmaps.
+            <br className="hidden sm:block" />
+            <span className="font-medium">Watch your streak grow.</span>
+          </p>
+        </div>
+
+        <div className="text-center sm:col-span-2 lg:col-span-1">
+          <div className="mb-6 sm:mb-8">
+            <img
+              src="/tasks-ss.png"
+              alt="Clean, distraction-free task management interface"
+              className="w-48 sm:w-64 h-auto mx-auto max-w-full"
+            />
+          </div>
+          <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-900">
+            Tasks
+          </h3>
+          <p className="text-gray-600 leading-relaxed">
+            Zero fluff. Just what matters.
+            <br className="hidden sm:block" />
+            <span className="font-medium">Get stuff done, not organized.</span>
+          </p>
         </div>
       </div>
-
-      <div className="bg-gray-50 p-8 rounded-xl max-w-4xl mx-auto border border-gray-200">
-        <p className="text-lg text-center leading-relaxed">
-          <strong className="text-gray-800">
-            After years of trying complex systems and juggling multiple apps, I
-            built exactly what I wanted:
-          </strong>{" "}
-          a simple, beautiful tool that brings everything together. No more app
-          switching. No more lost context. Just pure focus on building the life
-          you want.
-        </p>
-      </div>
-    </Section>
+    </section>
   );
 };
 
-const FeaturesOverviewSection = () => {
+const HowItWorksSection = () => {
   return (
-    <div className="bg-gradient-to-b from-gray-50 to-white w-full">
-      <Section className="py-16">
-        <h2 className="text-4xl font-bold md:text-5xl leading-tight text-center mb-4">
-          Everything you need, nothing you don't
+    <section className="bg-gray-50 py-12 sm:py-20">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-12 sm:mb-16 text-gray-900">
+          Your new 5-minute morning ritual
         </h2>
-        <p className="text-xl text-muted-foreground text-center mb-12 max-w-3xl mx-auto">
-          Built for people who want results, not complexity. Every feature
-          serves a purpose.
-        </p>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="flex flex-col items-center text-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-              <Calendar className="h-10 w-10 text-gray-600" />
+        <div className="space-y-8 sm:space-y-12">
+          <div className="flex items-start gap-4 sm:gap-6">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-black text-white rounded-full flex items-center justify-center text-lg sm:text-xl font-bold flex-shrink-0">
+              1
             </div>
-            <h3 className="text-2xl font-semibold mb-4">Daily Journaling</h3>
-            <p className="text-muted-foreground text-lg">
-              Three powerful questions reveal patterns in your best days. Track
-              what matters and optimize your life systematically.
-            </p>
+            <div>
+              <h3 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900">
+                Open Three Cells
+              </h3>
+              <p className="text-lg sm:text-xl text-gray-600">
+                Everything's right there. No hunting for apps.
+              </p>
+            </div>
           </div>
 
-          <div className="flex flex-col items-center text-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-              <Target className="h-10 w-10 text-green-600" />
+          <div className="flex items-start gap-4 sm:gap-6">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-black text-white rounded-full flex items-center justify-center text-lg sm:text-xl font-bold flex-shrink-0">
+              2
             </div>
-            <h3 className="text-2xl font-semibold mb-4">Smart Habits</h3>
-            <p className="text-muted-foreground text-lg">
-              Simple one-click tracking with beautiful yearly heatmaps. See your
-              progress at a glance and stay motivated long-term.
-            </p>
+            <div>
+              <h3 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900">
+                Tap your habits
+              </h3>
+              <p className="text-lg sm:text-xl text-gray-600">
+                Did you meditate yesterday? Tap. Instant dopamine hit.
+              </p>
+            </div>
           </div>
 
-          <div className="flex flex-col items-center text-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-              <CheckSquare className="h-10 w-10 text-gray-600" />
+          <div className="flex items-start gap-4 sm:gap-6">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-black text-white rounded-full flex items-center justify-center text-lg sm:text-xl font-bold flex-shrink-0">
+              3
             </div>
-            <h3 className="text-2xl font-semibold mb-4">Effortless Tasks</h3>
-            <p className="text-muted-foreground text-lg">
-              Clean, distraction-free task management. Edit inline, complete
-              with satisfaction, and focus on what truly matters.
-            </p>
+            <div>
+              <h3 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900">
+                Reflect on yesterday
+              </h3>
+              <p className="text-lg sm:text-xl text-gray-600">
+                Three questions. No overthinking. Spot patterns in your best
+                days.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4 sm:gap-6">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-black text-white rounded-full flex items-center justify-center text-lg sm:text-xl font-bold flex-shrink-0">
+              4
+            </div>
+            <div>
+              <h3 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900">
+                Set today's intention
+              </h3>
+              <p className="text-lg sm:text-xl text-gray-600">
+                Three tasks max. Close the app. Go live your life.
+              </p>
+            </div>
           </div>
         </div>
-      </Section>
-    </div>
+
+        <div className="text-center mt-12 sm:mt-16">
+          <p className="text-xl sm:text-2xl font-light text-gray-700">
+            <span className="font-medium">5 minutes.</span> Every morning.{" "}
+            <span className="font-medium">Life transformed.</span>
+          </p>
+        </div>
+      </div>
+    </section>
   );
 };
 
 const TestimonialsSection = () => {
   return (
-    <Section className="py-16">
-      <h2 className="text-4xl font-bold text-center mb-12">
-        What people are saying
+    <section className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-12 sm:mb-16 text-gray-900">
+        What actual users say
       </h2>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-100">
-          <div className="flex items-center mb-4">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Star
-                key={star}
-                className="h-5 w-5 text-yellow-400 fill-current"
-              />
-            ))}
-          </div>
-          <p className="text-gray-700 mb-4">
-            "I have tried countless apps over the years. Notion for journaling.
-            Todoist for tasks. Various habits app. This is the only app that is
-            minimal and has everything I need to achieve my dream life."
-          </p>
-          <p className="font-semibold">Mags, Software Engineer</p>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-100">
-          <div className="flex items-center mb-4">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Star
-                key={star}
-                className="h-5 w-5 text-yellow-400 fill-current"
-              />
-            ))}
-          </div>
-          <p className="text-gray-700 mb-4">
-            "Cleanest UI I've seen. Simple. To the point. Does exactly what it
-            says. Couldn't be happier."
-          </p>
-          <p className="font-semibold">Mabroor</p>
-        </div>
-
-        {/* <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-100">
-          <div className="flex items-center mb-4">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Star
-                key={star}
-                className="h-5 w-5 text-yellow-400 fill-current"
-              />
-            ))}
-          </div>
-          <p className="text-gray-700 mb-4">
-            "The interface is so clean and beautiful. I actually look forward to
-            my daily check-in now. It takes 3 minutes and keeps me on track all
+      <div className="space-y-8 sm:space-y-12">
+        <div className="border-l-4 border-black pl-6 sm:pl-8">
+          <p className="text-lg sm:text-xl italic mb-3 sm:mb-4 text-gray-700 leading-relaxed">
+            "I've tried everything. Notion for journaling, Todoist for tasks,
+            random habit apps. This is the first app that's minimal and has
+            everything I need to build my dream life. I actually use it every
             day."
           </p>
-          <p className="font-semibold">Elena R., Designer</p>
-        </div> */}
+          <p className="font-semibold text-gray-900">Mags, Software Engineer</p>
+        </div>
+
+        <div className="border-l-4 border-black pl-6 sm:pl-8">
+          <p className="text-lg sm:text-xl italic mb-3 sm:mb-4 text-gray-700 leading-relaxed">
+            "Finally. An app that doesn't try to do everything. Clean design,
+            works perfectly, does exactly what it promises. I'm genuinely happy
+            I found this."
+          </p>
+          <p className="font-semibold text-gray-900">Mabroor</p>
+        </div>
       </div>
-    </Section>
+    </section>
   );
 };
 
 const FinalCTASection = () => {
   return (
-    <div className="bg-gradient-to-r from-orange-600 to-yellow-600 w-full">
-      <Section className="py-16 text-center text-white">
-        <h2 className="text-5xl font-bold mb-6">
-          Your productive life starts today
+    <section className="bg-black text-white py-16 sm:py-20">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">
+          Ready to get your life together?
         </h2>
-        <p className="text-xl mb-4 max-w-3xl mx-auto opacity-90">
-          Stop juggling apps and start building the life you want.
-        </p>
-        <p className="text-lg mb-8 opacity-80">
-          The method trusted by Cal Newport and Jim Collins, now in one
-          beautiful app.
+        <p className="mt-4 text-xl sm:text-2xl mb-8 sm:mb-12 text-gray-300 max-w-2xl mx-auto">
+          stop app-hopping and started building better habits
         </p>
 
-        <div className="flex flex-col items-center gap-6">
-          <Link to="/track">
-            <Button
-              className="text-xl px-12 py-6 bg-white text-black hover:bg-gray-100 font-semibold"
-              size={"lg"}
-            >
-              Get started for free
-              <ArrowRight className="h-6 w-6" />
-            </Button>
-          </Link>
+        <AppStoreButton />
 
-          {/* <div className="flex items-center gap-6 text-sm opacity-90">
-            <div className="flex items-center gap-2">
-              <Check className="h-4 w-4" />
-              <span>Completely free</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              <span>No credit card required</span>
-            </div>
-          </div> */}
+        <div className="mt-2 sm:mt-4">
+          <p className="text-gray-400 text-sm sm:text-base">
+            <span className="font-medium text-white">Free to start</span> •
+            Available on iPhone
+          </p>
         </div>
-      </Section>
-    </div>
+        <div className="flex flex-row gap-6 items-center justify-center mt-8">
+          <a
+            href="/privacy"
+            className="text-white"
+            style={{
+              color: "white",
+            }}
+          >
+            Privacy Policy
+          </a>
+          <a
+            href="/terms"
+            className="text-white"
+            style={{
+              color: "white",
+            }}
+          >
+            Terms of Service
+          </a>
+          <a
+            href="mailto:hello@three-cells.com"
+            className=""
+            style={{
+              color: "white",
+            }}
+          >
+            Contact Us
+          </a>
+        </div>
+      </div>
+    </section>
   );
 };
 
-const PricingSection = () => {
+const AppStoreButton = ({
+  variant = "black",
+}: {
+  variant?: "black" | "white";
+}) => {
+  const baseClasses =
+    "inline-flex items-center gap-3 px-4 py-2 bg-white rounded-lg border-2 border-gray-700";
+  const variantClasses =
+    variant === "white" ? "bg-black text-white" : "text-white";
+
   return (
-    <Section className="w-full max-w-6xl mx-auto px-4 py-10">
-      {/* Header */}
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold mb-1">Choose your path</h2>
-        <p className="text-gray-600 text-lg">
-          Keep juggling apps or simplify your life with Three Cells
-        </p>
-      </div>
+    <a
+      href="https://apps.apple.com/us/app/three-cells-your-life-system/id6747948986"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn(baseClasses, variantClasses)}
+      // style={{ minWidth: "180px", height: "60px" }}
+    >
+      {/* Apple Logo */}
+      <AppleLogo width={40} height={40} />
 
-      {/* Cards comparison */}
-      <div className="grid md:grid-cols-2 gap-8 items-start">
-        {/* Bad option - Traditional scattered approach */}
-        <div className="order-2 md:order-1">
-          <div className="text-center mb-6">
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">
-              😫 The Scattered Way
-            </h3>
-            <p className="text-gray-500 text-sm">
-              What you're probably doing now
-            </p>
-          </div>
-          <TraditionalApproachCard />
-        </div>
-
-        {/* Good option - Three Cells */}
-        <div className="order-1 md:order-2">
-          <div className="text-center mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              ✨ The Three Cells Way
-            </h3>
-            <p className="text-gray-600 text-sm">
-              Everything unified in one beautiful app
-            </p>
-          </div>
-          <BuyThreeCellsCard login={true} />
-        </div>
+      {/* Text */}
+      <div className="flex flex-col items-start text-left leading-none">
+        <div className="text-xs font-normal">Download on the</div>
+        <div className="text-lg font-semibold -mt-1">App Store</div>
       </div>
-
-      {/* Bottom comparison text */}
-      <div className="mt-12 text-center">
-        <p className="text-gray-600 text-lg">
-          Stop switching between apps. Start building the life you want.
-        </p>
-      </div>
-    </Section>
+    </a>
   );
 };
-
-function CleanCTAButton() {
-  return (
-    <Link to="/track">
-      <Button
-        className="
-          text-lg px-8 py-5
-          bg-gradient-to-r from-orange-500 to-orange-600
-          hover:from-orange-600 hover:to-orange-700
-          text-white font-semibold
-          rounded-lg
-          shadow-md hover:shadow-lg
-          transition-all duration-200
-          group
-        "
-        size="lg"
-      >
-        Start your productive life today
-        <ArrowRight className="ml-3 h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
-      </Button>
-    </Link>
-  );
-}
