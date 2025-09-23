@@ -52,6 +52,21 @@ export const fulfillRevenueCat = internalAction({
           );
           break;
 
+        case "NON_RENEWING_PURCHASE":
+          if (productId === "com.threecells.lifetime") {
+            await ctx.runMutation(
+              internal.internal.payments.updateRevenueCatSubscription,
+              {
+                userId,
+                productId,
+                expiresAt: null,
+              },
+            );
+          } else {
+            console.log("Unhandled non-renewing product:", productId);
+          }
+          break;
+
         default:
           console.log("Unhandled RevenueCat event type:", event.type);
       }
