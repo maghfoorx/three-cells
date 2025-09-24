@@ -52,6 +52,20 @@ export const fulfillRevenueCat = internalAction({
           );
           break;
 
+        case "CANCELLATION":
+          // if user refunds lifetime access
+          if (productId === "com.threecells.lifetime") {
+            await ctx.runMutation(
+              internal.internal.payments.unsubscribeRevenueCatSubscription,
+              {
+                userId,
+                productId,
+              },
+            );
+          } else {
+            console.log("Unhandled cancellation product:", productId);
+          }
+          break;
         case "NON_RENEWING_PURCHASE":
           if (productId === "com.threecells.lifetime") {
             await ctx.runMutation(
