@@ -317,9 +317,10 @@ const AppStoreButton = ({
 
   return (
     <a
-      href="https://apps.apple.com/us/app/three-cells-your-life-system/id6747948986"
-      target="_blank"
-      rel="noopener noreferrer"
+      // href="https://apps.apple.com/us/app/three-cells-your-life-system/id6747948986"
+      href="itms-apps://apps.apple.com/us/app/three-cells-your-life-system/id6747948986"
+      // target="_blank"
+      // rel="noopener noreferrer"
       className={cn(baseClasses, variantClasses)}
       // style={{ minWidth: "180px", height: "60px" }}
     >
