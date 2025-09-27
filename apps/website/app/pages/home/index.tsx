@@ -20,7 +20,7 @@ const HeroSection = () => {
       <div className="grid lg:grid-cols-2 gap-4 lg:gap-16 items-center">
         <div className="flex flex-col gap-2 text-center lg:text-left">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-gray-900">
-            Your days are slipping away. Take them back.
+            Make the most of your days
           </h1>
           <div className="">
             <h2 className="text-lg sm:text-xl md:text-2xl text-gray-600">
