@@ -9,7 +9,6 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   Pressable,
   TouchableWithoutFeedback,
   Keyboard,
@@ -26,6 +25,7 @@ import { Id } from "@packages/backend/convex/_generated/dataModel";
 import { formatValueByIncrement } from "@/utils/numbers";
 import DualValuePicker from "@/components/pages/metrics/DualWheelPicker";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const formSchema = z.object({
   value: z.number().min(0, "Value must be positive"),

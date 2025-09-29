@@ -3,6 +3,7 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import Purchases, { LOG_LEVEL } from "react-native-purchases";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -63,34 +64,36 @@ export default function RootLayout() {
       }
     >
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-          <Stack.Screen name="subscribe" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="yearly-view"
-            options={{ headerShown: false, presentation: "modal" }}
-          />
-          <Stack.Screen
-            name="three-cell-log"
-            options={{ headerShown: false, presentation: "modal" }}
-          />
-          <Stack.Screen
-            name="create-new-task"
-            options={{ headerShown: false, presentation: "modal" }}
-          />
-          <Stack.Screen
-            name="create-new-habit"
-            options={{ headerShown: false, presentation: "modal" }}
-          />
-          <Stack.Screen
-            name="create-new-metric"
-            options={{ headerShown: false, presentation: "modal" }}
-          />
-          <Stack.Screen name="+not-found" options={{ headerShown: false }} />
-          <Stack.Screen name="logged-out" options={{ headerShown: false }} />
-        </Stack>
+        <KeyboardProvider>
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+            <Stack.Screen name="subscribe" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="yearly-view"
+              options={{ headerShown: false, presentation: "modal" }}
+            />
+            <Stack.Screen
+              name="three-cell-log"
+              options={{ headerShown: false, presentation: "modal" }}
+            />
+            <Stack.Screen
+              name="create-new-task"
+              options={{ headerShown: false, presentation: "modal" }}
+            />
+            <Stack.Screen
+              name="create-new-habit"
+              options={{ headerShown: false, presentation: "modal" }}
+            />
+            <Stack.Screen
+              name="create-new-metric"
+              options={{ headerShown: false, presentation: "modal" }}
+            />
+            <Stack.Screen name="+not-found" options={{ headerShown: false }} />
+            <Stack.Screen name="logged-out" options={{ headerShown: false }} />
+          </Stack>
+        </KeyboardProvider>
         <StatusBar style="auto" />
         <MonitorUserLoggedInAndSubscription />
       </ThemeProvider>

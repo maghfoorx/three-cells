@@ -171,3 +171,117 @@ export const deleteUserAccount = mutation({
     await ctx.db.delete(userId);
   },
 });
+
+function toCSV(headers: string[], rows: any[][]): string {
+  const escape = (val: any) => `"${String(val ?? "").replace(/"/g, '""')}"`; // safe escaping
+  return [headers.join(","), ...rows.map((r) => r.map(escape).join(","))].join(
+    "\n",
+  );
+}
+
+export const exportUserData = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      throw new ConvexError("You must be logged in to delete your account");
+    }
+
+    // --- three_cells
+    const threeCells = await ctx.db
+      .query("three_cells")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+
+    const threeCellsCsv = toCSV(
+      ["dateFor", "summary", "score"],
+      threeCells.map((c) => [c.dateFor, c.summary, c.score]),
+    );
+
+    // --- habits submissions
+    const habitSubs = await ctx.db
+      .query("userHabitSubmissions")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+
+    const habits = await ctx.db
+      .query("userHabits")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+    const habitMap = Object.fromEntries(habits.map((h) => [h._id, h.name]));
+
+    // --- metric submissions
+    const metricSubs = await ctx.db
+      .query("userMetricSubmissions")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+
+    const metrics = await ctx.db
+      .query("userMetrics")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+    const metricMap = Object.fromEntries(
+      metrics.map((m) => [m._id, { name: m.name, unit: m.unit }]),
+    );
+
+    // --- habits submissions grouped by habit
+    const habitSubsGrouped = Object.values(
+      habitSubs.reduce(
+        (acc, sub) => {
+          const habitName = habitMap[sub.habitId] ?? "Unknown";
+          if (!acc[habitName]) acc[habitName] = [];
+          acc[habitName].push(sub);
+          return acc;
+        },
+        {} as Record<string, typeof habitSubs>,
+      ),
+    );
+
+    const habitCsvLines: string[][] = [];
+    for (const group of habitSubsGrouped) {
+      const habitName = habitMap[group[0].habitId] ?? "Unknown";
+      habitCsvLines.push([`=== ${habitName} ===`]); // optional section header
+      habitCsvLines.push(["dateFor", "value"]); // CSV headers per habit
+      for (const sub of group) {
+        habitCsvLines.push([sub.dateFor, sub.value.toString()]);
+      }
+      habitCsvLines.push([]); // empty line between habits
+    }
+
+    const habitCsv = habitCsvLines.map((r) => r.join(",")).join("\n");
+
+    // --- metric submissions grouped by metric
+    const metricSubsGrouped = Object.values(
+      metricSubs.reduce(
+        (acc, sub) => {
+          const metricName = metricMap[sub.metricId]?.name ?? "Unknown";
+          if (!acc[metricName]) acc[metricName] = [];
+          acc[metricName].push(sub);
+          return acc;
+        },
+        {} as Record<string, typeof metricSubs>,
+      ),
+    );
+
+    const metricCsvLines: string[][] = [];
+    for (const group of metricSubsGrouped) {
+      const metricName = metricMap[group[0].metricId]?.name ?? "Unknown";
+      const unit = metricMap[group[0].metricId]?.unit ?? "";
+      metricCsvLines.push([`=== ${metricName} (${unit}) ===`]); // optional section header
+      metricCsvLines.push(["dateFor", "value"]);
+      for (const sub of group) {
+        metricCsvLines.push([sub.dateFor, sub.value.toString()]);
+      }
+      metricCsvLines.push([]); // empty line between metrics
+    }
+
+    const metricCsv = metricCsvLines.map((r) => r.join(",")).join("\n");
+
+    return {
+      threeCellsCsv,
+      habitCsv,
+      metricCsv,
+    };
+  },
+});

@@ -9,7 +9,6 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   Pressable,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
@@ -18,6 +17,7 @@ import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -36,14 +36,6 @@ export default function CreateNewTaskPage() {
       category_id: "",
     },
   });
-
-  const viewer = useQuery(api.auth.viewer);
-
-  const hasLifeTimeAccess =
-    (viewer != null &&
-      viewer.hasActivePurchase != null &&
-      viewer.hasActivePurchase) ??
-    false;
 
   const createNewTask = useMutation(api.tasks.createUserTask);
 

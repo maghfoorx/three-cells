@@ -32,7 +32,7 @@ export default function SignInWithApple() {
       className="w-full border-2 border-gray-200 rounded-sm py-4 px-6 flex-row items-center gap-2 justify-center shadow-sm"
       activeOpacity={0.8}
     >
-      <AntDesign name="apple1" size={24} />
+      <AntDesign name="apple" size={24} />
       <Text className="font-semibold text-lg">Continue with Apple</Text>
     </TouchableOpacity>
   );

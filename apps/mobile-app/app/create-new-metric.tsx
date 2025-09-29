@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  SafeAreaView,
   Pressable,
   Modal,
 } from "react-native";
@@ -22,6 +21,7 @@ import clsx from "clsx";
 import color from "color";
 import { useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const formSchema = z.object({
   name: z.string().min(1, "Metric name is required"),

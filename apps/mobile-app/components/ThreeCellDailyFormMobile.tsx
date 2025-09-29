@@ -13,7 +13,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
-  SafeAreaView,
   Pressable,
   Keyboard,
 } from "react-native";
@@ -28,6 +27,7 @@ import { SCORE_COLORS } from "@/utils/types";
 import DailyHighlights from "./pages/track/DailyHighlights";
 import LoadingScreen from "./LoadingScreen";
 import { Image } from "expo-image";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const formSchema = z.object({
   summary: z.string().min(1, "Summary is required"),

@@ -6,7 +6,6 @@ import { useQuery } from "convex/react";
 import {
   ActivityIndicator,
   Pressable,
-  SafeAreaView,
   ScrollView,
   Text,
   View,
@@ -15,6 +14,7 @@ import { Feather } from "@expo/vector-icons";
 import MetricTrendChart from "@/components/pages/metrics/MetricTrendChart";
 import MetricStatisticsCards from "@/components/pages/metrics/MetricStatisticsCards";
 import { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SingleMetricPage() {
   const { singleMetric: singleMetricId } = useLocalSearchParams();

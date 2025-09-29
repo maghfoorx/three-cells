@@ -44,7 +44,7 @@ export default function TabLayout() {
         options={{
           title: "Tasks",
           tabBarIcon: ({ color, size, focused }) => {
-            const iconName = focused ? "checksquareo" : "checksquareo";
+            const iconName = focused ? "check-square" : "check-square";
             return (
               <AntDesign
                 name={iconName}

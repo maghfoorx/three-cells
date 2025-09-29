@@ -17,7 +17,6 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   Pressable,
   ScrollView,
   ActivityIndicator,
@@ -27,6 +26,7 @@ import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { format } from "date-fns";
 import clsx from "clsx";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),

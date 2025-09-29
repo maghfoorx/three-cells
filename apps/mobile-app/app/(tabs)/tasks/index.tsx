@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { View, Text, SafeAreaView, ScrollView, Pressable } from "react-native";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import UserTaskTile from "@/components/UserTaskTileMobile";
@@ -7,6 +7,7 @@ import { router } from "expo-router";
 import { PlusIcon } from "react-native-heroicons/outline";
 import LoadingScreen from "@/components/LoadingScreen";
 import { Image } from "expo-image";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TasksPage() {
   const userTasks = useQuery(api.tasks.getAllUserTasks);

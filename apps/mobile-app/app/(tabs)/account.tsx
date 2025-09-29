@@ -1,12 +1,14 @@
 import { Image } from "expo-image";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 import {
   View,
   Text,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
   Linking,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
@@ -16,6 +18,8 @@ import NotificationSettings from "@/components/pages/account/NotificationSetting
 import LoadingScreen from "@/components/LoadingScreen";
 import { router } from "expo-router";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useState } from "react";
 
 export default function AccountPage() {
   const user = useQuery(api.auth.viewer);
@@ -164,6 +168,8 @@ export default function AccountPage() {
             </TouchableOpacity>
           </View>
 
+          <ExportYourDataSection />
+
           {/* Danger Zone */}
           <View className="px-4 py-4 bg-red-50 mt-8 rounded-md border border-red-300">
             <Text className="text-xl font-semibold text-red-700 mb-2">
@@ -193,3 +199,62 @@ export default function AccountPage() {
     </SafeAreaView>
   );
 }
+
+const ExportYourDataSection = () => {
+  const [loading, setLoading] = useState(false);
+  const exportUserData = useMutation(api.auth.exportUserData);
+
+  const handleDownload = async () => {
+    try {
+      setLoading(true);
+
+      const data = await exportUserData();
+
+      // Combine all three datasets into one CSV string
+      const combinedCsv = [
+        "=== Three Cells Submissions ===",
+        data.threeCellsCsv,
+        "\n=== Habit Submissions ===",
+        data.habitCsv,
+        "\n=== Metric Submissions ===",
+        data.metricCsv,
+      ].join("\n\n");
+
+      // Use timestamp + random suffix to ensure unique filename
+      const time = new Date().toISOString().replace(/[:.]/g, "-");
+      const randomSuffix = Math.floor(Math.random() * 10000);
+
+      const fileName = `three_cells_exported_data_${time}_${randomSuffix}.csv`;
+
+      // Create and write the file using the new File API
+      const file = new FileSystem.File(FileSystem.Paths.document, fileName);
+      file.create();
+      file.write(combinedCsv);
+
+      // Open the share sheet
+      await Sharing.shareAsync(file.uri);
+    } catch (error) {
+      console.error("Error exporting data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <View className="px-4 py-4 bg-green-50 mt-4 rounded-md">
+      <Text className="text-xl font-semibold mb-2">Export Data</Text>
+      <Text className="mb-4">Export your data in CSV format :)</Text>
+      <TouchableOpacity
+        onPress={handleDownload}
+        className={"py-3 px-4 rounded-md bg-green-400"}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="green" />
+        ) : (
+          <Text className="font-semibold text-center">Download</Text>
+        )}
+      </TouchableOpacity>
+    </View>
+  );
+};

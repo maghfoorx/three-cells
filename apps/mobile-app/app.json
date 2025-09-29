@@ -9,7 +9,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
+      "userInterfaceStyle": "light",
       "bundleIdentifier": "com.threecells.iosapp",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -47,7 +47,10 @@
           "defaultChannel": "default",
           "enableBackgroundRemoteNotifications": false
         }
-      ]
+      ],
+      "expo-font",
+      "expo-secure-store",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

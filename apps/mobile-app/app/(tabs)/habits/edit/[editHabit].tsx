@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  SafeAreaView,
   Pressable,
   ActivityIndicator,
 } from "react-native";
@@ -23,6 +22,7 @@ import { useLocalSearchParams, router } from "expo-router";
 import { DataModel } from "@packages/backend/convex/_generated/dataModel";
 import clsx from "clsx";
 import color from "color";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const formSchema = z.object({
   name: z.string().min(1, "Habit name is required"),

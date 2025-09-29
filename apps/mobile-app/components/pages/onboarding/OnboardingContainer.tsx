@@ -1,5 +1,6 @@
 import type React from "react";
-import { View, SafeAreaView, StatusBar } from "react-native";
+import { StatusBar, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface OnboardingContainerProps {
   children: React.ReactNode;

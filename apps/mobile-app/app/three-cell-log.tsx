@@ -3,7 +3,7 @@ import { MotiView, AnimatePresence } from "moti";
 import { Layout } from "react-native-reanimated";
 import { XMarkIcon } from "react-native-heroicons/outline";
 import React, { useState, useMemo } from "react";
-import { View, Text, ScrollView, SafeAreaView, Pressable } from "react-native";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { useQuery } from "convex/react";
 import { format } from "date-fns";
 import color from "color";
@@ -11,6 +11,7 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { DataModel } from "@packages/backend/convex/_generated/dataModel";
 import { SCORE_COLORS } from "@/utils/types";
 import clsx from "clsx";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type SortOption = "latest" | "score";
 

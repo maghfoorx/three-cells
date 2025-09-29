@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, SafeAreaView, ScrollView, Pressable } from "react-native";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { PlusIcon } from "react-native-heroicons/outline";
 import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
@@ -7,6 +7,7 @@ import UserHabitCardMobile from "@/components/UserHabitCardMobile";
 import { router } from "expo-router";
 import LoadingScreen from "@/components/LoadingScreen";
 import { Image } from "expo-image";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HabitsPage() {
   const allUserHabits = useQuery(api.habits.getAllUserHabits);

@@ -2,7 +2,8 @@ import SignInWithGoogle from "@/components/SignInWithGoogle";
 import { api } from "@packages/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { Redirect, router } from "expo-router";
-import { Pressable, SafeAreaView, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TestLoggedOutPage() {
   const user = useQuery(api.auth.viewer);

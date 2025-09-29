@@ -6,7 +6,6 @@ import { useQuery } from "convex/react";
 import {
   ActivityIndicator,
   Pressable,
-  SafeAreaView,
   ScrollView,
   Text,
   View,
@@ -16,6 +15,7 @@ import { BulkManageToast } from "@/components/useCalendarSquareToast";
 import { Feather } from "@expo/vector-icons";
 import PerformanceGraph from "@/components/PerformanceGraph";
 import StreaksView from "@/components/StreaksView";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SingleHabitPage() {
   const { singleHabit: singleHabitId } = useLocalSearchParams();

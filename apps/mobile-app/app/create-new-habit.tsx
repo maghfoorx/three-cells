@@ -9,8 +9,6 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
-  SafeAreaView,
   Pressable,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
@@ -21,6 +19,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import clsx from "clsx";
 import color from "color";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const formSchema = z.object({
   name: z.string().min(1, "Habit name is required"),
@@ -61,14 +60,6 @@ export default function CreateNewHabitPage() {
       colour: getRandomColourForNewHabit(),
     },
   });
-
-  const viewer = useQuery(api.auth.viewer);
-
-  const hasLifeTimeAccess =
-    (viewer != null &&
-      viewer.hasActivePurchase != null &&
-      viewer.hasActivePurchase) ??
-    false;
 
   const createHabit = useMutation(api.habits.createNewUserHabit);
 

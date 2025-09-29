@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Image } from "expo-image";
 import { Feather } from "@expo/vector-icons";
-import { View, Text, Animated, SafeAreaView, Platform } from "react-native";
+import { View, Text, Animated, Platform } from "react-native";
 import { useConvexAuth, useQuery } from "convex/react";
 import SignInWithGoogle from "@/components/SignInWithGoogle";
 import { Redirect } from "expo-router";
@@ -11,6 +11,7 @@ import Purchases from "react-native-purchases";
 import LoadingScreen from "@/components/LoadingScreen";
 import { Asset } from "expo-asset";
 import { openLink } from "@/utils/openLink";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const FEATURES = [
   {

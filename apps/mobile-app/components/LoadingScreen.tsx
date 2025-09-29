@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
-import { View, Animated, SafeAreaView } from "react-native";
+import { View, Animated } from "react-native";
 import { Image } from "expo-image";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoadingScreen({
   pictureName = "loading-icon.png",
