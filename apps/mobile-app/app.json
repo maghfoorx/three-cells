@@ -2,14 +2,15 @@
   "expo": {
     "name": "Three Cells",
     "slug": "three-cells",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/meditating.png",
     "scheme": "com.threecells.iosapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "userInterfaceStyle": "light",
+      "supportsTablet": true,
       "bundleIdentifier": "com.threecells.iosapp",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
