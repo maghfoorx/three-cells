@@ -1,11 +1,4 @@
-import {
-  format,
-  startOfWeek,
-  addDays,
-  isSameDay,
-  startOfDay,
-  endOfDay,
-} from "date-fns";
+import { format, addDays, isSameDay, startOfDay, endOfDay } from "date-fns";
 import color from "color";
 import { useMutation, useQuery } from "convex/react";
 import { CheckIcon, XMarkIcon } from "react-native-heroicons/outline";
@@ -21,14 +14,17 @@ import {
   NativeSyntheticEvent,
   NativeTouchEvent,
 } from "react-native";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { handleHookMutationError } from "@/utils/handleHookMutationError";
+import { useNewDay } from "@/hooks/useNewDay";
 
 export function UserHabitCard({
   habit,
 }: {
   habit: DataModel["userHabits"]["document"];
 }) {
+  const today = useNewDay();
+
   const { start, end, dates } = useMemo(() => {
     const rawEnd = new Date();
     const rawStart = addDays(rawEnd, -6);
@@ -38,7 +34,7 @@ export function UserHabitCard({
       end: endOfDay(rawEnd),
       dates,
     };
-  }, []);
+  }, [today]);
 
   const submissionsForHabit = useQuery(api.habits.getSubmissionsForHabit, {
     habitId: habit._id,
@@ -87,21 +83,32 @@ export function UserHabitCard({
       </View>
 
       {/* Stats */}
-      {submissionsForHabit?.currentMonthPerformancePercentage != null &&
-        submissionsForHabit?.lastXDaysSubmissions != null && (
-          <View className="flex flex-row justify-between items-center pt-4 border-t border-gray-100">
+      <View className="flex flex-row justify-between items-center pt-4 border-t border-gray-100">
+        {submissionsForHabit === undefined ? (
+          // Skeleton state
+          <>
+            <View className="h-4 w-28 bg-gray-300 rounded" />
+            <View className="flex flex-row items-center gap-2">
+              <View className="h-4 w-10 bg-gray-300 rounded" />
+              <View className="h-4 w-16 bg-gray-300 rounded" />
+            </View>
+          </>
+        ) : (
+          // Loaded state
+          <>
             <Text className="text-sm text-gray-500">
-              {submissionsForHabit?.lastXDaysSubmissions?.length}/{dates.length}{" "}
+              {submissionsForHabit.lastXDaysSubmissions?.length}/{dates.length}{" "}
               days this week
             </Text>
             <View className="flex flex-row items-center gap-2">
               <Text className="text-sm font-medium text-gray-900">
-                {submissionsForHabit?.currentMonthPerformancePercentage}%
+                {submissionsForHabit.currentMonthPerformancePercentage}%
               </Text>
               <Text className="text-sm text-gray-500">this month</Text>
             </View>
-          </View>
+          </>
         )}
+      </View>
     </Pressable>
   );
 }

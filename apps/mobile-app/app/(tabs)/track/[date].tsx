@@ -1,8 +1,11 @@
 import { useLocalSearchParams } from "expo-router";
 import { parse, isValid } from "date-fns";
 import ThreeCellDailyForm from "@/components/ThreeCellDailyFormMobile";
+import React from "react";
+import { useNewDay } from "@/hooks/useNewDay";
 
 export default function TrackPage() {
+  const today = useNewDay();
   const { date } = useLocalSearchParams();
 
   // Handle the date parsing more safely
@@ -19,8 +22,8 @@ export default function TrackPage() {
   }
 
   return (
-    <>
+    <React.Fragment key={today.toISOString()}>
       <ThreeCellDailyForm date={parsedDate} />
-    </>
+    </React.Fragment>
   );
 }

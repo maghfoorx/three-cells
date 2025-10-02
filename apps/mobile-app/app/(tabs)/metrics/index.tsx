@@ -8,8 +8,11 @@ import UserMetricCardMobile from "@/components/pages/metrics/UserMetricCardMobil
 import LoadingScreen from "@/components/LoadingScreen";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNewDay } from "@/hooks/useNewDay";
 
 export default function MetricsPage() {
+  const today = useNewDay();
+  console.log(today, "IS_TODAY");
   const allSubmissions = useQuery(
     api.userMetrics.queries.getAllUserMetricSubmissions,
     {
@@ -71,7 +74,11 @@ export default function MetricsPage() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+    <SafeAreaView
+      className="flex-1 bg-white"
+      edges={["top"]}
+      key={today.toISOString()}
+    >
       <View className="flex-1">
         {/* Header */}
         <View className="px-6 py-4 flex flex-row justify-between items-center bg-white">
