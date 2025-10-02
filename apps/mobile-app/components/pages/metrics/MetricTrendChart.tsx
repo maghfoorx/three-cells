@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
+import * as Haptics from "expo-haptics"; // add this at the top
+import { format } from "date-fns"; // helpful for date formatting
 import {
   View,
   Text,
@@ -33,15 +35,33 @@ export default function MetricTrendChart({
   metric,
   graphWidth: GRAPH_WIDTH,
 }: MetricTrendChartProps) {
+  const [selectedDotIndex, setSelectedDotIndex] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<"7days" | "30days" | "90days">(
     "30days",
   );
+
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   const trendData = useQuery(api.userMetrics.queries.getMetricTrendData, {
     metricId,
     period: viewMode,
   });
+
+  const getSelectedDotInfo = () => {
+    if (selectedDotIndex === null || trendData == null) return null;
+
+    const entry = trendData[selectedDotIndex];
+    return {
+      value: formatValueByIncrement(entry.value, metric.increment),
+      date: entry.label ?? format(new Date(entry.date), "MMM d"),
+      unit: metric.unit,
+    };
+  };
+
+  const handleDotLongPress = (index: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setSelectedDotIndex(index);
+  };
 
   const isLoading = trendData === undefined;
 
@@ -158,16 +178,45 @@ export default function MetricTrendChart({
         />
 
         {/* Data points */}
-        {dataWithDates.map((d, i) => (
-          <Circle
-            key={i}
-            cx={xScale(d.date)}
-            cy={yScale(d.value)}
-            r={4}
-            fill={metric.colour}
-            opacity={0.9}
-          />
-        ))}
+        {dataWithDates.map((d, i) => {
+          const cx = xScale(d.date);
+          const cy = yScale(d.value);
+          const isSelected = selectedDotIndex === i;
+
+          return (
+            <G key={i}>
+              <Circle
+                cx={cx}
+                cy={cy}
+                r={4}
+                fill={metric.colour}
+                opacity={0.9}
+              />
+
+              {/* Invisible large circle for press detection */}
+              <Circle
+                cx={cx}
+                cy={cy}
+                r={15}
+                fill="transparent"
+                onPressIn={() => handleDotLongPress(i)}
+                onPressOut={() => setSelectedDotIndex(null)}
+              />
+
+              {/* Highlight selected dot */}
+              {isSelected && (
+                <Circle
+                  cx={cx}
+                  cy={cy}
+                  r={6}
+                  fill="white"
+                  stroke={metric.colour}
+                  strokeWidth={2}
+                />
+              )}
+            </G>
+          );
+        })}
 
         {/* Show first and last values */}
         <G>
@@ -285,6 +334,33 @@ export default function MetricTrendChart({
             ? "Values over the last 30 days"
             : "Values over the last 90 days"}
       </Text>
+
+      {/* Floating value tooltip */}
+      {getSelectedDotInfo() && (
+        <View
+          className="absolute top-2 left-0 right-0 items-center z-10"
+          style={{ pointerEvents: "none" }}
+        >
+          <View
+            className="px-3 py-2 rounded-md shadow-lg"
+            style={{
+              backgroundColor: color(metric.colour)
+                .mix(color("white"), 0.1)
+                .hex(),
+            }}
+          >
+            <Text className="text-sm font-semibold text-white text-center">
+              {getSelectedDotInfo()!.value}
+              {getSelectedDotInfo()!.unit
+                ? ` ${getSelectedDotInfo()!.unit}`
+                : ""}
+            </Text>
+            <Text className="text-xs text-white opacity-90 text-center">
+              {getSelectedDotInfo()!.date}
+            </Text>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
