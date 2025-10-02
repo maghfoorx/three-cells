@@ -12,6 +12,7 @@ import { DataModel } from "@packages/backend/convex/_generated/dataModel";
 import Svg, { Path, Circle, G, Text as SvgText } from "react-native-svg";
 import * as d3 from "d3";
 import color from "color";
+import * as Haptics from "expo-haptics";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
@@ -33,6 +34,7 @@ export default function PerformanceGraph({
     "weekly",
   );
   const [containerWidth, setContainerWidth] = useState(300); // Default fallback
+  const [selectedDotIndex, setSelectedDotIndex] = useState<number | null>(null);
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   const weeklyData = useQuery(api.habits.getWeeklyPerformance, { habitId });
@@ -67,6 +69,29 @@ export default function PerformanceGraph({
       }).start();
     }
   }, [currentData, viewMode, animatedValue]);
+
+  const handleDotLongPress = (index: number) => {
+    // Trigger haptic feedback
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setSelectedDotIndex(index);
+  };
+
+  const getSelectedDotInfo = () => {
+    if (
+      !currentData ||
+      selectedDotIndex === null ||
+      selectedDotIndex === 0 ||
+      selectedDotIndex === currentData.length - 1
+    ) {
+      return null;
+    }
+
+    const entry = currentData[selectedDotIndex];
+    return {
+      value: `${entry.value}%`,
+      label: entry.label,
+    };
+  };
 
   const renderGraph = () => {
     if (isLoading) {
@@ -166,16 +191,28 @@ export default function PerformanceGraph({
         />
 
         {/* Data points */}
-        {dataWithDates.map((d, i) => (
-          <Circle
-            key={i}
-            cx={xScale(d.date)}
-            cy={yScale(d.value)}
-            r={4}
-            fill={habitColor}
-            opacity={0.9}
-          />
-        ))}
+        {dataWithDates.map((d, i) => {
+          const cx = xScale(d.date);
+          const cy = yScale(d.value);
+          const isFirstOrLast = i === 0 || i === dataWithDates.length - 1;
+
+          return (
+            <G key={i}>
+              <Circle cx={cx} cy={cy} r={4} fill={habitColor} opacity={0.9} />
+              {/* Invisible larger circle for easier touch target */}
+              {!isFirstOrLast && (
+                <Circle
+                  cx={cx}
+                  cy={cy}
+                  r={15}
+                  fill="transparent"
+                  onPressIn={() => handleDotLongPress(i)}
+                  onPressOut={() => setSelectedDotIndex(null)}
+                />
+              )}
+            </G>
+          );
+        })}
 
         {/* Show first and last values */}
         <G>
@@ -231,6 +268,28 @@ export default function PerformanceGraph({
       className="px-4 py-3 bg-gray-50 rounded-lg mx-4 mb-4"
       onLayout={handleLayout}
     >
+      {/* Floating value tooltip at top */}
+      {getSelectedDotInfo() && (
+        <View
+          className="absolute top-2 left-0 right-0 items-center z-10"
+          style={{ pointerEvents: "none" }}
+        >
+          <View
+            className="px-3 py-2 rounded-md shadow-lg"
+            style={{
+              backgroundColor: color(habitColor).mix(color("white"), 0.1).hex(),
+            }}
+          >
+            <Text className="text-sm font-semibold text-white text-center">
+              {getSelectedDotInfo()!.value}
+            </Text>
+            <Text className="text-xs text-white opacity-90 text-center">
+              {getSelectedDotInfo()!.label}
+            </Text>
+          </View>
+        </View>
+      )}
+
       {/* Header with toggle buttons */}
       <View className="flex-row items-center justify-between mb-4">
         <Text className="text-base font-semibold text-gray-800">
@@ -292,7 +351,9 @@ export default function PerformanceGraph({
       <Text className="text-xs text-gray-500 text-center">
         {viewMode === "weekly"
           ? "Completion rate over the last 8 weeks"
-          : "Completion rate over the last 6 months"}
+          : viewMode === "monthly"
+            ? "Completion rate over the last 6 months"
+            : "Completion rate over the last 12 months"}
       </Text>
     </View>
   );
