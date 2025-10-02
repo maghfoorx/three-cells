@@ -280,9 +280,9 @@ export default function AddMetricEntryPage() {
               )}
 
               {/* Value Selector */}
-              <View className="flex-1 items-center justify-center">
+              <View className="flex-1 mt-8">
                 <View
-                  className="rounded-2xl p-8 mb-8 min-w-[280px]"
+                  className="rounded-md p-1 mb-8 min-w-full"
                   style={{
                     backgroundColor: color(metric.colour)
                       .mix(color("white"), 0.95)
@@ -294,7 +294,7 @@ export default function AddMetricEntryPage() {
                   }}
                 >
                   {/* Value Display */}
-                  <View className="items-center mb-6">
+                  <View className="mt-8 items-center mb-6">
                     {isEditing ? (
                       <Controller
                         control={control}
