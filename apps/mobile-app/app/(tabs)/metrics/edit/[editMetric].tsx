@@ -167,9 +167,9 @@ export default function EditMetricPage() {
           style: "destructive",
           onPress: async () => {
             try {
-              await deleteMetric({ metricId: metricId });
               router.dismiss();
               router.replace("/metrics");
+              await deleteMetric({ metricId: metricId });
             } catch (error) {
               console.error("Delete error:", error);
               Alert.alert(
@@ -200,7 +200,7 @@ export default function EditMetricPage() {
 
   if (!singleMetricData) {
     return (
-      <SafeAreaView className="flex-1 bg-gray-50">
+      <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#3B82F6" />
           <Text className="text-gray-500 mt-4">Loading metric...</Text>
