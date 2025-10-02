@@ -15,7 +15,6 @@ import {
   ScrollView,
   Pressable,
   Keyboard,
-  TouchableNativeFeedbackBase,
   TouchableNativeFeedback,
 } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
