@@ -280,10 +280,20 @@ export default function PerformanceGraph({
               backgroundColor: color(habitColor).mix(color("white"), 0.1).hex(),
             }}
           >
-            <Text className="text-sm font-semibold text-white text-center">
+            <Text
+              className="text-sm font-semibold text-center"
+              style={{
+                color: color(habitColor).mix(color("black"), 0.4).hex(),
+              }}
+            >
               {getSelectedDotInfo()!.value}
             </Text>
-            <Text className="text-xs text-white opacity-90 text-center">
+            <Text
+              className="text-xs opacity-90 text-center"
+              style={{
+                color: color(habitColor).mix(color("black"), 0.4).hex(),
+              }}
+            >
               {getSelectedDotInfo()!.label}
             </Text>
           </View>

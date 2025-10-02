@@ -319,13 +319,23 @@ export function UserMetricCardMobile({
                 .hex(),
             }}
           >
-            <Text className="text-sm font-semibold text-white text-center">
+            <Text
+              className="text-sm font-semibold text-center"
+              style={{
+                color: color(metric.colour).mix(color("black"), 0.4).hex(),
+              }}
+            >
               {getSelectedDotInfo()!.value}
               {getSelectedDotInfo()!.unit
                 ? ` ${getSelectedDotInfo()!.unit}`
                 : ""}
             </Text>
-            <Text className="text-xs text-white opacity-90 text-center">
+            <Text
+              className="text-xs opacity-90 text-center"
+              style={{
+                color: color(metric.colour).mix(color("black"), 0.4).hex(),
+              }}
+            >
               {getSelectedDotInfo()!.date}
             </Text>
           </View>

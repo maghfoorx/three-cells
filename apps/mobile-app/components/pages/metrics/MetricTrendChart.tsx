@@ -199,21 +199,13 @@ export default function MetricTrendChart({
                 cy={cy}
                 r={15}
                 fill="transparent"
-                onPressIn={() => handleDotLongPress(i)}
+                onPressIn={() => {
+                  if (i === 0) return;
+                  if (i === dataWithDates.length - 1) return;
+                  handleDotLongPress(i);
+                }}
                 onPressOut={() => setSelectedDotIndex(null)}
               />
-
-              {/* Highlight selected dot */}
-              {isSelected && (
-                <Circle
-                  cx={cx}
-                  cy={cy}
-                  r={6}
-                  fill="white"
-                  stroke={metric.colour}
-                  strokeWidth={2}
-                />
-              )}
             </G>
           );
         })}
@@ -349,13 +341,27 @@ export default function MetricTrendChart({
                 .hex(),
             }}
           >
-            <Text className="text-sm font-semibold text-white text-center">
+            <Text
+              className="text-sm font-semibold text-center"
+              style={{
+                backgroundColor: color(metric.colour)
+                  .mix(color("white"), 0.1)
+                  .hex(),
+              }}
+            >
               {getSelectedDotInfo()!.value}
               {getSelectedDotInfo()!.unit
                 ? ` ${getSelectedDotInfo()!.unit}`
                 : ""}
             </Text>
-            <Text className="text-xs text-white opacity-90 text-center">
+            <Text
+              className="text-xs opacity-90 text-center"
+              style={{
+                backgroundColor: color(metric.colour)
+                  .mix(color("white"), 0.1)
+                  .hex(),
+              }}
+            >
               {getSelectedDotInfo()!.date}
             </Text>
           </View>
