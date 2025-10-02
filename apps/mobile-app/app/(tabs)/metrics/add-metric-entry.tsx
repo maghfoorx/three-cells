@@ -160,6 +160,8 @@ export default function AddMetricEntryPage() {
       form.reset();
       router.back();
     } catch (error) {
+      form.reset();
+      router.back();
       Alert.alert("Error", "Failed to create entry");
     }
   };
@@ -444,7 +446,7 @@ const ValueInput: React.FC<ValueInputProps> = ({
     let parsed = parseFloat(inputText);
     if (isNaN(parsed) || parsed < 0) parsed = 0;
     const rounded = formatValueByIncrement(parsed, increment);
-    onChange(rounded as any);
+    onChange(Number(rounded));
     setInputText(rounded.toString());
     setIsEditing(false);
   };
