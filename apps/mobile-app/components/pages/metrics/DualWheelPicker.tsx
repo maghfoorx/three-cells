@@ -1,7 +1,6 @@
 import { Text, Vibration, View } from "react-native";
-import WheelPickerExpo from "react-native-wheel-picker-expo";
+import { Picker } from "@react-native-picker/picker";
 import React from "react";
-import { Doc } from "@packages/backend/convex/_generated/dataModel";
 
 function countDecimalPlaces(num: number): number {
   if (!isFinite(num)) return 0;
@@ -40,62 +39,62 @@ export default function DualValuePicker({
     });
   }, [rangeStart]);
 
-  const selectedIndex = integerPart - rangeStart;
-
-  const safeIndex = Math.max(0, Math.min(100, selectedIndex));
-
   const formatFraction = (num: number) =>
     num.toString().padStart(decimalPlaces, "0");
 
   const showFractionWheel = increment < 1;
 
   return (
-    <View className="flex-row justify-center items-center gap-4 h-[200px] mb-8">
-      {/* Integer Wheel */}
-      <WheelPickerExpo
-        key={`int-${integerPart}`}
-        height={200}
-        width={100}
-        initialSelectedIndex={safeIndex}
-        items={integerItemsOnWheel}
-        onChange={({ item }) => {
-          const newValue = showFractionWheel
-            ? parseFloat(`${item.value}.${formatFraction(fractionPart)}`)
-            : item.value;
-          if (newValue !== value) {
-            onChange(newValue); // Avoid triggering onChange if value didn’t change
-          }
-        }}
-        selectedStyle={{ borderColor: colorHex, borderWidth: 1 }}
-        haptics={true}
-      />
+    <View className="flex-row justify-center items-center gap-4 mb-8">
+      {/* Integer Picker */}
+      <View style={{ flex: 1 }}>
+        <Picker
+          selectedValue={integerPart}
+          onValueChange={(itemValue) => {
+            const newValue = showFractionWheel
+              ? parseFloat(`${itemValue}.${formatFraction(fractionPart)}`)
+              : itemValue;
+            if (newValue !== value) {
+              onChange(newValue);
+            }
+          }}
+          style={{ height: 200 }}
+        >
+          {integerItemsOnWheel.map((item) => (
+            <Picker.Item
+              key={item.value}
+              label={item.label}
+              value={item.value}
+            />
+          ))}
+        </Picker>
+      </View>
+
       {showFractionWheel && (
         <View>
-          <Text>.</Text>
+          <Text className="text-2xl">.</Text>
         </View>
       )}
 
-      {/* Fraction Wheel - Only shown if increment has decimals */}
+      {/* Fraction Picker - Only shown if increment has decimals */}
       {showFractionWheel && (
-        <WheelPickerExpo
-          key={`frac-${fractionPart}`}
-          height={200}
-          width={80}
-          initialSelectedIndex={fractionPart}
-          items={Array.from({ length: fractionRange }, (_, i) => ({
-            label: formatFraction(i),
-            value: i,
-          }))}
-          onChange={({ item }) => {
-            const newValue = parseFloat(
-              `${integerPart}.${formatFraction(item.value)}`,
-            );
-            onChange(newValue);
-            Vibration.vibrate(10);
-          }}
-          selectedStyle={{ borderColor: colorHex, borderWidth: 1 }}
-          haptics={true}
-        />
+        <View style={{ flex: 1 }}>
+          <Picker
+            selectedValue={fractionPart}
+            onValueChange={(itemValue) => {
+              const newValue = parseFloat(
+                `${integerPart}.${formatFraction(itemValue)}`,
+              );
+              onChange(newValue);
+              Vibration.vibrate(10);
+            }}
+            style={{ height: 200 }}
+          >
+            {Array.from({ length: fractionRange }, (_, i) => (
+              <Picker.Item key={i} label={formatFraction(i)} value={i} />
+            ))}
+          </Picker>
+        </View>
       )}
     </View>
   );

@@ -15,6 +15,8 @@ import {
   ScrollView,
   Pressable,
   Keyboard,
+  TouchableNativeFeedbackBase,
+  TouchableNativeFeedback,
 } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -154,6 +156,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
       style={{
         backgroundColor: bgColor,
       }}
+      edges={["top"]}
     >
       <View className="flex-1">
         {/* Header */}
@@ -222,47 +225,43 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
                     return (
                       <View
                         key={mood.value}
-                        className=""
-                        style={{
-                          minHeight: 70,
-                        }}
+                        className="flex flex-col items-center"
                       >
-                        <TouchableOpacity
+                        <TouchableNativeFeedback
                           onPress={() => {
                             field.onChange(mood.value);
                           }}
-                          className={clsx(
-                            "flex-1 items-center pt-2 px-1 rounded-md border-2 justify-center",
-                          )}
-                          style={{
-                            borderColor: isSelected ? mood.color : "#F3F4F6",
-                            backgroundColor: isSelected
-                              ? mood.color
-                              : "#FAFAFA",
-                            shadowColor: isSelected ? mood.color : "#000",
-                            shadowOffset: {
-                              width: 0,
-                              height: isSelected ? 4 : 2,
-                            },
-                            shadowOpacity: isSelected ? 0.2 : 0.05,
-                            shadowRadius: isSelected ? 8 : 4,
-                            elevation: isSelected ? 6 : 2,
-                            minWidth: 60,
-                            minHeight: 60,
-                            height: 60,
-                          }}
                         >
-                          <Image
-                            source={mood.icon}
-                            style={{ width: 50, height: 50 }}
-                            placeholder={{ blurhash: mood.blurHash }}
-                            transition={200}
-                            placeholderContentFit="contain"
-                          />
-                        </TouchableOpacity>
+                          <View
+                            className="flex items-center justify-center rounded-md"
+                            style={{
+                              backgroundColor: isSelected
+                                ? mood.color
+                                : "#FAFAFA",
+                              shadowOffset: {
+                                width: 0,
+                                height: isSelected ? 4 : 2,
+                              },
+                              shadowOpacity: isSelected ? 0.2 : 0.05,
+                              shadowRadius: isSelected ? 8 : 4,
+                              elevation: isSelected ? 6 : 2,
+                              minWidth: 60,
+                              minHeight: 60,
+                              height: 60,
+                            }}
+                          >
+                            <Image
+                              source={mood.icon}
+                              style={{ width: 50, height: 50 }}
+                              placeholder={{ blurhash: mood.blurHash }}
+                              transition={200}
+                              placeholderContentFit="contain"
+                            />
+                          </View>
+                        </TouchableNativeFeedback>
 
                         <Text
-                          className={`mt-1 text-xs text-center font-semibold leading-tight`}
+                          className={`mt-0.5 text-xs text-center font-semibold leading-tight`}
                           numberOfLines={1}
                           adjustsFontSizeToFit
                         >
