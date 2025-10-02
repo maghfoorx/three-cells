@@ -1,15 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { Image } from "expo-image";
-import { Feather } from "@expo/vector-icons";
-import { View, Text, Animated, Platform } from "react-native";
-import { useConvexAuth, useQuery } from "convex/react";
+import { View, Text, Platform } from "react-native";
+import { useQuery } from "convex/react";
 import SignInWithGoogle from "@/components/SignInWithGoogle";
 import { Redirect } from "expo-router";
 import SignInWithApple from "@/components/SignInWithApple";
 import { api } from "@packages/backend/convex/_generated/api";
-import Purchases from "react-native-purchases";
 import LoadingScreen from "@/components/LoadingScreen";
-import { Asset } from "expo-asset";
 import { openLink } from "@/utils/openLink";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -72,93 +69,6 @@ export default function Homepage() {
   const isAuthenticated = user?._id != null;
   const isLoading = user === undefined;
 
-  const logoOpacity = useRef(new Animated.Value(0)).current;
-  const logoScale = useRef(new Animated.Value(0.8)).current;
-  const taglineOpacity = useRef(new Animated.Value(0)).current;
-  const taglineTranslateY = useRef(new Animated.Value(30)).current;
-  const buttonsOpacity = useRef(new Animated.Value(0)).current;
-  const buttonsTranslateY = useRef(new Animated.Value(40)).current;
-
-  const featureAnimations = useRef(
-    FEATURES.map(() => ({
-      opacity: new Animated.Value(0),
-      translateY: new Animated.Value(20),
-    })),
-  ).current;
-
-  useEffect(() => {
-    const animateIn = () => {
-      Animated.parallel([
-        Animated.timing(logoOpacity, {
-          toValue: 1,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-        Animated.timing(logoScale, {
-          toValue: 1,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-      ]).start();
-
-      setTimeout(() => {
-        Animated.parallel([
-          Animated.timing(taglineOpacity, {
-            toValue: 1,
-            duration: 600,
-            useNativeDriver: true,
-          }),
-          Animated.timing(taglineTranslateY, {
-            toValue: 0,
-            duration: 600,
-            useNativeDriver: true,
-          }),
-        ]).start();
-      }, 400);
-
-      // Feature cards animation
-      setTimeout(() => {
-        const animations = featureAnimations.map(
-          ({ opacity, translateY }, index) =>
-            Animated.parallel([
-              Animated.timing(opacity, {
-                toValue: 1,
-                duration: 300,
-                delay: index * 100,
-                useNativeDriver: true,
-              }),
-              Animated.timing(translateY, {
-                toValue: 0,
-                duration: 500,
-                delay: index * 100,
-                useNativeDriver: true,
-              }),
-            ]),
-        );
-
-        Animated.stagger(100, animations).start();
-      }, 600);
-
-      // Buttons animation (starts after tagline)
-      setTimeout(() => {
-        Animated.parallel([
-          Animated.timing(buttonsOpacity, {
-            toValue: 1,
-            duration: 600,
-            useNativeDriver: true,
-          }),
-          Animated.timing(buttonsTranslateY, {
-            toValue: 0,
-            duration: 600,
-            useNativeDriver: true,
-          }),
-        ]).start();
-      }, 800);
-    };
-
-    animateIn();
-  }, []);
-
   const hasAccessToApp = user?.isSubscribed || user?.hasLifetimeAccess;
 
   const navigateToOnboarding =
@@ -192,13 +102,7 @@ export default function Homepage() {
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1 justify-center items-center">
         {/* Logo Section */}
-        <Animated.View
-          style={{
-            opacity: logoOpacity,
-            transform: [{ scale: logoScale }],
-          }}
-          className="items-center"
-        >
+        <View className="items-center">
           {/* Three Cells Logo */}
           <View className="flex-row items-center justify-center mt-4">
             <Image
@@ -211,34 +115,21 @@ export default function Homepage() {
               }}
             />
           </View>
-        </Animated.View>
+        </View>
 
         {/* Tagline Section */}
-        <Animated.View
-          style={{
-            opacity: taglineOpacity,
-            transform: [{ translateY: taglineTranslateY }],
-          }}
-          className="items-center"
-        >
+        <View className="items-center">
           <Text className="text-5xl font-bold text-gray-900 text-center leading-tight">
             Finally become <Text>THAT</Text> person
           </Text>
-        </Animated.View>
+        </View>
 
         {/* Feature Cards */}
         <View className="flex-1 flex-col items-center justify-center gap-4 w-full mt-6">
-          {FEATURES.map((feature, index) => (
-            <Animated.View
+          {FEATURES.map((feature) => (
+            <View
               key={feature.id}
               className="flex-row items-center rounded-md gap-8 p-4 mx-10"
-              style={{
-                // backgroundColor: feature.backgroundColor,
-                opacity: featureAnimations[index].opacity,
-                transform: [
-                  { translateY: featureAnimations[index].translateY },
-                ],
-              }}
             >
               <View className="w-12 h-12 rounded-full items-center justify-center">
                 <Image
@@ -250,18 +141,12 @@ export default function Homepage() {
               <Text className="text-lg font-semibold text-gray-900 flex-1">
                 {feature.subtitle}
               </Text>
-            </Animated.View>
+            </View>
           ))}
         </View>
 
         {/* Login Buttons */}
-        <Animated.View
-          style={{
-            opacity: buttonsOpacity,
-            transform: [{ translateY: buttonsTranslateY }],
-          }}
-          className="w-full max-w-sm mt-6"
-        >
+        <View className="w-full max-w-sm mt-6">
           {/* Google Login Button */}
           <View className="flex gap-4">
             <View className="flex gap-4">
@@ -289,7 +174,7 @@ export default function Homepage() {
               . Cancel anytime. No commitments.
             </Text>
           </Text>
-        </Animated.View>
+        </View>
       </View>
     </SafeAreaView>
   );
