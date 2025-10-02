@@ -12,6 +12,7 @@ import { PlusIcon } from "react-native-heroicons/outline";
 import Svg, { Path, Circle, G, Text as SvgText } from "react-native-svg";
 import * as d3 from "d3";
 import color from "color";
+import * as Haptics from "expo-haptics";
 import { Link, router } from "expo-router";
 import { format } from "date-fns";
 import type { DataModel } from "@packages/backend/convex/_generated/dataModel";
@@ -38,6 +39,7 @@ export function UserMetricCardMobile({
   submissions = [],
 }: UserMetricCardProps) {
   const animatedValue = useRef(new Animated.Value(0)).current;
+  const [selectedDotIndex, setSelectedDotIndex] = useState<number | null>(null);
 
   // Get last 7 entries (not necessarily last 7 days)
   const last7Entries = useMemo(() => {
@@ -87,6 +89,29 @@ export function UserMetricCardMobile({
   const handleLayout = (event: any) => {
     const { width } = event.nativeEvent.layout;
     setContainerWidth(width);
+  };
+
+  const getSelectedDotInfo = () => {
+    if (
+      selectedDotIndex === null ||
+      selectedDotIndex === 0 ||
+      selectedDotIndex === last7Entries.length - 1
+    ) {
+      return null;
+    }
+
+    const entry = last7Entries[selectedDotIndex];
+    return {
+      value: formatValueByIncrement(entry.value, metric.increment),
+      date: format(entry.date, "MMM d"),
+      unit: metric.unit,
+    };
+  };
+
+  const handleDotLongPress = (index: number) => {
+    // Trigger haptic feedback
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setSelectedDotIndex(index);
   };
 
   const renderGraph = () => {
@@ -162,83 +187,107 @@ export function UserMetricCardMobile({
     const path = lineGenerator(last7Entries)!;
 
     return (
-      <Svg width={GRAPH_WIDTH} height={GRAPH_HEIGHT}>
-        <AnimatedPath
-          d={path}
-          fill="none"
-          stroke={metric.colour}
-          strokeWidth={2.5}
-          strokeDasharray={animatedValue.interpolate({
-            inputRange: [0, 1],
-            outputRange: ["0,1000", "1000,0"], // Adjust length as needed
-          })}
-        />
-
-        {/* Data points */}
-        {last7Entries.map((d, i) => (
-          <Circle
-            key={i}
-            cx={xScale(d.date)}
-            cy={yScale(d.value)}
-            r={4}
-            fill={metric.colour}
-            opacity={0.9}
+      <View>
+        <Svg width={GRAPH_WIDTH} height={GRAPH_HEIGHT}>
+          <AnimatedPath
+            d={path}
+            fill="none"
+            stroke={metric.colour}
+            strokeWidth={2.5}
+            strokeDasharray={animatedValue.interpolate({
+              inputRange: [0, 1],
+              outputRange: ["0,1000", "1000,0"],
+            })}
           />
-        ))}
 
-        {/* Show first and last values */}
-        {last7Entries.length > 1 && (
-          <G>
-            <SvgText
-              x={xScale(last7Entries[0].date)}
-              y={yScale(last7Entries[0].value) - 12}
-              fontSize="10"
-              fill={color(metric.colour).mix(color("black"), 0.4).hex()}
-              textAnchor="middle"
-              fontWeight="600"
-            >
-              {formatValueByIncrement(last7Entries[0].value, metric.increment)}
-            </SvgText>
-            <SvgText
-              x={xScale(last7Entries[last7Entries.length - 1].date)}
-              y={yScale(last7Entries[last7Entries.length - 1].value) - 12}
-              fontSize="10"
-              fill={color(metric.colour).mix(color("black"), 0.4).hex()}
-              textAnchor="middle"
-              fontWeight="600"
-            >
-              {formatValueByIncrement(
-                last7Entries[last7Entries.length - 1].value,
-                metric.increment,
-              )}
-            </SvgText>
-          </G>
-        )}
+          {/* Data points */}
+          {last7Entries.map((d, i) => {
+            const cx = xScale(d.date);
+            const cy = yScale(d.value);
+            const isFirstOrLast = i === 0 || i === last7Entries.length - 1;
+            const isSelected = selectedDotIndex === i;
 
-        {/* Date labels for first and last points */}
-        {last7Entries.length > 1 && (
-          <G>
-            <SvgText
-              x={xScale(last7Entries[0].date)}
-              y={GRAPH_HEIGHT - 4}
-              fontSize="9"
-              fill="#9CA3AF"
-              textAnchor="middle"
-            >
-              {format(last7Entries[0].date, "MMM d")}
-            </SvgText>
-            <SvgText
-              x={xScale(last7Entries[last7Entries.length - 1].date)}
-              y={GRAPH_HEIGHT - 4}
-              fontSize="9"
-              fill="#9CA3AF"
-              textAnchor="middle"
-            >
-              {format(last7Entries[last7Entries.length - 1].date, "MMM d")}
-            </SvgText>
-          </G>
-        )}
-      </Svg>
+            return (
+              <G key={i}>
+                <Circle
+                  cx={cx}
+                  cy={cy}
+                  r={4}
+                  fill={metric.colour}
+                  opacity={0.9}
+                />
+                {/* Invisible larger circle for easier touch target */}
+                {!isFirstOrLast && (
+                  <Circle
+                    cx={cx}
+                    cy={cy}
+                    r={15}
+                    fill="transparent"
+                    onPressIn={() => handleDotLongPress(i)}
+                    onPressOut={() => setSelectedDotIndex(null)}
+                  />
+                )}
+              </G>
+            );
+          })}
+
+          {/* Show first and last values */}
+          {last7Entries.length > 1 && (
+            <G>
+              <SvgText
+                x={xScale(last7Entries[0].date)}
+                y={yScale(last7Entries[0].value) - 12}
+                fontSize="10"
+                fill={color(metric.colour).mix(color("black"), 0.4).hex()}
+                textAnchor="middle"
+                fontWeight="600"
+              >
+                {formatValueByIncrement(
+                  last7Entries[0].value,
+                  metric.increment,
+                )}
+              </SvgText>
+              <SvgText
+                x={xScale(last7Entries[last7Entries.length - 1].date)}
+                y={yScale(last7Entries[last7Entries.length - 1].value) - 12}
+                fontSize="10"
+                fill={color(metric.colour).mix(color("black"), 0.4).hex()}
+                textAnchor="middle"
+                fontWeight="600"
+              >
+                {formatValueByIncrement(
+                  last7Entries[last7Entries.length - 1].value,
+                  metric.increment,
+                )}
+              </SvgText>
+            </G>
+          )}
+
+          {/* Date labels for first and last points */}
+          {last7Entries.length > 1 && (
+            <G>
+              <SvgText
+                x={xScale(last7Entries[0].date)}
+                y={GRAPH_HEIGHT - 4}
+                fontSize="9"
+                fill="#9CA3AF"
+                textAnchor="middle"
+              >
+                {format(last7Entries[0].date, "MMM d")}
+              </SvgText>
+              <SvgText
+                x={xScale(last7Entries[last7Entries.length - 1].date)}
+                y={GRAPH_HEIGHT - 4}
+                fontSize="9"
+                fill="#9CA3AF"
+                textAnchor="middle"
+              >
+                {format(last7Entries[last7Entries.length - 1].date, "MMM d")}
+              </SvgText>
+            </G>
+          )}
+        </Svg>
+      </View>
     );
   };
 
@@ -256,6 +305,33 @@ export function UserMetricCardMobile({
       }}
       onLayout={handleLayout}
     >
+      {/* Floating value tooltip at top */}
+      {getSelectedDotInfo() && (
+        <View
+          className="absolute top-2 left-0 right-0 items-center z-10"
+          style={{ pointerEvents: "none" }}
+        >
+          <View
+            className="px-3 py-2 rounded-md shadow-lg"
+            style={{
+              backgroundColor: color(metric.colour)
+                .mix(color("white"), 0.1)
+                .hex(),
+            }}
+          >
+            <Text className="text-sm font-semibold text-white text-center">
+              {getSelectedDotInfo()!.value}
+              {getSelectedDotInfo()!.unit
+                ? ` ${getSelectedDotInfo()!.unit}`
+                : ""}
+            </Text>
+            <Text className="text-xs text-white opacity-90 text-center">
+              {getSelectedDotInfo()!.date}
+            </Text>
+          </View>
+        </View>
+      )}
+
       {/* Header */}
       <View className="flex flex-row justify-between items-center mb-4">
         <View className="flex flex-row items-center gap-3 flex-1">
