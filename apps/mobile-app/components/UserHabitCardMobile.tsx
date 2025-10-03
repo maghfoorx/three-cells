@@ -55,7 +55,7 @@ export function UserHabitCard({
       onPress={() => {
         router.push(`/habits/${habit._id}`);
       }}
-      className="rounded-md p-6 border border-gray-200"
+      className="rounded-md p-4 border border-gray-200"
       style={{
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
@@ -79,10 +79,11 @@ export function UserHabitCard({
       {/* Scrollable Date Grid */}
       <ScrollView
         ref={scrollViewRef}
+        className="mb-2"
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ gap: 4 }}
-        contentOffset={{ x: 10000, y: 0 }}
+        contentOffset={{ x: 1000, y: 0 }}
       >
         {dates.map((date) => (
           <HabitDateButton
@@ -95,7 +96,7 @@ export function UserHabitCard({
       </ScrollView>
 
       {/* Stats */}
-      <View className="flex flex-row justify-between items-center pt-4 border-t border-gray-100">
+      <View className="flex flex-row justify-between items-center mt-1 pt-2 border-t border-gray-200">
         {submissionsForHabit === undefined ? (
           <>
             <View className="h-4 w-28 bg-gray-300 rounded" />
