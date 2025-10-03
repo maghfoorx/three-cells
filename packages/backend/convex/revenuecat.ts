@@ -42,6 +42,7 @@ export const fulfillRevenueCat = internalAction({
           break;
 
         case "EXPIRED":
+        case "EXPIRATION":
         case "ENTITLEMENT_REVOKED":
           await ctx.runMutation(
             internal.internal.payments.unsubscribeRevenueCatSubscription,
