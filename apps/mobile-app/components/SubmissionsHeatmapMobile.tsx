@@ -60,12 +60,8 @@ export default function SubmissionsCalendarHeatmapMobile({
   endDate = new Date(),
   className = "",
 }: SubmissionsCalendarHeatmapMobileProps) {
-  const scrollViewRef = useRef<ScrollView>(null);
-
   const { selectedDates, toggleDate, togglingSubmission } =
     useBulkManageHabitSubmissions();
-
-  const [isInitialRender, setIsInitialRender] = useState(true);
 
   const [dateRange, setDateRange] = React.useState(() => ({
     start: startDate || addMonths(endDate, -12),
@@ -117,26 +113,6 @@ export default function SubmissionsCalendarHeatmapMobile({
       end: today,
     });
   };
-
-  // Handle initial scroll position and updates
-  useEffect(() => {
-    if (!scrollViewRef.current) return;
-
-    const scrollToEnd = () => {
-      if (isInitialRender) {
-        // On initial render, scroll to end immediately
-        setTimeout(() => {
-          scrollViewRef.current?.scrollToEnd({ animated: false });
-          setIsInitialRender(false);
-        }, 100);
-      } else {
-        // For subsequent updates, smooth scroll
-        scrollViewRef.current?.scrollToEnd({ animated: true });
-      }
-    };
-
-    scrollToEnd();
-  }, [weekGroups, dateRange, isInitialRender]);
 
   const dayLabels = ["M", "T", "W", "T", "F", "S", "S"];
 
@@ -191,10 +167,10 @@ export default function SubmissionsCalendarHeatmapMobile({
           <View className="flex flex-row">
             {/* Scrollable calendar content */}
             <ScrollView
-              ref={scrollViewRef}
               horizontal
               showsHorizontalScrollIndicator={false}
               className="flex-1"
+              contentOffset={{ x: 1000, y: 0 }}
             >
               <View className="flex flex-col">
                 {/* Calendar grid with month labels as first row */}
