@@ -11,7 +11,6 @@ import {
   View,
 } from "react-native";
 import SubmissionsCalendarHeatmapMobile from "@/components/SubmissionsHeatmapMobile";
-import { BulkManageToast } from "@/components/useCalendarSquareToast";
 import { Feather } from "@expo/vector-icons";
 import PerformanceGraph from "@/components/PerformanceGraph";
 import StreaksView from "@/components/StreaksView";
@@ -112,7 +111,6 @@ export default function SingleHabitPage() {
           </View>
         </ScrollView>
       </View>
-      <BulkManageToast habit={singleHabit?.habit ?? null} />
     </SafeAreaView>
   );
 }
