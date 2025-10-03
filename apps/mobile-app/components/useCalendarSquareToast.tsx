@@ -1,5 +1,5 @@
 import { proxy, useSnapshot } from "valtio";
-import { useMemo } from "react";
+import { useCallback } from "react";
 import { format } from "date-fns";
 import { useMutation } from "convex/react";
 import type { Doc } from "@packages/backend/convex/_generated/dataModel";
@@ -21,16 +21,6 @@ export const useBulkManageHabitSubmissions = (
 ) => {
   const $state = useSnapshot(bulkManageSubmissionState);
 
-  const selectedDatesArray = useMemo(
-    () => Object.keys($state.selectedDateStrings).map((str) => new Date(str)),
-    [$state.selectedDateStrings],
-  );
-
-  const formattedSelectedDates = useMemo(
-    () => Object.keys($state.selectedDateStrings),
-    [$state.selectedDateStrings],
-  );
-
   const bulkCompleteSubmittedDates = useMutation(
     api.habits.bulkCompleteSelectedDates,
   );
@@ -38,28 +28,31 @@ export const useBulkManageHabitSubmissions = (
     api.habits.bulkUnCompleteSelectedDates,
   );
 
-  const toggleDate = (date: Date) => {
+  // Optimize toggleDate to work directly with strings and avoid date conversion
+  const toggleDate = useCallback((date: Date) => {
     const dateStr = format(date, "yyyy-MM-dd");
-
     if (bulkManageSubmissionState.selectedDateStrings[dateStr]) {
       delete bulkManageSubmissionState.selectedDateStrings[dateStr];
     } else {
       bulkManageSubmissionState.selectedDateStrings[dateStr] = true;
     }
-  };
+  }, []);
 
-  const clearDates = () => {
+  const clearDates = useCallback(() => {
     bulkManageSubmissionState.selectedDateStrings = {};
-  };
+  }, []);
 
-  const handleCompleteAction = async () => {
-    if (formattedSelectedDates.length === 0 || !habit?._id) return;
+  const handleCompleteAction = useCallback(async () => {
+    const selectedDates = Object.keys(
+      bulkManageSubmissionState.selectedDateStrings,
+    );
+    if (selectedDates.length === 0 || !habit?._id) return;
 
     bulkManageSubmissionState.togglingSubmission = true;
     try {
       await bulkCompleteSubmittedDates({
         habitId: habit._id,
-        selectedDates: formattedSelectedDates,
+        selectedDates,
       });
       clearDates();
     } catch (err) {
@@ -68,16 +61,19 @@ export const useBulkManageHabitSubmissions = (
     } finally {
       bulkManageSubmissionState.togglingSubmission = false;
     }
-  };
+  }, [habit?._id, bulkCompleteSubmittedDates, clearDates]);
 
-  const handleUnCompleteAction = async () => {
-    if (formattedSelectedDates.length === 0 || !habit?._id) return;
+  const handleUnCompleteAction = useCallback(async () => {
+    const selectedDates = Object.keys(
+      bulkManageSubmissionState.selectedDateStrings,
+    );
+    if (selectedDates.length === 0 || !habit?._id) return;
 
     bulkManageSubmissionState.togglingSubmission = true;
     try {
       await bulkUnCompleteSubmittedDates({
         habitId: habit._id,
-        selectedDates: formattedSelectedDates,
+        selectedDates,
       });
       clearDates();
     } catch (err) {
@@ -86,10 +82,10 @@ export const useBulkManageHabitSubmissions = (
     } finally {
       bulkManageSubmissionState.togglingSubmission = false;
     }
-  };
+  }, [habit?._id, bulkUnCompleteSubmittedDates, clearDates]);
 
   return {
-    selectedDates: selectedDatesArray,
+    // Remove unnecessary conversions - just return the snapshot directly
     selectedDateStrings: $state.selectedDateStrings,
     toggleDate,
     clearDates,

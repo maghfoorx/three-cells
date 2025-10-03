@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback, memo } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { format, isAfter, addMonths, startOfWeek, addDays } from "date-fns";
 import type { DataModel } from "@packages/backend/convex/_generated/dataModel";
@@ -14,6 +14,70 @@ interface SubmissionsCalendarHeatmapMobileProps {
   endDate?: Date;
   className?: string;
 }
+
+// Memoized Day Cell Component - prevents re-rendering all cells when one is clicked
+const DayCell = memo(
+  ({
+    date,
+    dateStr,
+    intensity,
+    habitColour,
+    isSelected,
+    isFuture,
+    isLoading,
+    onPress,
+  }: {
+    date: Date;
+    dateStr: string;
+    intensity: number;
+    habitColour?: string;
+    isSelected: boolean;
+    isFuture: boolean;
+    isLoading: boolean;
+    onPress: (dateStr: string) => void;
+  }) => {
+    const handlePress = useCallback(() => {
+      onPress(dateStr);
+    }, [dateStr, onPress]);
+
+    if (isLoading) {
+      return (
+        <View className="h-5 w-5 items-center justify-center">
+          <Feather name="loader" width={16} height={16} color="#374151" />
+        </View>
+      );
+    }
+
+    const dateBoxColour = intensity > 0 ? habitColour : "#EEEEEE";
+    const dayNumber = date.getDate();
+
+    if (isFuture) {
+      return (
+        <View
+          className="h-5 w-5 border border-gray-200 rounded-sm items-center justify-center"
+          style={{ backgroundColor: "#F5F5F5" }}
+        >
+          <Text className="text-xs text-gray-500">{dayNumber}</Text>
+        </View>
+      );
+    }
+
+    return (
+      <TouchableOpacity
+        className="h-5 w-5 border border-gray-200 rounded-sm items-center justify-center"
+        style={{
+          backgroundColor: isSelected ? "#FFB86A" : dateBoxColour,
+        }}
+        onPress={handlePress}
+        activeOpacity={0.6}
+      >
+        <Text className="text-xs font-medium text-gray-700">{dayNumber}</Text>
+      </TouchableOpacity>
+    );
+  },
+);
+
+DayCell.displayName = "DayCell";
 
 // Helper functions for date manipulation
 const formatDate = (date: Date, formatStr: string): string => {
@@ -55,7 +119,6 @@ export default function SubmissionsCalendarHeatmapMobile({
   className = "",
 }: SubmissionsCalendarHeatmapMobileProps) {
   const {
-    selectedDates,
     selectedDateStrings,
     toggleDate,
     togglingSubmission,
@@ -64,57 +127,71 @@ export default function SubmissionsCalendarHeatmapMobile({
     clearDates,
   } = useBulkManageHabitSubmissions(habit);
 
-  const [dateRange, setDateRange] = React.useState(() => ({
+  const [dateRange, setDateRange] = useState(() => ({
     start: startDate || addMonths(endDate, -12),
     end: endDate,
   }));
 
+  // Pre-compute today once
+  const today = useMemo(() => new Date().getTime(), []);
+
   // Create a map of submissions by date for quick lookup
   const submissionsByDate = useMemo(() => {
-    const map = new Map<string, Submission[]>();
+    const map = new Map<string, number>();
     allSubmissions.forEach((submission) => {
-      const dateKey = submission.dateFor;
-      if (!map.has(dateKey)) {
-        map.set(dateKey, []);
-      }
-      map.get(dateKey)!.push(submission);
+      const count = map.get(submission.dateFor) || 0;
+      map.set(submission.dateFor, count + 1);
     });
     return map;
   }, [allSubmissions]);
 
-  const { weekGroups } = useMemo(
-    () => generateDateWeeks(dateRange),
-    [dateRange],
-  );
+  const { weekGroups, dateStrings } = useMemo(() => {
+    const result = generateDateWeeks(dateRange);
+    // Pre-compute date strings to avoid repeated format() calls
+    const strings = new Map<number, string>();
+    result.allDates.forEach((date) => {
+      strings.set(date.getTime(), formatDate(date, "yyyy-MM-dd"));
+    });
+    return { ...result, dateStrings: strings };
+  }, [dateRange]);
 
   const monthLabels = useMemo(
     () => calculateMonthLabels(weekGroups, formatDate),
     [weekGroups],
   );
 
-  // Navigate date range
-  const navigatePrevious = () => {
+  // Memoize navigation handlers
+  const navigatePrevious = useCallback(() => {
     setDateRange((prev) => ({
       start: addMonths(prev.start, -1),
       end: addMonths(prev.end, -1),
     }));
-  };
+  }, []);
 
-  const navigateNext = () => {
+  const navigateNext = useCallback(() => {
     setDateRange((prev) => ({
       start: addMonths(prev.start, 1),
       end: addMonths(prev.end, 1),
     }));
-  };
+  }, []);
 
-  const goToToday = () => {
+  const goToToday = useCallback(() => {
     const today = new Date();
     setDateRange({
       start: addMonths(today, -12),
       end: today,
     });
-  };
+  }, []);
 
+  // Memoize toggle handler with string parameter
+  const handleToggleDate = useCallback(
+    (dateStr: string) => {
+      toggleDate(new Date(dateStr));
+    },
+    [toggleDate],
+  );
+
+  const selectedCount = Object.keys(selectedDateStrings).length;
   const dayLabels = ["M", "T", "W", "T", "F", "S", "S"];
 
   return (
@@ -172,6 +249,7 @@ export default function SubmissionsCalendarHeatmapMobile({
               showsHorizontalScrollIndicator={false}
               className="flex-1"
               contentOffset={{ x: 1000, y: 0 }}
+              removeClippedSubviews={true}
             >
               <View className="flex flex-col">
                 {/* Calendar grid with month labels as first row */}
@@ -190,7 +268,6 @@ export default function SubmissionsCalendarHeatmapMobile({
                       </View>
                       {/* Day rows */}
                       {week.map((date, dayIndex) => {
-                        // if not a date then just render an empty hidden box
                         if (!date) {
                           return (
                             <View
@@ -200,71 +277,27 @@ export default function SubmissionsCalendarHeatmapMobile({
                           );
                         }
 
-                        const intensity = getIntensityLevel(
-                          date,
-                          submissionsByDate,
-                        );
-
-                        const dateStr = formatDate(date, "yyyy-MM-dd");
-                        const isInBulkSelectedDates =
-                          selectedDateStrings[dateStr];
-
-                        if (isInBulkSelectedDates && togglingSubmission) {
-                          return (
-                            <View
-                              className="h-5 w-5 items-center justify-center"
-                              key={date.getTime()}
-                            >
-                              <Feather
-                                name="loader"
-                                width={16}
-                                height={16}
-                                color="#374151"
-                              />
-                            </View>
-                          );
-                        }
-
-                        const dateBoxColour =
-                          intensity > 0 ? habit?.colour : "#EEEEEE";
-
-                        // if the date is sometime in the future render a disabled box you can't click
-                        if (isAfter(date.getTime(), new Date().getTime())) {
-                          return (
-                            <View
-                              key={date.getTime()}
-                              className="h-5 w-5 border border-gray-200 rounded-sm items-center justify-center"
-                              style={{
-                                backgroundColor: isInBulkSelectedDates
-                                  ? undefined
-                                  : "#F5F5F5",
-                              }}
-                            >
-                              <Text className="text-xs text-gray-500">
-                                {format(date, "d")}
-                              </Text>
-                            </View>
-                          );
-                        }
+                        const dateTime = date.getTime();
+                        const dateStr = dateStrings.get(dateTime)!;
+                        const submissionCount =
+                          submissionsByDate.get(dateStr) || 0;
+                        const intensity = Math.min(submissionCount, 4);
+                        const isSelected =
+                          selectedDateStrings[dateStr] || false;
+                        const isFuture = dateTime > today;
 
                         return (
-                          <TouchableOpacity
-                            key={date.getTime()}
-                            className="h-5 w-5 border border-gray-200 rounded-sm items-center justify-center"
-                            style={{
-                              backgroundColor: isInBulkSelectedDates
-                                ? "#FFB86A" // selected date colour
-                                : dateBoxColour,
-                            }}
-                            onPress={() => {
-                              toggleDate(date);
-                            }}
-                            activeOpacity={0.6}
-                          >
-                            <Text className="text-xs font-medium text-gray-700">
-                              {format(date, "d")}
-                            </Text>
-                          </TouchableOpacity>
+                          <DayCell
+                            key={dateTime}
+                            date={date}
+                            dateStr={dateStr}
+                            intensity={intensity}
+                            habitColour={habit?.colour}
+                            isSelected={isSelected}
+                            isFuture={isFuture}
+                            isLoading={isSelected && togglingSubmission}
+                            onPress={handleToggleDate}
+                          />
                         );
                       })}
                     </View>
@@ -308,9 +341,9 @@ export default function SubmissionsCalendarHeatmapMobile({
       </View>
 
       {/* Bulk action view - shown when dates are selected */}
-      {selectedDates.length > 0 && (
+      {selectedCount > 0 && (
         <BulkActionPanel
-          selectedCount={selectedDates.length}
+          selectedCount={selectedCount}
           onClear={clearDates}
           onComplete={handleCompleteAction}
           onUncomplete={handleUnCompleteAction}
@@ -319,18 +352,6 @@ export default function SubmissionsCalendarHeatmapMobile({
     </View>
   );
 }
-
-// Get intensity level for a date (0-4 scale like GitHub)
-const getIntensityLevel = (date: Date, submissionsByDate: any): number => {
-  const dateKey = formatDate(date, "yyyy-MM-dd");
-  const submissions = submissionsByDate.get(dateKey) || [];
-
-  if (submissions.length === 0) return 0;
-  if (submissions.length === 1) return 1;
-  if (submissions.length === 2) return 2;
-  if (submissions.length === 3) return 3;
-  return 4; // 4 or more submissions
-};
 
 // Get intensity color value for React Native
 const getIntensityColorValue = (level: number): string => {
@@ -355,7 +376,6 @@ export function generateDateWeeks(dateRange: { start: Date; end: Date }) {
 
   const firstDate = allDates[0];
   const lastDate = allDates[allDates.length - 1];
-  // Start weeks on Monday (1) instead of Sunday (0)
   const firstWeekStart = startOfWeek(firstDate, { weekStartsOn: 1 });
   const lastWeekEnd = addDays(startOfWeek(lastDate, { weekStartsOn: 1 }), 6);
 
@@ -388,17 +408,14 @@ export function calculateMonthLabels(
 ) {
   const monthLabels: (string | null)[] = [];
 
-  weekGroups.forEach((week, weekIndex) => {
-    // Check if this week contains the 1st of any month
+  weekGroups.forEach((week) => {
     const firstOfMonth = week.find(
       (day) => day !== null && day.getDate() === 1,
     );
 
     if (firstOfMonth) {
-      // This week contains the 1st of a month
       monthLabels.push(formatDate(firstOfMonth, "MMM"));
     } else {
-      // This week doesn't contain the 1st of any month
       monthLabels.push(null);
     }
   });
