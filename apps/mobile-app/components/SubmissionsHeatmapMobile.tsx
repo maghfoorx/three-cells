@@ -248,7 +248,7 @@ export default function SubmissionsCalendarHeatmapMobile({
               horizontal
               showsHorizontalScrollIndicator={false}
               className="flex-1"
-              contentOffset={{ x: 1000, y: 0 }}
+              contentOffset={{ x: 770, y: 0 }}
               removeClippedSubviews={true}
             >
               <View className="flex flex-col">

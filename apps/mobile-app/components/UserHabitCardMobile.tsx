@@ -14,7 +14,6 @@ import {
   NativeSyntheticEvent,
   NativeTouchEvent,
   ScrollView,
-  Button,
 } from "react-native";
 import { router } from "expo-router";
 import { handleHookMutationError } from "@/utils/handleHookMutationError";
