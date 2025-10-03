@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useCallback, memo } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import { format, isAfter, addMonths, startOfWeek, addDays } from "date-fns";
+import { addMonths, startOfWeek, addDays } from "date-fns";
 import type { DataModel } from "@packages/backend/convex/_generated/dataModel";
 import { Feather } from "@expo/vector-icons";
 import { useBulkManageHabitSubmissions } from "./useCalendarSquareToast";
