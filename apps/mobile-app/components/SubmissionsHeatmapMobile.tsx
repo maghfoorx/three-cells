@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { format, isAfter, addMonths, startOfWeek, addDays } from "date-fns";
 import type { DataModel } from "@packages/backend/convex/_generated/dataModel";
@@ -56,6 +56,7 @@ export default function SubmissionsCalendarHeatmapMobile({
 }: SubmissionsCalendarHeatmapMobileProps) {
   const {
     selectedDates,
+    selectedDateStrings,
     toggleDate,
     togglingSubmission,
     handleCompleteAction,
@@ -204,9 +205,9 @@ export default function SubmissionsCalendarHeatmapMobile({
                           submissionsByDate,
                         );
 
-                        const isInBulkSelectedDates = selectedDates.find(
-                          (selectedDate) => selectedDate === date,
-                        );
+                        const dateStr = formatDate(date, "yyyy-MM-dd");
+                        const isInBulkSelectedDates =
+                          selectedDateStrings[dateStr];
 
                         if (isInBulkSelectedDates && togglingSubmission) {
                           return (
@@ -308,44 +309,12 @@ export default function SubmissionsCalendarHeatmapMobile({
 
       {/* Bulk action view - shown when dates are selected */}
       {selectedDates.length > 0 && (
-        <View className="px-4 mt-4">
-          <View className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-            <View className="flex flex-row items-center justify-between mb-3">
-              <Text className="text-sm text-gray-700">
-                {selectedDates.length} date{selectedDates.length > 1 ? "s" : ""}{" "}
-                selected
-              </Text>
-              <TouchableOpacity
-                onPress={clearDates}
-                disabled={togglingSubmission}
-              >
-                <Feather name="x" size={18} color="#6b7280" />
-              </TouchableOpacity>
-            </View>
-
-            <View className="flex flex-row gap-2">
-              <TouchableOpacity
-                className="flex-1 bg-green-500 py-2.5 rounded-md items-center justify-center"
-                onPress={handleCompleteAction}
-                disabled={togglingSubmission}
-              >
-                <Text className="text-white font-medium text-sm">
-                  {togglingSubmission ? "Loading..." : "Mark as complete"}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                className="flex-1 bg-red-500 py-2.5 rounded-md items-center justify-center"
-                onPress={handleUnCompleteAction}
-                disabled={togglingSubmission}
-              >
-                <Text className="text-white font-medium text-sm">
-                  {togglingSubmission ? "Loading..." : "Mark as uncomplete"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+        <BulkActionPanel
+          selectedCount={selectedDates.length}
+          onClear={clearDates}
+          onComplete={handleCompleteAction}
+          onUncomplete={handleUnCompleteAction}
+        />
       )}
     </View>
   );
@@ -435,4 +404,93 @@ export function calculateMonthLabels(
   });
 
   return monthLabels;
+}
+
+interface BulkActionPanelProps {
+  selectedCount: number;
+  onClear: () => void;
+  onComplete: () => Promise<void>;
+  onUncomplete: () => Promise<void>;
+}
+
+function BulkActionPanel({
+  selectedCount,
+  onClear,
+  onComplete,
+  onUncomplete,
+}: BulkActionPanelProps) {
+  const [loadingAction, setLoadingAction] = useState<
+    "complete" | "uncomplete" | null
+  >(null);
+
+  const handleComplete = async () => {
+    setLoadingAction("complete");
+    try {
+      await onComplete();
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
+  const handleUncomplete = async () => {
+    setLoadingAction("uncomplete");
+    try {
+      await onUncomplete();
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
+  const isLoading = loadingAction !== null;
+
+  return (
+    <View className="px-4 mt-4">
+      <View className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <View className="flex flex-row items-center justify-between mb-3">
+          <Text className="text-sm text-gray-700">
+            {selectedCount} date{selectedCount > 1 ? "s" : ""} selected
+          </Text>
+          <TouchableOpacity onPress={onClear} disabled={isLoading}>
+            <Feather name="x" size={18} color="#6b7280" />
+          </TouchableOpacity>
+        </View>
+
+        <View className="flex flex-row gap-2">
+          <TouchableOpacity
+            className="flex-1 py-2.5 rounded-md items-center justify-center"
+            style={{
+              backgroundColor:
+                loadingAction === "complete" || !isLoading
+                  ? "#22c55e"
+                  : "#9ca3af",
+            }}
+            onPress={handleComplete}
+            disabled={isLoading}
+          >
+            <Text className="text-white font-medium text-sm">
+              {loadingAction === "complete" ? "Loading..." : "Mark as complete"}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="flex-1 py-2.5 rounded-md items-center justify-center"
+            style={{
+              backgroundColor:
+                loadingAction === "uncomplete" || !isLoading
+                  ? "#ef4444"
+                  : "#9ca3af",
+            }}
+            onPress={handleUncomplete}
+            disabled={isLoading}
+          >
+            <Text className="text-white font-medium text-sm">
+              {loadingAction === "uncomplete"
+                ? "Loading..."
+                : "Mark as uncomplete"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
 }

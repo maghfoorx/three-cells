@@ -7,12 +7,12 @@ import { api } from "@packages/backend/convex/_generated/api";
 import { handleHookMutationError } from "@/utils/handleHookMutationError";
 
 type BulkManageHabitSubmissionsStateType = {
-  selectedDates: Date[];
+  selectedDateStrings: Record<string, boolean>;
   togglingSubmission: boolean;
 };
 
 const bulkManageSubmissionState = proxy<BulkManageHabitSubmissionsStateType>({
-  selectedDates: [],
+  selectedDateStrings: {},
   togglingSubmission: false,
 });
 
@@ -21,9 +21,14 @@ export const useBulkManageHabitSubmissions = (
 ) => {
   const $state = useSnapshot(bulkManageSubmissionState);
 
+  const selectedDatesArray = useMemo(
+    () => Object.keys($state.selectedDateStrings).map((str) => new Date(str)),
+    [$state.selectedDateStrings],
+  );
+
   const formattedSelectedDates = useMemo(
-    () => $state.selectedDates.map((date) => format(date, "yyyy-MM-dd")),
-    [$state.selectedDates],
+    () => Object.keys($state.selectedDateStrings),
+    [$state.selectedDateStrings],
   );
 
   const bulkCompleteSubmittedDates = useMutation(
@@ -34,21 +39,17 @@ export const useBulkManageHabitSubmissions = (
   );
 
   const toggleDate = (date: Date) => {
-    const index = bulkManageSubmissionState.selectedDates.findIndex(
-      (d) => d.getTime() === date.getTime(),
-    );
+    const dateStr = format(date, "yyyy-MM-dd");
 
-    if (index !== -1) {
-      // Already selected — remove it
-      bulkManageSubmissionState.selectedDates.splice(index, 1);
+    if (bulkManageSubmissionState.selectedDateStrings[dateStr]) {
+      delete bulkManageSubmissionState.selectedDateStrings[dateStr];
     } else {
-      // Not selected — add it
-      bulkManageSubmissionState.selectedDates.push(date);
+      bulkManageSubmissionState.selectedDateStrings[dateStr] = true;
     }
   };
 
   const clearDates = () => {
-    bulkManageSubmissionState.selectedDates = [];
+    bulkManageSubmissionState.selectedDateStrings = {};
   };
 
   const handleCompleteAction = async () => {
@@ -60,11 +61,12 @@ export const useBulkManageHabitSubmissions = (
         habitId: habit._id,
         selectedDates: formattedSelectedDates,
       });
+      clearDates();
     } catch (err) {
       handleHookMutationError(err);
+      throw err;
     } finally {
       bulkManageSubmissionState.togglingSubmission = false;
-      clearDates();
     }
   };
 
@@ -77,16 +79,18 @@ export const useBulkManageHabitSubmissions = (
         habitId: habit._id,
         selectedDates: formattedSelectedDates,
       });
+      clearDates();
     } catch (err) {
       handleHookMutationError(err);
+      throw err;
     } finally {
       bulkManageSubmissionState.togglingSubmission = false;
-      clearDates();
     }
   };
 
   return {
-    selectedDates: $state.selectedDates,
+    selectedDates: selectedDatesArray,
+    selectedDateStrings: $state.selectedDateStrings,
     toggleDate,
     clearDates,
     togglingSubmission: $state.togglingSubmission,
