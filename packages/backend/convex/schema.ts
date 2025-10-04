@@ -17,7 +17,7 @@ const schema = defineSchema({
     hasCompletedOnboarding: v.boolean(),
     isSubscribed: v.boolean(), // true if they have an active subscription
     hasLifetimeAccess: v.boolean(), // true if they ever bought lifetime
-    subscriptionExpiresAt: v.optional(v.number()), // timestamp for current sub expiry
+    subscriptionExpiresAt: v.optional(v.union(v.number(), v.null())), // timestamp for current sub expiry
   }).index("email", ["email"]),
 
   user_tasks: defineTable({
