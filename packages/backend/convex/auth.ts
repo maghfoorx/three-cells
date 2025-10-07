@@ -74,6 +74,27 @@ export const viewer = query({
   },
 });
 
+export const setUserTimezone = mutation({
+  args: {
+    timezoneInput: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      throw new ConvexError("You must be logged in to create a metric");
+    }
+
+    await ctx.db.patch(userId, {
+      timezone: args.timezoneInput,
+    });
+
+    const user = await ctx.db.get(userId);
+
+    return user;
+  },
+});
+
 export const completeUserOnboarding = mutation({
   args: {
     motivationReason: v.string(),

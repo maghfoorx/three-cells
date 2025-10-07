@@ -9,10 +9,13 @@
   "dependencies": {
     "@auth/core": "^0.39.1",
     "@convex-dev/auth": "^0.0.86",
+    "@convex-dev/crons": "^0.1.9",
+    "@convex-dev/expo-push-notifications": "^0.2.6",
     "@convex-dev/migrations": "^0.2.7",
     "axios": "^1.8.4",
     "convex": "^1.24.1",
     "date-fns": "^4.1.0",
+    "dayjs": "^1.11.18",
     "isbot": "^5.1.17",
     "stripe": "^18.2.1"
   },

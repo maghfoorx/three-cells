@@ -19,6 +19,8 @@ import { ConvexReactClient } from "convex/react";
 import { useEffect } from "react";
 import MonitorUserLoggedInAndSubscription from "@/components/MonitorUserLoggedInAndSubscription";
 import { NewDayProvider } from "@/hooks/useNewDay";
+import SetUserTimezone from "@/components/SetUserTimezone";
+import UpdatePushNotificationsToken from "@/components/UpdatePushNotificationsToken";
 
 const convex = new ConvexReactClient(
   process.env.EXPO_PUBLIC_CONVEX_URL as string,
@@ -109,6 +111,8 @@ export default function RootLayout() {
           </KeyboardProvider>
           <StatusBar style="auto" />
           <MonitorUserLoggedInAndSubscription />
+          <SetUserTimezone />
+          <UpdatePushNotificationsToken />
         </ThemeProvider>
       </NewDayProvider>
     </ConvexAuthProvider>
