@@ -12,7 +12,6 @@ import { useNewDay } from "@/hooks/useNewDay";
 
 export default function MetricsPage() {
   const today = useNewDay();
-  console.log(today, "IS_TODAY");
   const allSubmissions = useQuery(
     api.userMetrics.queries.getAllUserMetricSubmissions,
     {
