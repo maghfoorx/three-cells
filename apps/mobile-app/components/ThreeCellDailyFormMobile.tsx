@@ -16,12 +16,14 @@ import {
   Pressable,
   Keyboard,
   TouchableNativeFeedback,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { format } from "date-fns";
 import { router } from "expo-router";
 import { SCORE_COLORS } from "@/utils/types";
@@ -80,6 +82,7 @@ const MOOD_OPTIONS = [
 ];
 
 export default function ThreeCellDailyForm({ date }: { date: Date }) {
+  const scrollViewRef = useRef<ScrollView>(null);
   const parsedDate = format(date, "yyyy-MM-dd");
 
   const todayDate = format(new Date(), "yyyy-MM-dd");
@@ -157,7 +160,11 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
       }}
       edges={["top"]}
     >
-      <View className="flex-1">
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
         {/* Header */}
         <View className="px-6 py-4 flex flex-row justify-between items-center">
           <View>
@@ -198,13 +205,14 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
         )}
 
         <ScrollView
+          ref={scrollViewRef}
           showsVerticalScrollIndicator={false}
           className="flex-1"
           contentContainerStyle={{
             paddingHorizontal: 24,
             paddingBottom: 32,
-            flexGrow: 1,
           }}
+          keyboardShouldPersistTaps="handled"
         >
           <DailyHighlights date={date} />
 
@@ -299,10 +307,18 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
                       placeholder="What happened today? Any wins, challenges, or insights?"
                       value={field.value}
                       onChangeText={field.onChange}
-                      className="p-6 text-base text-gray-800 min-h-48"
+                      className="p-6 text-gray-800 min-h-48"
                       placeholderTextColor="#9CA3AF"
                       textAlignVertical="top"
-                      onBlur={() => Keyboard.dismiss()} // Dismiss keyboard when input loses focus
+                      onFocus={() => {
+                        setTimeout(() => {
+                          scrollViewRef.current?.scrollToEnd({
+                            animated: true,
+                          });
+                        }, 100);
+                      }}
+                      onBlur={() => Keyboard.dismiss()}
+                      scrollEnabled={false}
                       style={{
                         lineHeight: 24,
                         fontFamily: "System",
@@ -345,7 +361,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
             )}
           </TouchableOpacity>
         </ScrollView>
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
