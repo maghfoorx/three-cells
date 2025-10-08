@@ -14,11 +14,10 @@ import {
   ActivityIndicator,
   ScrollView,
   Pressable,
-  Keyboard,
   TouchableNativeFeedback,
   KeyboardAvoidingView,
   Platform,
-  InputAccessoryView,
+  Modal,
 } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -82,12 +81,91 @@ const MOOD_OPTIONS = [
   },
 ];
 
-const KEYBOARD_TOOLBAR_ID = "keyboard_toolbar";
+// Simple working modal
+function FullScreenTextEditor({
+  visible,
+  value,
+  onChangeText,
+  onClose,
+  bgColor,
+}: {
+  visible: boolean;
+  value: string;
+  onChangeText: (text: string) => void;
+  onClose: () => void;
+  bgColor: string;
+}) {
+  return (
+    <Modal
+      visible={visible}
+      animationType="slide"
+      presentationStyle="fullScreen"
+      statusBarTranslucent={true}
+    >
+      <SafeAreaView style={{ flex: 1, backgroundColor: bgColor }}>
+        <View className="px-6 py-4 flex-row justify-between items-center border-b border-gray-200/30">
+          <TouchableOpacity
+            onPress={() => {
+              console.log("Cancel button pressed");
+              onClose();
+            }}
+            className="px-4 py-2 bg-gray-100/80 rounded-full"
+          >
+            <Text className="text-gray-700 font-semibold">Cancel</Text>
+          </TouchableOpacity>
+
+          <Text className="text-lg font-semibold text-gray-900">
+            Daily Reflection
+          </Text>
+
+          <TouchableOpacity
+            onPress={() => {
+              console.log("Done button pressed");
+              onClose();
+            }}
+            className="px-4 py-2 bg-blue-600 rounded-full"
+          >
+            <Text className="text-white font-semibold">Done</Text>
+          </TouchableOpacity>
+        </View>
+
+        <KeyboardAvoidingView
+          className="flex-1"
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <View className="flex-1 px-6 py-6">
+            <TextInput
+              multiline
+              value={value}
+              onChangeText={onChangeText}
+              placeholder="What happened today? Any wins, challenges, or insights?"
+              placeholderTextColor="#9CA3AF"
+              className="flex-1 text-base text-gray-800"
+              textAlignVertical="top"
+              style={{
+                fontFamily: "System",
+                fontSize: 16,
+                lineHeight: 24,
+              }}
+              scrollEnabled={true}
+              autoFocus={true}
+            />
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </Modal>
+  );
+}
 
 export default function ThreeCellDailyForm({ date }: { date: Date }) {
   const scrollViewRef = useRef<ScrollView>(null);
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [showFullScreenEditor, setShowFullScreenEditor] = useState(false);
   const parsedDate = format(date, "yyyy-MM-dd");
+
+  const handleOpenEditor = () => {
+    console.log("handleOpenEditor called - opening modal");
+    setShowFullScreenEditor(true);
+  };
 
   const todayDate = format(new Date(), "yyyy-MM-dd");
   const isToday = todayDate === parsedDate;
@@ -130,26 +208,6 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
       });
     }
   }, [data, reset, parsedDate]);
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => {
-        setIsKeyboardVisible(true);
-      },
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        setIsKeyboardVisible(false);
-      },
-    );
-
-    return () => {
-      keyboardDidHideListener?.remove();
-      keyboardDidShowListener?.remove();
-    };
-  }, []);
 
   const submitThreeCellEntry = useMutation(api.threeCells.submitThreeCellEntry);
 
@@ -316,51 +374,69 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
               name="summary"
               render={({ field }) => (
                 <View>
-                  <View
-                    className="bg-white/90 rounded-md border border-gray-100"
-                    style={{
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.05,
-                      shadowRadius: 8,
-                      elevation: 2,
-                    }}
+                  <TouchableOpacity
+                    onPress={handleOpenEditor}
+                    activeOpacity={0.7}
                   >
-                    <TextInput
-                      multiline
-                      placeholder="What happened today? Any wins, challenges, or insights?"
-                      value={field.value}
-                      onChangeText={field.onChange}
-                      className="p-6 text-base text-gray-800 min-h-48"
-                      placeholderTextColor="#9CA3AF"
-                      textAlignVertical="top"
-                      onFocus={() => {
-                        setIsKeyboardVisible(true);
-                        setTimeout(() => {
-                          scrollViewRef.current?.scrollToEnd({
-                            animated: true,
-                          });
-                        }, 100);
-                      }}
-                      onBlur={() => {
-                        Keyboard.dismiss();
-                        setIsKeyboardVisible(false);
-                      }}
-                      scrollEnabled={false}
-                      inputAccessoryViewID={
-                        Platform.OS === "ios" ? KEYBOARD_TOOLBAR_ID : undefined
-                      }
+                    <View
+                      className="bg-white/90 rounded-md border border-gray-100 min-h-48"
                       style={{
-                        lineHeight: 24,
-                        fontFamily: "System",
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.05,
+                        shadowRadius: 8,
+                        elevation: 2,
                       }}
-                    />
-                  </View>
+                    >
+                      <View className="p-6">
+                        {field.value ? (
+                          <Text
+                            className="text-base text-gray-800 leading-6"
+                            style={{
+                              fontFamily: "System",
+                            }}
+                          >
+                            {field.value}
+                          </Text>
+                        ) : (
+                          <Text
+                            className="text-base text-gray-400 leading-6"
+                            style={{
+                              fontFamily: "System",
+                            }}
+                          >
+                            What happened today? Any wins, challenges, or
+                            insights?
+                          </Text>
+                        )}
+                      </View>
+
+                      {/* Tap to edit indicator */}
+                      <View className="absolute top-3 right-3 bg-blue-100 px-2 py-1 rounded-full">
+                        <Text className="text-blue-600 text-xs font-medium">
+                          Tap to edit
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+
                   {errors.summary && (
                     <Text className="text-red-500 text-sm mt-3 ml-2">
                       {errors.summary.message}
                     </Text>
                   )}
+
+                  {/* Full-screen text editor */}
+                  <FullScreenTextEditor
+                    visible={showFullScreenEditor}
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    onClose={() => {
+                      console.log("Closing modal");
+                      setShowFullScreenEditor(false);
+                    }}
+                    bgColor={bgColor}
+                  />
                 </View>
               )}
             />
@@ -392,61 +468,6 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
             )}
           </TouchableOpacity>
         </ScrollView>
-
-        {/* Keyboard Toolbar (iOS only) */}
-        {Platform.OS === "ios" && (
-          <InputAccessoryView nativeID={KEYBOARD_TOOLBAR_ID}>
-            <View
-              className="flex-row justify-end items-center px-4 py-2"
-              style={{
-                minHeight: 44,
-                backgroundColor: "transparent",
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => Keyboard.dismiss()}
-                className="px-4 py-2 bg-blue-600 rounded-full"
-                style={{
-                  shadowColor: "#3B82F6",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.1,
-                  shadowRadius: 4,
-                  elevation: 2,
-                }}
-              >
-                <Text className="text-white font-semibold text-base">Done</Text>
-              </TouchableOpacity>
-            </View>
-          </InputAccessoryView>
-        )}
-
-        {/* Android Keyboard Toolbar */}
-        {Platform.OS === "android" && isKeyboardVisible && (
-          <View
-            className="absolute bottom-0 left-0 right-0 flex-row justify-end items-center px-4 py-2 border-t border-gray-200"
-            style={{
-              minHeight: 44,
-              backgroundColor: bgColor,
-            }}
-          >
-            <TouchableOpacity
-              onPress={() => {
-                Keyboard.dismiss();
-                setIsKeyboardVisible(false);
-              }}
-              className="px-4 py-2 bg-blue-600 rounded-md"
-              style={{
-                shadowColor: "#3B82F6",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.1,
-                shadowRadius: 4,
-                elevation: 2,
-              }}
-            >
-              <Text className="text-white font-semibold text-base">Done</Text>
-            </TouchableOpacity>
-          </View>
-        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
