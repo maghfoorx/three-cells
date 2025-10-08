@@ -400,12 +400,12 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
               className="flex-row justify-end items-center px-4 py-2"
               style={{
                 minHeight: 44,
-                backgroundColor: color(bgColor).fade(0.8).rgb().toString(),
+                backgroundColor: "transparent",
               }}
             >
               <TouchableOpacity
                 onPress={() => Keyboard.dismiss()}
-                className="px-4 py-2 bg-blue-600 rounded-md"
+                className="px-4 py-2 bg-blue-600 rounded-full"
                 style={{
                   shadowColor: "#3B82F6",
                   shadowOffset: { width: 0, height: 2 },
