@@ -5,7 +5,6 @@ import {
 } from "react-native-heroicons/outline";
 
 import color from "color";
-import clsx from "clsx";
 import {
   View,
   TextInput,
@@ -18,13 +17,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   Modal,
-  StatusBar,
 } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { format } from "date-fns";
 import { router } from "expo-router";
 import { SCORE_COLORS } from "@/utils/types";
@@ -91,14 +89,21 @@ function FullScreenTextEditor({
   value,
   onChangeText,
   onClose,
+  onSave,
   bgColor,
 }: {
   visible: boolean;
   value: string;
   onChangeText: (text: string) => void;
   onClose: () => void;
+  onSave: (text: string) => void;
   bgColor: string;
 }) {
+  const [localText, setLocalText] = useState(value);
+
+  useEffect(() => {
+    setLocalText(value);
+  }, [value]);
   const insets = useSafeAreaInsets();
 
   return (
@@ -114,6 +119,7 @@ function FullScreenTextEditor({
           <TouchableOpacity
             onPress={() => {
               console.log("Cancel button pressed");
+              setLocalText(value); // Reset to original value
               onClose();
             }}
             className="px-4 py-2 bg-gray-100/80 rounded-full"
@@ -128,6 +134,8 @@ function FullScreenTextEditor({
           <TouchableOpacity
             onPress={() => {
               console.log("Done button pressed");
+              onChangeText(localText);
+              onSave(localText);
               onClose();
             }}
             className="px-4 py-2 bg-blue-600 rounded-full"
@@ -143,8 +151,8 @@ function FullScreenTextEditor({
           <View className="flex-1 px-6 py-6">
             <TextInput
               multiline
-              value={value}
-              onChangeText={onChangeText}
+              value={localText}
+              onChangeText={setLocalText}
               placeholder="What happened today? Any wins, challenges, or insights?"
               placeholderTextColor="#9CA3AF"
               className="flex-1 text-base text-gray-800"
@@ -187,7 +195,6 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
 
   const {
     control,
-    handleSubmit,
     reset,
     watch,
     formState: { isSubmitting, errors },
@@ -200,37 +207,97 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
     },
   });
 
+  const formValues = watch();
+  const [initialValues, setInitialValues] = useState<z.infer<
+    typeof formSchema
+  > | null>(null);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastSavedRef = useRef<z.infer<typeof formSchema> | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [originalSummary, setOriginalSummary] = useState("");
+
   useEffect(() => {
-    if (data) {
-      reset({
-        summary: data.summary,
-        score: data.score,
-        date_for: data.dateFor,
-      });
-    } else {
-      reset({
-        summary: "",
-        score: 0,
-        date_for: parsedDate,
-      });
+    const newValues = data
+      ? {
+          summary: data.summary,
+          score: data.score,
+          date_for: data.dateFor,
+        }
+      : {
+          summary: "",
+          score: 0,
+          date_for: parsedDate,
+        };
+
+    // Only reset if the data actually changed to prevent unnecessary re-renders
+    if (
+      !initialValues ||
+      initialValues.summary !== newValues.summary ||
+      initialValues.score !== newValues.score ||
+      initialValues.date_for !== newValues.date_for
+    ) {
+      reset(newValues);
+      setInitialValues(newValues);
+      lastSavedRef.current = newValues;
+      setOriginalSummary(newValues.summary);
     }
-  }, [data, reset, parsedDate]);
+  }, [data, reset, parsedDate, initialValues]);
 
   const submitThreeCellEntry = useMutation(api.threeCells.submitThreeCellEntry);
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      await submitThreeCellEntry({
-        input: {
-          summary: values.summary,
-          score: values.score,
-          date_for: format(values.date_for, "yyyy-MM-dd"),
-        },
-      });
-    } catch (e) {
-      console.error("Submission error:", e);
+  const saveEntry = useCallback(
+    async (values: z.infer<typeof formSchema>) => {
+      try {
+        setIsSaving(true);
+        await submitThreeCellEntry({
+          input: {
+            summary: values.summary,
+            score: values.score,
+            date_for:
+              typeof values.date_for === "string"
+                ? values.date_for
+                : format(new Date(values.date_for), "yyyy-MM-dd"),
+          },
+        });
+        lastSavedRef.current = { ...values };
+      } catch (e) {
+        console.error("Auto-save error:", e);
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [submitThreeCellEntry],
+  );
+
+  // Auto-save only for mood changes, not text
+  useEffect(() => {
+    if (!initialValues || !formValues) return;
+
+    // Only auto-save mood changes, not summary changes
+    const scoreChanged =
+      formValues.score !== (lastSavedRef.current?.score || 0);
+
+    if (scoreChanged) {
+      // Clear existing timeout
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+
+      // Quick save for mood changes
+      saveTimeoutRef.current = setTimeout(() => {
+        saveEntry({
+          ...formValues,
+          summary: lastSavedRef.current?.summary || "", // Keep original summary
+        });
+      }, 100);
     }
-  };
+
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [formValues.score, saveEntry, initialValues]);
 
   const bgColor = color(SCORE_COLORS[watch("score").toString()] ?? "#ffffff")
     .fade(0.8)
@@ -324,7 +391,9 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
                         className="flex flex-col items-center"
                       >
                         <TouchableNativeFeedback
+                          disabled={isSaving}
                           onPress={() => {
+                            if (isSaving) return;
                             field.onChange(mood.value);
                           }}
                         >
@@ -438,6 +507,14 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
                     visible={showFullScreenEditor}
                     value={field.value}
                     onChangeText={field.onChange}
+                    onSave={async (text: string) => {
+                      const updatedValues = {
+                        ...formValues,
+                        summary: text,
+                      };
+                      await saveEntry(updatedValues);
+                      setOriginalSummary(text);
+                    }}
                     onClose={() => {
                       console.log("Closing modal");
                       setShowFullScreenEditor(false);
@@ -449,31 +526,13 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
             />
           </View>
 
-          {/* Submit Button */}
-          <TouchableOpacity
-            onPress={handleSubmit(onSubmit)}
-            disabled={isSubmitting}
-            className={clsx(
-              "bg-blue-600 rounded-md py-5 items-center justify-center mt-6",
-              isSubmitting ? "opacity-70" : "",
-            )}
-            style={{
-              shadowColor: "#3B82F6",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.2,
-              shadowRadius: 12,
-              elevation: 8,
-            }}
-          >
-            {isSubmitting ? (
-              <View className="flex-row items-center gap-3">
-                <ActivityIndicator size="small" color="white" />
-                <Text className="text-white text-lg font-bold">Saving...</Text>
-              </View>
-            ) : (
-              <Text className="text-white text-lg font-bold">Save Entry</Text>
-            )}
-          </TouchableOpacity>
+          {/* Auto-save indicator */}
+          {(isSubmitting || isSaving) && (
+            <View className="flex-row items-center justify-center gap-2 mt-6 py-3">
+              <ActivityIndicator size="small" color="#6B7280" />
+              <Text className="text-gray-600 text-sm">Saving...</Text>
+            </View>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
