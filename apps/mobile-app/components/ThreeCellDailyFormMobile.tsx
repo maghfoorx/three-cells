@@ -18,6 +18,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Modal,
+  StatusBar,
 } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -30,7 +31,10 @@ import { SCORE_COLORS } from "@/utils/types";
 import DailyHighlights from "./pages/track/DailyHighlights";
 import LoadingScreen from "./LoadingScreen";
 import { Image } from "expo-image";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 const formSchema = z.object({
   summary: z.string().min(1, "Summary is required"),
@@ -95,14 +99,17 @@ function FullScreenTextEditor({
   onClose: () => void;
   bgColor: string;
 }) {
+  const insets = useSafeAreaInsets();
+
   return (
     <Modal
       visible={visible}
       animationType="slide"
       presentationStyle="fullScreen"
-      statusBarTranslucent={true}
     >
-      <SafeAreaView style={{ flex: 1, backgroundColor: bgColor }}>
+      <View
+        style={{ flex: 1, backgroundColor: bgColor, paddingTop: insets.top }}
+      >
         <View className="px-6 py-4 flex-row justify-between items-center border-b border-gray-200/30">
           <TouchableOpacity
             onPress={() => {
@@ -152,7 +159,7 @@ function FullScreenTextEditor({
             />
           </View>
         </KeyboardAvoidingView>
-      </SafeAreaView>
+      </View>
     </Modal>
   );
 }
