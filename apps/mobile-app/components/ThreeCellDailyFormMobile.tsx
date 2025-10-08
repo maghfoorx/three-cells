@@ -118,7 +118,6 @@ function FullScreenTextEditor({
         <View className="px-6 py-4 flex-row justify-between items-center border-b border-gray-200/30">
           <TouchableOpacity
             onPress={() => {
-              console.log("Cancel button pressed");
               setLocalText(value); // Reset to original value
               onClose();
             }}
@@ -133,7 +132,6 @@ function FullScreenTextEditor({
 
           <TouchableOpacity
             onPress={() => {
-              console.log("Done button pressed");
               onChangeText(localText);
               onSave(localText);
               onClose();
@@ -178,7 +176,6 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
   const parsedDate = format(date, "yyyy-MM-dd");
 
   const handleOpenEditor = () => {
-    console.log("handleOpenEditor called - opening modal");
     setShowFullScreenEditor(true);
   };
 
@@ -516,7 +513,6 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
                       setOriginalSummary(text);
                     }}
                     onClose={() => {
-                      console.log("Closing modal");
                       setShowFullScreenEditor(false);
                     }}
                     bgColor={bgColor}
