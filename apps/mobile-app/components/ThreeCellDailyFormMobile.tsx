@@ -18,12 +18,13 @@ import {
   TouchableNativeFeedback,
   KeyboardAvoidingView,
   Platform,
+  InputAccessoryView,
 } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
 import { router } from "expo-router";
 import { SCORE_COLORS } from "@/utils/types";
@@ -81,8 +82,11 @@ const MOOD_OPTIONS = [
   },
 ];
 
+const KEYBOARD_TOOLBAR_ID = "keyboard_toolbar";
+
 export default function ThreeCellDailyForm({ date }: { date: Date }) {
   const scrollViewRef = useRef<ScrollView>(null);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const parsedDate = format(date, "yyyy-MM-dd");
 
   const todayDate = format(new Date(), "yyyy-MM-dd");
@@ -126,6 +130,26 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
       });
     }
   }, [data, reset, parsedDate]);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setIsKeyboardVisible(true);
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setIsKeyboardVisible(false);
+      },
+    );
+
+    return () => {
+      keyboardDidHideListener?.remove();
+      keyboardDidShowListener?.remove();
+    };
+  }, []);
 
   const submitThreeCellEntry = useMutation(api.threeCells.submitThreeCellEntry);
 
@@ -307,18 +331,25 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
                       placeholder="What happened today? Any wins, challenges, or insights?"
                       value={field.value}
                       onChangeText={field.onChange}
-                      className="p-6 text-gray-800 min-h-48"
+                      className="p-6 text-base text-gray-800 min-h-48"
                       placeholderTextColor="#9CA3AF"
                       textAlignVertical="top"
                       onFocus={() => {
+                        setIsKeyboardVisible(true);
                         setTimeout(() => {
                           scrollViewRef.current?.scrollToEnd({
                             animated: true,
                           });
                         }, 100);
                       }}
-                      onBlur={() => Keyboard.dismiss()}
+                      onBlur={() => {
+                        Keyboard.dismiss();
+                        setIsKeyboardVisible(false);
+                      }}
                       scrollEnabled={false}
+                      inputAccessoryViewID={
+                        Platform.OS === "ios" ? KEYBOARD_TOOLBAR_ID : undefined
+                      }
                       style={{
                         lineHeight: 24,
                         fontFamily: "System",
@@ -361,6 +392,61 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
             )}
           </TouchableOpacity>
         </ScrollView>
+
+        {/* Keyboard Toolbar (iOS only) */}
+        {Platform.OS === "ios" && (
+          <InputAccessoryView nativeID={KEYBOARD_TOOLBAR_ID}>
+            <View
+              className="flex-row justify-end items-center px-4 py-2"
+              style={{
+                minHeight: 44,
+                backgroundColor: color(bgColor).fade(0.8).rgb().toString(),
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => Keyboard.dismiss()}
+                className="px-4 py-2 bg-blue-600 rounded-md"
+                style={{
+                  shadowColor: "#3B82F6",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 4,
+                  elevation: 2,
+                }}
+              >
+                <Text className="text-white font-semibold text-base">Done</Text>
+              </TouchableOpacity>
+            </View>
+          </InputAccessoryView>
+        )}
+
+        {/* Android Keyboard Toolbar */}
+        {Platform.OS === "android" && isKeyboardVisible && (
+          <View
+            className="absolute bottom-0 left-0 right-0 flex-row justify-end items-center px-4 py-2 border-t border-gray-200"
+            style={{
+              minHeight: 44,
+              backgroundColor: bgColor,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                Keyboard.dismiss();
+                setIsKeyboardVisible(false);
+              }}
+              className="px-4 py-2 bg-blue-600 rounded-md"
+              style={{
+                shadowColor: "#3B82F6",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 2,
+              }}
+            >
+              <Text className="text-white font-semibold text-base">Done</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
