@@ -99,6 +99,9 @@ export default function PersonalMotivationScreen({
               <Text className="text-3xl font-bold text-gray-900 text-center mb-4">
                 What Drives You?
               </Text>
+              <Text className="text-lg text-gray-600 text-center leading-relaxed">
+                Understanding your "why" is crucial for lasting change.
+              </Text>
             </View>
 
             <View className="bg-white rounded-md border border-gray-200 p-6 shadow-sm mb-6">
@@ -141,13 +144,6 @@ export default function PersonalMotivationScreen({
                 The more specific and personal your reason, the stronger your
                 motivation will be during challenging moments. This becomes your
                 North Star.
-              </Text>
-            </View>
-            <View className="my-4">
-              <Text className="text-lg text-gray-600 text-center leading-relaxed">
-                Understanding your "why" is crucial for lasting change. Research
-                shows that intrinsic motivation is 3x more powerful than
-                external rewards.
               </Text>
             </View>
           </ScrollView>
