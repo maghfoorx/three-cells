@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { XMarkIcon } from "react-native-heroicons/outline";
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,9 @@ import {
   Platform,
   Pressable,
   Switch,
+  InputAccessoryView,
+  Keyboard,
+  ScrollView,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -47,6 +50,8 @@ export const habitsFormColourOptions = [
   "#F6A9FF",
 ];
 
+const KEYBOARD_TOOLBAR_ID = "keyboard_toolbar_create_habit";
+
 const getRandomColourForNewHabit = () => {
   return habitsFormColourOptions[
     Math.floor(Math.random() * habitsFormColourOptions.length)
@@ -54,6 +59,8 @@ const getRandomColourForNewHabit = () => {
 };
 
 export default function CreateNewHabitPage() {
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -96,7 +103,28 @@ export default function CreateNewHabitPage() {
 
   const pageColour = useMemo(() => {
     return color(selectedColour).mix(color("white"), 0.8).hex();
-  }, [form.watch("colour")]);
+  }, [selectedColour]);
+
+  // Keyboard visibility listeners
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setIsKeyboardVisible(true);
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setIsKeyboardVisible(false);
+      },
+    );
+
+    return () => {
+      keyboardDidHideListener?.remove();
+      keyboardDidShowListener?.remove();
+    };
+  }, []);
 
   return (
     <SafeAreaView
@@ -115,14 +143,15 @@ export default function CreateNewHabitPage() {
           </Pressable>
         </View>
 
-        <View className="flex-1 mt-4">
+        <ScrollView
+          className="flex-1 mt-4"
+          contentContainerStyle={{ paddingBottom: 32 }}
+        >
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             className=""
           >
             <View className="px-6">
-              {/* Header */}
-
               <Text className="text-gray-600 mb-6">
                 Use this form to create a new habit
               </Text>
@@ -171,6 +200,9 @@ export default function CreateNewHabitPage() {
                       onChangeText={onChange}
                       value={value}
                       autoComplete="off"
+                      inputAccessoryViewID={
+                        Platform.OS === "ios" ? KEYBOARD_TOOLBAR_ID : undefined
+                      }
                     />
                   )}
                 />
@@ -268,7 +300,61 @@ export default function CreateNewHabitPage() {
               </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
-        </View>
+        </ScrollView>
+
+        {/* Keyboard Toolbar (iOS only) */}
+        {Platform.OS === "ios" && (
+          <InputAccessoryView nativeID={KEYBOARD_TOOLBAR_ID}>
+            <View
+              className="flex-row justify-end items-center px-4 py-2"
+              style={{
+                minHeight: 44,
+                backgroundColor: "transparent",
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => Keyboard.dismiss()}
+                className="px-4 py-2 bg-blue-600 rounded-full"
+                style={{
+                  shadowColor: "#3B82F6",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 4,
+                  elevation: 2,
+                }}
+              >
+                <Text className="text-white font-semibold text-base">Done</Text>
+              </TouchableOpacity>
+            </View>
+          </InputAccessoryView>
+        )}
+
+        {/* Android Keyboard Toolbar */}
+        {Platform.OS === "android" && isKeyboardVisible && (
+          <View
+            className="absolute bottom-0 left-0 right-0 flex-row justify-end items-center px-4 py-2 border-t border-gray-200 bg-white"
+            style={{
+              minHeight: 44,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                Keyboard.dismiss();
+                setIsKeyboardVisible(false);
+              }}
+              className="px-4 py-2 bg-blue-600 rounded-md"
+              style={{
+                shadowColor: "#3B82F6",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 2,
+              }}
+            >
+              <Text className="text-white font-semibold text-base">Done</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );

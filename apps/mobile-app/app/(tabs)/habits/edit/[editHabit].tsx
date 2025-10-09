@@ -1,5 +1,5 @@
 import { XMarkIcon, TrashIcon } from "react-native-heroicons/outline";
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,8 @@ import {
   Pressable,
   ActivityIndicator,
   Switch,
+  InputAccessoryView,
+  Keyboard,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -50,6 +52,8 @@ export const habitsFormColourOptions = [
   "#F6A9FF",
 ];
 
+const KEYBOARD_TOOLBAR_ID = "keyboard_toolbar_edit_habit";
+
 export default function EditHabitPage() {
   const { editHabit: singleHabitId } = useLocalSearchParams();
   const habitId = singleHabitId as DataModel["userHabits"]["document"]["_id"];
@@ -70,6 +74,7 @@ export default function EditHabitPage() {
 
   const updateHabit = useMutation(api.habits.updateHabit);
   const deleteHabit = useMutation(api.habits.deleteHabit);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const {
     control,
@@ -91,6 +96,27 @@ export default function EditHabitPage() {
       });
     }
   }, [singleHabitData, reset]);
+
+  // Keyboard visibility listeners
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setIsKeyboardVisible(true);
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setIsKeyboardVisible(false);
+      },
+    );
+
+    return () => {
+      keyboardDidHideListener?.remove();
+      keyboardDidShowListener?.remove();
+    };
+  }, []);
 
   const handleUpdateHabit = async (data: FormSchema) => {
     try {
@@ -232,6 +258,9 @@ export default function EditHabitPage() {
                       value={value}
                       autoComplete="off"
                       keyboardType="default"
+                      inputAccessoryViewID={
+                        Platform.OS === "ios" ? KEYBOARD_TOOLBAR_ID : undefined
+                      }
                     />
                   )}
                 />
@@ -348,6 +377,61 @@ export default function EditHabitPage() {
             </View>
           </KeyboardAvoidingView>
         </ScrollView>
+
+        {/* Keyboard Toolbar (iOS only) */}
+        {Platform.OS === "ios" && (
+          <InputAccessoryView nativeID={KEYBOARD_TOOLBAR_ID}>
+            <View
+              className="flex-row justify-end items-center px-4 py-2"
+              style={{
+                minHeight: 44,
+                backgroundColor: "transparent",
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => Keyboard.dismiss()}
+                className="px-4 py-2 bg-blue-600 rounded-full"
+                style={{
+                  shadowColor: "#3B82F6",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 4,
+                  elevation: 2,
+                }}
+              >
+                <Text className="text-white font-semibold text-base">Done</Text>
+              </TouchableOpacity>
+            </View>
+          </InputAccessoryView>
+        )}
+
+        {/* Android Keyboard Toolbar */}
+        {Platform.OS === "android" && isKeyboardVisible && (
+          <View
+            className="absolute bottom-0 left-0 right-0 flex-row justify-end items-center px-4 py-2 border-t border-gray-200"
+            style={{
+              minHeight: 44,
+              backgroundColor: pageColour,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                Keyboard.dismiss();
+                setIsKeyboardVisible(false);
+              }}
+              className="px-4 py-2 bg-blue-600 rounded-md"
+              style={{
+                shadowColor: "#3B82F6",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 2,
+              }}
+            >
+              <Text className="text-white font-semibold text-base">Done</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );
