@@ -75,7 +75,7 @@ export const checkAndSendHabitReminders = internalMutation({
       const incompleteHabits = habits.filter(
         (h) =>
           !submittedHabitIds.has(h._id.toString()) &&
-          h.enableNotifications === true,
+          h?.enableNotifications === true,
       );
 
       if (incompleteHabits.length === 0) continue;
