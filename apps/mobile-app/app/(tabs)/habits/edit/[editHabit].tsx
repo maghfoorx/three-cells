@@ -11,6 +11,7 @@ import {
   ScrollView,
   Pressable,
   ActivityIndicator,
+  Switch,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,6 +29,7 @@ const formSchema = z.object({
   name: z.string().min(1, "Habit name is required"),
   colour: z.string().min(1),
   habitQuestion: z.string().min(1, "Question is required"),
+  enableNotifications: z.boolean(),
 });
 
 type FormSchema = z.output<typeof formSchema>;
@@ -62,6 +64,7 @@ export default function EditHabitPage() {
       name: "",
       habitQuestion: "",
       colour: "#FF8A8A",
+      enableNotifications: false,
     },
   });
 
@@ -84,6 +87,7 @@ export default function EditHabitPage() {
         name: singleHabitData.name,
         habitQuestion: singleHabitData.habitQuestion,
         colour: singleHabitData.colour,
+        enableNotifications: singleHabitData?.enableNotifications ?? false,
       });
     }
   }, [singleHabitData, reset]);
@@ -95,6 +99,7 @@ export default function EditHabitPage() {
         name: data.name,
         colour: data.colour,
         habitQuestion: data.habitQuestion,
+        enableNotifications: data.enableNotifications,
       });
 
       router.back();
@@ -262,6 +267,37 @@ export default function EditHabitPage() {
                     {errors.colour.message}
                   </Text>
                 )}
+              </View>
+
+              {/* Notifications Field */}
+              <View className="mb-6">
+                <Text className="text-sm font-medium text-gray-700 mb-2">
+                  Notifications
+                </Text>
+                <View className="bg-white border border-gray-300 rounded-md p-3">
+                  <View className="flex-row justify-between items-center">
+                    <View className="flex-1 mr-4">
+                      <Text className="text-base font-medium text-gray-900">
+                        Enable Notifications
+                      </Text>
+                      <Text className="text-sm text-gray-600 mt-1">
+                        Get reminders to complete this habit
+                      </Text>
+                    </View>
+                    <Controller
+                      control={control}
+                      name="enableNotifications"
+                      render={({ field: { onChange, value } }) => (
+                        <Switch
+                          value={value}
+                          onValueChange={onChange}
+                          trackColor={{ false: "#d1d5db", true: "#10b981" }}
+                          thumbColor={value ? "#ffffff" : "#ffffff"}
+                        />
+                      )}
+                    />
+                  </View>
+                </View>
               </View>
 
               {/* Action Buttons */}

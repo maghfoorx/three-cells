@@ -95,6 +95,7 @@ const schema = defineSchema({
       startDate: v.optional(v.number()), // ISO date (for calculating next occurrences)
     }),
 
+    enableNotifications: v.optional(v.boolean()), // whether to send notifications for this habit
     updatedAt: v.optional(v.number()),
   }).index("by_user", ["userId"]),
 

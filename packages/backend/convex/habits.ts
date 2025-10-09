@@ -41,6 +41,7 @@ export const createNewUserHabit = mutation({
     name: v.string(),
     colour: v.string(),
     habitQuestion: v.string(),
+    enableNotifications: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -56,6 +57,7 @@ export const createNewUserHabit = mutation({
       colour: args.colour,
       habitQuestion: args.habitQuestion,
       type: "yes_no",
+      enableNotifications: args?.enableNotifications ?? false,
 
       frequency: {
         mode: "daily",
@@ -480,6 +482,7 @@ export const updateHabit = mutation({
     name: v.string(),
     colour: v.string(),
     habitQuestion: v.string(),
+    enableNotifications: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -494,6 +497,8 @@ export const updateHabit = mutation({
       name: args.name,
       colour: args.colour,
       habitQuestion: args.habitQuestion,
+      enableNotifications:
+        args?.enableNotifications ?? habit.enableNotifications ?? false,
       updatedAt: Date.now(),
     });
 
@@ -502,6 +507,8 @@ export const updateHabit = mutation({
       name: args.name,
       colour: args.colour,
       habitQuestion: args.habitQuestion,
+      enableNotifications:
+        args?.enableNotifications ?? habit.enableNotifications ?? false,
       updatedAt: Date.now(),
     };
   },

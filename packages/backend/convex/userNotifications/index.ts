@@ -71,9 +71,11 @@ export const checkAndSendHabitReminders = internalMutation({
         submissions.map((s) => s.habitId.toString()),
       );
 
-      // Filter habits that are NOT submitted today
+      // Filter habits that are NOT submitted today AND have notifications enabled
       const incompleteHabits = habits.filter(
-        (h) => !submittedHabitIds.has(h._id.toString()),
+        (h) =>
+          !submittedHabitIds.has(h._id.toString()) &&
+          h.enableNotifications === true,
       );
 
       if (incompleteHabits.length === 0) continue;
