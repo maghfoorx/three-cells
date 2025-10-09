@@ -162,8 +162,7 @@ export default function CreateHabitScreen({ onNext }: CreateHabitScreenProps) {
               </Text>
 
               <Text className="text-lg text-gray-600 text-center leading-relaxed">
-                Make it specific, make it yours, and most importantly - make it
-                small enough that you cannot say no.
+                Make it specific, make it yours.
               </Text>
             </View>
 
@@ -190,33 +189,6 @@ export default function CreateHabitScreen({ onNext }: CreateHabitScreenProps) {
                 {errors.name && (
                   <Text className="text-red-500 text-sm mt-1">
                     {errors.name.message}
-                  </Text>
-                )}
-              </View>
-
-              {/* Colour Field */}
-              <View>
-                <Text className="text-sm font-medium text-gray-700 mb-2">
-                  Choose a Color*
-                </Text>
-                <View className="flex-row flex-wrap gap-2">
-                  {habitsFormColourOptions.map((habitColour) => (
-                    <TouchableOpacity
-                      key={habitColour}
-                      onPress={() => setValue("colour", habitColour)}
-                      className={clsx("h-8 w-8 rounded-md border-2", {
-                        "border-gray-900": habitColour === selectedColour,
-                        "border-gray-100": habitColour !== selectedColour,
-                      })}
-                      style={{
-                        backgroundColor: habitColour,
-                      }}
-                    />
-                  ))}
-                </View>
-                {errors.colour && (
-                  <Text className="text-red-500 text-sm mt-1">
-                    {errors.colour.message}
                   </Text>
                 )}
               </View>
@@ -262,6 +234,33 @@ export default function CreateHabitScreen({ onNext }: CreateHabitScreenProps) {
                 {errors.habitQuestion && (
                   <Text className="text-red-500 text-sm mt-1">
                     {errors.habitQuestion.message}
+                  </Text>
+                )}
+              </View>
+
+              {/* Colour Field */}
+              <View>
+                <Text className="text-sm font-medium text-gray-700 mb-2">
+                  Choose a Color*
+                </Text>
+                <View className="flex-row flex-wrap gap-2">
+                  {habitsFormColourOptions.map((habitColour) => (
+                    <TouchableOpacity
+                      key={habitColour}
+                      onPress={() => setValue("colour", habitColour)}
+                      className={clsx("h-8 w-8 rounded-md border-2", {
+                        "border-gray-900": habitColour === selectedColour,
+                        "border-gray-100": habitColour !== selectedColour,
+                      })}
+                      style={{
+                        backgroundColor: habitColour,
+                      }}
+                    />
+                  ))}
+                </View>
+                {errors.colour && (
+                  <Text className="text-red-500 text-sm mt-1">
+                    {errors.colour.message}
                   </Text>
                 )}
               </View>

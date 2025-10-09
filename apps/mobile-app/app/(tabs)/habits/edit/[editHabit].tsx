@@ -208,33 +208,6 @@ export default function EditHabitPage() {
                 )}
               </View>
 
-              {/* Colour Field */}
-              <View className="mb-4">
-                <Text className="text-sm font-medium text-gray-700 mb-2">
-                  Colour*
-                </Text>
-                <View className="flex-row flex-wrap gap-2">
-                  {habitsFormColourOptions.map((habitColour) => (
-                    <TouchableOpacity
-                      key={habitColour}
-                      onPress={() => setValue("colour", habitColour)}
-                      className={clsx("h-10 w-10 rounded-md border-2", {
-                        "border-gray-900": habitColour === selectedColour,
-                        "border-gray-300": habitColour !== selectedColour,
-                      })}
-                      style={{
-                        backgroundColor: habitColour,
-                      }}
-                    />
-                  ))}
-                </View>
-                {errors.colour && (
-                  <Text className="text-red-500 text-sm mt-1">
-                    {errors.colour.message}
-                  </Text>
-                )}
-              </View>
-
               {/* Question Field */}
               <View className="mb-6">
                 <Text className="text-sm font-medium text-gray-700 mb-2">
@@ -264,29 +237,31 @@ export default function EditHabitPage() {
                 )}
               </View>
 
-              {/* Current Habit Info */}
-              <View className="mb-6 bg-white/50 rounded-md p-4 border border-gray-200">
+              {/* Colour Field */}
+              <View className="mb-4">
                 <Text className="text-sm font-medium text-gray-700 mb-2">
-                  Current habit info
+                  Colour*
                 </Text>
-                <View className="space-y-1">
-                  <Text className="text-sm text-gray-600">
-                    <Text className="font-medium">Type:</Text>{" "}
-                    {singleHabitData.type === "yes_no"
-                      ? "Yes/No"
-                      : singleHabitData.type}
-                  </Text>
-                  <Text className="text-sm text-gray-600">
-                    <Text className="font-medium">Frequency:</Text>{" "}
-                    {singleHabitData.frequency.mode}
-                  </Text>
-                  {singleHabitData.updatedAt && (
-                    <Text className="text-sm text-gray-600">
-                      <Text className="font-medium">Last updated:</Text>{" "}
-                      {new Date(singleHabitData.updatedAt).toLocaleDateString()}
-                    </Text>
-                  )}
+                <View className="flex-row flex-wrap gap-2">
+                  {habitsFormColourOptions.map((habitColour) => (
+                    <TouchableOpacity
+                      key={habitColour}
+                      onPress={() => setValue("colour", habitColour)}
+                      className={clsx("h-10 w-10 rounded-md border-2", {
+                        "border-gray-900": habitColour === selectedColour,
+                        "border-gray-300": habitColour !== selectedColour,
+                      })}
+                      style={{
+                        backgroundColor: habitColour,
+                      }}
+                    />
+                  ))}
                 </View>
+                {errors.colour && (
+                  <Text className="text-red-500 text-sm mt-1">
+                    {errors.colour.message}
+                  </Text>
+                )}
               </View>
 
               {/* Action Buttons */}

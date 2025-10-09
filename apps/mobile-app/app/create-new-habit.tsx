@@ -149,33 +149,6 @@ export default function CreateNewHabitPage() {
                 )}
               </View>
 
-              {/* Colour Field */}
-              <View className="mb-4">
-                <Text className="text-sm font-medium text-gray-700 mb-2">
-                  Colour*
-                </Text>
-                <View className="flex-row flex-wrap gap-2">
-                  {habitsFormColourOptions.map((habitColour) => (
-                    <TouchableOpacity
-                      key={habitColour}
-                      onPress={() => setValue("colour", habitColour)}
-                      className={clsx("h-10 w-10 rounded-md border-2", {
-                        "border-gray-900": habitColour === selectedColour,
-                        "border-gray-300": habitColour !== selectedColour,
-                      })}
-                      style={{
-                        backgroundColor: habitColour,
-                      }}
-                    />
-                  ))}
-                </View>
-                {errors.colour && (
-                  <Text className="text-red-500 text-sm mt-1">
-                    {errors.colour.message}
-                  </Text>
-                )}
-              </View>
-
               {/* Question Field */}
               <View className="mb-4">
                 <Text className="text-sm font-medium text-gray-700 mb-2">
@@ -200,6 +173,33 @@ export default function CreateNewHabitPage() {
                 {errors.habitQuestion && (
                   <Text className="text-red-500 text-sm mt-1">
                     {errors.habitQuestion.message}
+                  </Text>
+                )}
+              </View>
+
+              {/* Colour Field */}
+              <View className="mb-4">
+                <Text className="text-sm font-medium text-gray-700 mb-2">
+                  Colour*
+                </Text>
+                <View className="flex-row flex-wrap gap-2">
+                  {habitsFormColourOptions.map((habitColour) => (
+                    <TouchableOpacity
+                      key={habitColour}
+                      onPress={() => setValue("colour", habitColour)}
+                      className={clsx("h-10 w-10 rounded-md border-2", {
+                        "border-gray-900": habitColour === selectedColour,
+                        "border-gray-300": habitColour !== selectedColour,
+                      })}
+                      style={{
+                        backgroundColor: habitColour,
+                      }}
+                    />
+                  ))}
+                </View>
+                {errors.colour && (
+                  <Text className="text-red-500 text-sm mt-1">
+                    {errors.colour.message}
                   </Text>
                 )}
               </View>
