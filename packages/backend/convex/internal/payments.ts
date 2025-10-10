@@ -81,6 +81,14 @@ export const unsubscribeRevenueCatSubscription = internalMutationGeneric({
   handler: async (ctx, args) => {
     const userId = args.userId;
 
+    const user = await ctx.db.get(userId);
+
+    if (!user) {
+      // No user found — safely exit
+      console.warn(`User ${userId} not found. Skipping unsubscribe.`);
+      return;
+    }
+
     if (args.productId === "com.threecells.lifetime") {
       await ctx.db.patch(userId, {
         hasLifetimeAccess: false,
