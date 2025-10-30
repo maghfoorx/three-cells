@@ -13,6 +13,7 @@
     "@convex-dev/expo-push-notifications": "^0.2.6",
     "@convex-dev/migrations": "^0.2.7",
     "axios": "^1.8.4",
+    "bluebird": "^3.7.2",
     "convex": "^1.24.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.18",
@@ -20,6 +21,7 @@
     "stripe": "^18.2.1"
   },
   "devDependencies": {
+    "@types/bluebird": "^3.5.42",
     "@types/node": "^20"
   }
 }
