@@ -32,7 +32,33 @@ export default function TasksPage() {
   }, [userTasks]);
 
   if (userTasks === undefined) {
-    return <LoadingScreen pictureName="todos-loading.png" />;
+    return (
+      <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+        <View className="px-6 py-4 flex flex-row justify-between items-center">
+          <View>
+            <Text className="text-2xl font-bold text-gray-900">Tasks</Text>
+            <Text className="text-base text-gray-600 mt-1">
+              - pending, - completed
+            </Text>
+          </View>
+          <Pressable
+            onPress={() => router.navigate("/create-new-task")}
+            className="w-12 h-12 rounded-md bg-white/80 items-center justify-center"
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+              elevation: 4,
+            }}
+            disabled
+          >
+            <PlusIcon size={20} color="#6B7280" />
+          </Pressable>
+        </View>
+        <LoadingScreen pictureName="todos-loading.png" />
+      </SafeAreaView>
+    );
   }
 
   return (

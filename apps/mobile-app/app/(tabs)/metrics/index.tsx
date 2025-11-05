@@ -20,7 +20,7 @@ export default function MetricsPage() {
   );
 
   const renderContent = () => {
-    if (!allSubmissions) {
+    if (allSubmissions === undefined) {
       // Loading state
       return <LoadingScreen pictureName="habits-loading.png" />;
     }
