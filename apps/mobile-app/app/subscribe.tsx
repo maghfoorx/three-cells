@@ -5,10 +5,10 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  Switch,
   Alert,
+  Pressable,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, FontAwesome } from "@expo/vector-icons";
 import Purchases, { PurchasesOfferings } from "react-native-purchases";
 import OnboardingContainer from "@/components/pages/onboarding/OnboardingContainer";
 import OnboardingButton from "@/components/pages/onboarding/OnboardingButton";
@@ -20,15 +20,15 @@ import { api } from "@packages/backend/convex/_generated/api";
 type ProductIdentifier =
   | "com.threecells.weekly"
   | "com.threecells.weekly.notrial"
-  | "com.threecells.lifetime";
+  | "com.threecells.lifetime"
+  | "com.threecells.yearly.new";
 
 export default function PricingScreen({
   onComplete,
 }: {
   onComplete?: () => void;
 }) {
-  const [selectedPackage, setSelectedPackage] = useState<string>("weekly");
-  const [freeTrialEnabled, setFreeTrialEnabled] = useState<boolean>(true);
+  const [selectedPackage, setSelectedPackage] = useState<string>("yearly");
   const [offerings, setOfferings] = useState<PurchasesOfferings | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [processingPayment, setProcessingPayment] = useState<boolean>(false);
@@ -68,18 +68,15 @@ export default function PricingScreen({
       await Purchases.logIn(user._id);
       let packageToPurchase;
 
-      if (selectedPackage === "lifetime") {
+      if (selectedPackage === "yearly") {
+        packageToPurchase = offerings.current.annual;
+      } else if (selectedPackage === "lifetime") {
         packageToPurchase = offerings.current.lifetime;
       } else {
-        // For weekly, choose based on free trial toggle
-        if (freeTrialEnabled) {
-          packageToPurchase = offerings.current.weekly; // Has intro price/trial
-        } else {
-          // Find the weekly_notrial package from availablePackages
-          packageToPurchase = offerings.current.availablePackages.find(
-            (pkg) => pkg.identifier === "weekly_notrial",
-          );
-        }
+        // Weekly without trial
+        packageToPurchase = offerings.current.availablePackages.find(
+          (pkg) => pkg.identifier === "weekly_notrial",
+        );
       }
 
       if (!packageToPurchase) {
@@ -89,8 +86,6 @@ export default function PricingScreen({
 
       const { customerInfo } =
         await Purchases.purchasePackage(packageToPurchase);
-
-      console.log("CUSTOMER_INFO", JSON.stringify(customerInfo, null, 2));
 
       const entitlement =
         customerInfo.entitlements.active["three-cells-subscriptions"];
@@ -109,7 +104,6 @@ export default function PricingScreen({
     } catch (error: any) {
       console.log(JSON.stringify(error, null, 2), "PURCHASE_ERROR");
       if (error.userCancelled) {
-        // User cancelled, no need to show error
         return;
       }
       Alert.alert("Error", "Failed to complete purchase. Please try again.");
@@ -119,29 +113,65 @@ export default function PricingScreen({
   };
 
   const getButtonText = () => {
-    if (processingPayment) {
-      return "Processing...";
-    }
-
-    if (selectedPackage === "lifetime") {
-      return "Get Lifetime Access 🙌";
-    }
-    return freeTrialEnabled ? "Try 7 Days Free 🙌" : "Start Weekly Plan 🙌";
+    if (processingPayment) return "Processing...";
+    if (selectedPackage === "lifetime") return "Get Lifetime Access";
+    if (selectedPackage === "yearly") return "Start Free Trial";
+    return "Start Weekly Plan";
   };
 
-  const getWeeklyPackage = () => {
-    if (!offerings?.current) return null;
-
-    if (freeTrialEnabled) {
-      return offerings.current.weekly; // Has intro price
-    } else {
-      return offerings.current.availablePackages.find(
-        (pkg) => pkg.identifier === "weekly_notrial",
-      );
+  const getBillingText = () => {
+    if (selectedPackage === "yearly") {
+      const yearlyPrice =
+        offerings?.current?.annual?.product.priceString || "$48";
+      return `Then ${yearlyPrice}/year`;
     }
+    if (selectedPackage === "weekly") {
+      const weeklyPrice =
+        offerings?.current?.availablePackages.find(
+          (pkg) => pkg.identifier === "weekly_notrial",
+        )?.product.priceString || "$3";
+      return `Billed ${weeklyPrice}/week`;
+    }
+    const lifetimePrice =
+      offerings?.current?.lifetime?.product.priceString || "$30";
+    return `One-time payment of ${lifetimePrice}`;
   };
 
-  const weeklyPackage = getWeeklyPackage();
+  const getTrustLine = () => {
+    if (selectedPackage === "yearly") {
+      return "No payment today • Free for 7 days • Cancel anytime";
+    }
+    return "No commitment. Cancel anytime.";
+  };
+
+  const calculateMonthlyCost = (yearlyPrice: string) => {
+    const price = parseFloat(yearlyPrice.replace(/[^0-9.]/g, ""));
+    return `$${(price / 12).toFixed(0)}/mo`;
+  };
+
+  const calculateSavings = () => {
+    const weeklyPrice = parseFloat(
+      offerings?.current?.availablePackages
+        .find((pkg) => pkg.identifier === "weekly_notrial")
+        ?.product.priceString?.replace(/[^0-9.]/g, "") || "3",
+    );
+    const yearlyPrice = parseFloat(
+      offerings?.current?.annual?.product.priceString?.replace(
+        /[^0-9.]/g,
+        "",
+      ) || "48",
+    );
+    const weeklyAnnual = weeklyPrice * 52;
+    const savings = Math.round(
+      ((weeklyAnnual - yearlyPrice) / weeklyAnnual) * 100,
+    );
+    return savings;
+  };
+
+  const yearlyPackage = offerings?.current?.annual;
+  const weeklyPackage = offerings?.current?.availablePackages.find(
+    (pkg) => pkg.identifier === "weekly_notrial",
+  );
   const lifetimePackage = offerings?.current?.lifetime;
 
   if (loading) {
@@ -150,164 +180,210 @@ export default function PricingScreen({
 
   return (
     <OnboardingContainer backgroundColor="#fafafa">
-      <View className="flex-1 px-6">
-        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-          {/* Header */}
+      <View className="flex-1">
+        {/* Scrollable Content */}
+        <ScrollView
+          className="flex-1 px-6"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 20 }}
+        >
+          {/* Header - Non-scrolling hero */}
           <View className="items-center mb-8 mt-4">
-            <Text className="text-3xl font-bold text-gray-900 text-center mb-4">
-              Unlock Your Full Potential
+            <Text className="text-3xl font-bold text-gray-900 text-center mb-3">
+              Journal + Habits + Tasks that stick — daily.
             </Text>
-            <Text className="text-lg text-gray-600 text-center leading-relaxed">
-              Get access to all premium features and supercharge your personal
-              growth
+            <Text className="text-base text-gray-600 text-center leading-relaxed mb-2">
+              The only productivity system you'll actually use
             </Text>
+
+            {/* Social Proof */}
+            <View className="bg-white rounded-md p-4 border border-gray-200">
+              <View className="flex-row gap-1 mb-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <FontAwesome
+                    key={star}
+                    name="star"
+                    size={14}
+                    color="#fbbf24"
+                    fill="#fbbf24"
+                  />
+                ))}
+              </View>
+              <Text className="text-sm text-gray-700 italic mb-2">
+                "I've tried everything. This is the first app that's minimal and
+                has everything I need. I actually use it every day."
+              </Text>
+              <Text className="text-xs text-gray-500">
+                — Mags, Software Engineer
+              </Text>
+            </View>
           </View>
 
           {/* Pricing Options */}
-          <View className="mb-6">
-            <Text className="text-xl font-semibold text-gray-900 mb-4">
-              Choose Your Plan
-            </Text>
-
-            {/* Lifetime Option */}
-            <TouchableOpacity
-              onPress={() => setSelectedPackage("lifetime")}
-              className={`mb-4 rounded-md border-2 ${
-                selectedPackage === "lifetime"
+          <View className="">
+            {/* Annual Option - Default Selected */}
+            <Pressable
+              onPress={() => setSelectedPackage("yearly")}
+              className={`mb-3 rounded-md border-2 ${
+                selectedPackage === "yearly"
                   ? "border-green-500 bg-green-50"
                   : "border-gray-200 bg-white"
               }`}
             >
-              <View className="p-5 relative">
-                {/* Best Value Badge */}
-                <View className="absolute -top-2 left-4 bg-orange-500 px-3 py-1 rounded-full">
+              <View className="p-4 relative">
+                {/* Save Badge */}
+                <View className="absolute -top-2 right-4 bg-green-500 px-3 py-1 rounded-full">
                   <Text className="text-xs font-bold text-white">
-                    BEST VALUE
+                    SAVE {calculateSavings()}%
                   </Text>
                 </View>
 
-                <View className="flex-row items-center justify-between mt-2">
+                <View className="flex-row items-center justify-between">
                   <View className="flex-1">
-                    <Text className="text-lg font-bold text-gray-900">
-                      Lifetime Access
+                    <Text className="font-bold text-gray-900 mb-1">
+                      Annual Plan
                     </Text>
-                    <Text className="text-sm text-gray-600 mb-2">
-                      One-time payment
+                    <Text className="text-sm text-green-600 font-semibold mb-2">
+                      7-day free trial included
                     </Text>
-                    <Text className="text-2xl font-bold text-gray-900">
-                      {lifetimePackage?.product.priceString || "$29.99"}
-                    </Text>
+                    <View className="flex-row items-baseline">
+                      <Text className="font-extrabold text-gray-900">
+                        {yearlyPackage?.product.priceString}
+                      </Text>
+                      <Text className="text-sm text-gray-500 ml-2">
+                        {calculateMonthlyCost(
+                          yearlyPackage?.product.priceString || "$48",
+                        )}
+                      </Text>
+                    </View>
                   </View>
                   <View
-                    className={`w-6 h-6 rounded-md border-2 ${
-                      selectedPackage === "lifetime"
+                    className={`w-7 h-7 rounded-full border-2 ${
+                      selectedPackage === "yearly"
                         ? "border-green-500 bg-green-500"
                         : "border-gray-300"
                     } items-center justify-center`}
                   >
-                    {selectedPackage === "lifetime" && (
-                      <Feather name="check" size={12} color="white" />
+                    {selectedPackage === "yearly" && (
+                      <Feather name="check" size={14} color="white" />
                     )}
                   </View>
                 </View>
               </View>
-            </TouchableOpacity>
+            </Pressable>
 
             {/* Weekly Option */}
-            <TouchableOpacity
+            <Pressable
               onPress={() => setSelectedPackage("weekly")}
-              className={`mb-4 rounded-md border-2 ${
+              className={`mb-3 rounded-md border-2 ${
                 selectedPackage === "weekly"
                   ? "border-green-500 bg-green-50"
                   : "border-gray-200 bg-white"
               }`}
             >
-              <View className="p-5 relative">
-                <View className="flex-row items-center justify-between mt-2">
+              <View className="p-4">
+                <View className="flex-row items-center justify-between">
                   <View className="flex-1">
-                    <Text className="text-lg font-bold text-gray-900">
+                    <Text className="font-bold text-gray-900 mb-1">
                       Weekly Plan
                     </Text>
-                    {/* Most prominent price */}
-                    <Text className="text-2xl font-extrabold text-gray-900 mb-1">
-                      {weeklyPackage?.product.priceString || "$2.99"}
-                    </Text>
-                    {/* Subordinate trial info */}
-                    {freeTrialEnabled && (
-                      <Text className="text-sm text-gray-500">
-                        7-day free trial, then weekly billing
+                    <Text className="font-extrabold text-gray-900">
+                      {weeklyPackage?.product.priceString || "$3"}
+                      <Text className="text-sm text-gray-500 font-normal">
+                        /week
                       </Text>
-                    )}
+                    </Text>
                   </View>
                   <View
-                    className={`w-6 h-6 rounded-md border-2 ${
+                    className={`w-7 h-7 rounded-full border-2 ${
                       selectedPackage === "weekly"
                         ? "border-green-500 bg-green-500"
                         : "border-gray-300"
                     } items-center justify-center`}
                   >
                     {selectedPackage === "weekly" && (
-                      <Feather name="check" size={12} color="white" />
+                      <Feather name="check" size={14} color="white" />
                     )}
                   </View>
                 </View>
               </View>
-            </TouchableOpacity>
+            </Pressable>
 
-            {/* Free Trial Toggle - Only show for weekly */}
-            {selectedPackage === "weekly" && (
-              <View className="bg-gray-50 rounded-md p-4 mb-4">
-                <View className="flex-row items-center justify-between">
-                  <View className="flex-1 mr-4">
-                    <Text className="text-sm font-semibold text-gray-900">
-                      Free Trial
+            {/* Lifetime Option */}
+            <Pressable
+              onPress={() => setSelectedPackage("lifetime")}
+              className={`mb-3 rounded-md border-2 ${
+                selectedPackage === "lifetime"
+                  ? "border-green-500 bg-green-50"
+                  : "border-gray-200 bg-white"
+              }`}
+            >
+              <View className="p-4 relative">
+                <View className="flex-row items-center justify-between mt-2">
+                  <View className="flex-1">
+                    <Text className="font-bold text-gray-900 mb-1">
+                      Lifetime Access
                     </Text>
-                    <Text className="text-xs text-gray-600">
-                      {freeTrialEnabled
-                        ? "Start with 7 days free, then continue with weekly billing"
-                        : "Start immediately with weekly billing"}
+                    <Text className="text-sm text-gray-600 mb-2">
+                      One-time payment
+                    </Text>
+                    <Text className="font-extrabold text-gray-900">
+                      {lifetimePackage?.product.priceString || "$30"}
                     </Text>
                   </View>
-                  <Switch
-                    value={freeTrialEnabled}
-                    onValueChange={setFreeTrialEnabled}
-                    trackColor={{ false: "#d1d5db", true: "#10b981" }}
-                    thumbColor={freeTrialEnabled ? "#ffffff" : "#ffffff"}
-                  />
+                  <View
+                    className={`w-7 h-7 rounded-full border-2 ${
+                      selectedPackage === "lifetime"
+                        ? "border-green-500 bg-green-500"
+                        : "border-gray-300"
+                    } items-center justify-center`}
+                  >
+                    {selectedPackage === "lifetime" && (
+                      <Feather name="check" size={14} color="white" />
+                    )}
+                  </View>
                 </View>
               </View>
-            )}
+            </Pressable>
           </View>
-
-          {/* Terms and Privacy */}
         </ScrollView>
 
-        {/* Action Buttons */}
-        <View className="pb-8">
-          <View className="mb-6">
-            <Text className="text-xs text-gray-500 text-center leading-relaxed">
-              By continuing, you agree to our{" "}
-              <Text
-                className="underline"
-                onPress={() => openLink("https://three-cells.com/terms")}
-              >
-                Terms of Service
-              </Text>{" "}
-              and{" "}
-              <Text
-                className="underline"
-                onPress={() => openLink("https://three-cells.com/privacy")}
-              >
-                Privacy Policy
-              </Text>
-              . Cancel anytime. No commitments.
-            </Text>
-          </View>
+        {/* Fixed Footer with CTA */}
+        <View className="px-6 pt-4 bg-white border-t border-gray-200">
+          {/* Billing Info */}
+          {/*<Text className="text-sm text-gray-600 text-center mb-3 font-medium">
+            {getBillingText()}
+          </Text>*/}
+
+          {/* CTA Button */}
           <OnboardingButton
             title={getButtonText()}
             onPress={handlePurchase}
             disabled={processingPayment || loading || user == null}
           />
+
+          {/* Trust Line */}
+          <Text className="text-sm font-bold text-gray-700 text-center mt-3 mb-3">
+            {getTrustLine()}
+          </Text>
+
+          {/* Terms */}
+          <Text className="text-xs text-gray-500 text-center leading-relaxed">
+            By continuing, you agree to our{" "}
+            <Text
+              className="underline"
+              onPress={() => openLink("https://three-cells.com/terms")}
+            >
+              Terms
+            </Text>{" "}
+            and{" "}
+            <Text
+              className="underline"
+              onPress={() => openLink("https://three-cells.com/privacy")}
+            >
+              Privacy Policy
+            </Text>
+          </Text>
         </View>
       </View>
     </OnboardingContainer>
