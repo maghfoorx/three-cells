@@ -13,7 +13,33 @@ export default function HabitsPage() {
   const allUserHabits = useQuery(api.habits.getAllUserHabits);
 
   if (allUserHabits === undefined) {
-    return <LoadingScreen pictureName="habits-loading.png" />;
+    return (
+      <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+        <View className="px-6 py-4 flex flex-row justify-between items-center bg-white">
+          <View>
+            <Text className="text-2xl font-bold text-gray-900">Habits</Text>
+            <Text className="text-base text-gray-500 mt-1">
+              - active habits
+            </Text>
+          </View>
+          <Pressable
+            onPress={() => router.navigate("/create-new-habit")}
+            className="w-12 h-12 rounded-md bg-white/80 items-center justify-center"
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+              elevation: 4,
+            }}
+            disabled
+          >
+            <PlusIcon size={20} color="#6B7280" />
+          </Pressable>
+        </View>
+        <LoadingScreen pictureName="habits-loading.png" />
+      </SafeAreaView>
+    );
   }
 
   return (

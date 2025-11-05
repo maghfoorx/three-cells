@@ -45,10 +45,6 @@ export function UserHabitCard({
     end: format(end, "yyyy-MM-dd"),
   });
 
-  const handleSnapToAlign = () => {
-    scrollViewRef?.current?.scrollToEnd();
-  };
-
   return (
     <Pressable
       onPress={() => {
