@@ -6,6 +6,13 @@ import Purchases, {
   PurchasesOfferings,
   PurchasesPackage,
 } from "react-native-purchases";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
+  Easing,
+} from "react-native-reanimated";
 import OnboardingContainer from "@/components/pages/onboarding/OnboardingContainer";
 import OnboardingButton from "@/components/pages/onboarding/OnboardingButton";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -13,6 +20,7 @@ import { openLink } from "@/utils/openLink";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import ShinyBadge from "@/components/pages/subscribe/ShinyBadge";
+import { format } from "date-fns";
 
 type ProductIdentifier =
   | "com.threecells.weekly"
@@ -29,9 +37,15 @@ export default function PricingScreen({
   const [offerings, setOfferings] = useState<PurchasesOfferings | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [processingPayment, setProcessingPayment] = useState<boolean>(false);
+  const [paymentProgress, setPaymentProgress] = useState<number>(0);
+  const [progressMessage, setProgressMessage] = useState<string>("");
 
   const user = useQuery(api.auth.viewer);
   const updateUserSubscription = useMutation(api.revenuecat.addSusbscription);
+
+  // Animation values
+  const rotation = useSharedValue(0);
+  const progressWidth = useSharedValue(0);
 
   useEffect(() => {
     loadOfferings();
@@ -44,6 +58,38 @@ export default function PricingScreen({
       }
     }
   }, [user]);
+
+  useEffect(() => {
+    if (processingPayment) {
+      // Start spinning animation
+      rotation.value = withRepeat(
+        withTiming(360, {
+          duration: 1000,
+          easing: Easing.linear,
+        }),
+        -1,
+        false,
+      );
+    } else {
+      rotation.value = 0;
+    }
+  }, [processingPayment]);
+
+  useEffect(() => {
+    // Animate progress bar
+    progressWidth.value = withTiming(paymentProgress, {
+      duration: 500,
+      easing: Easing.out(Easing.cubic),
+    });
+  }, [paymentProgress]);
+
+  const animatedRotation = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
+
+  const animatedProgress = useAnimatedStyle(() => ({
+    width: `${progressWidth.value}%`,
+  }));
 
   const loadOfferings = async () => {
     try {
@@ -61,6 +107,9 @@ export default function PricingScreen({
     if (!offerings?.current || user?._id == null) return;
 
     setProcessingPayment(true);
+    setPaymentProgress(0);
+    setProgressMessage("🐦 Getting your account ready...");
+
     try {
       await Purchases.logIn(user._id);
       let packageToPurchase;
@@ -84,24 +133,36 @@ export default function PricingScreen({
       const { customerInfo } =
         await Purchases.purchasePackage(packageToPurchase);
 
+      // First progress update - payment succeeded
+      setPaymentProgress(50);
+      setProgressMessage("✨ Unlocking your best life...");
+
       const entitlement =
         customerInfo.entitlements.active["three-cells-subscriptions"];
 
       const productIdentifier =
         entitlement.productIdentifier as ProductIdentifier;
 
-      console.log(productIdentifier, "PRODUCT_IDENTIFIER");
-
       const result = await updateUserSubscription({
         productId: productIdentifier as any,
         expiresAt: entitlement.expirationDateMillis,
       });
 
+      // Second progress update - backend mutation complete
+      setPaymentProgress(100);
+      setProgressMessage("🎉 All set! Let's build those habits...");
+
       if (result?.isSubscribed || result?.hasLifetimeAccess) {
-        router.replace("/");
+        // Small delay to show completion
+        const today = format(new Date(), "yyyy-MM-dd");
+        setTimeout(() => {
+          router.replace(`/track/${today}`);
+        }, 200);
       }
     } catch (error: any) {
       console.log(JSON.stringify(error, null, 2), "PURCHASE_ERROR");
+      setPaymentProgress(0);
+      setProgressMessage("");
       if (error.userCancelled) {
         return;
       }
@@ -113,9 +174,9 @@ export default function PricingScreen({
 
   const getButtonText = () => {
     if (processingPayment) return "Unlocking...";
-    if (selectedPackage === "lifetime") return "Get Lifetime Access 🙌";
-    if (selectedPackage === "yearly") return "Start Free Trial 🙌";
-    return "Start Weekly Plan 🙌";
+    if (selectedPackage === "lifetime") return "Get Lifetime Access";
+    if (selectedPackage === "yearly") return "Start Free Trial";
+    return "Start Weekly Plan";
   };
 
   const getTrustLine = () => {
@@ -199,10 +260,10 @@ export default function PricingScreen({
                 <View className="flex-row items-center justify-between">
                   <View className="flex-1">
                     <Text className="font-bold text-gray-900 mb-1">
-                      Annual Plan
-                    </Text>
-                    <Text className="text-sm text-green-600 font-semibold mb-2">
-                      7-day free trial included
+                      Annual Plan{" "}
+                      <Text className="text-green-600 font-semibold mb-2">
+                        7-day free trial
+                      </Text>
                     </Text>
                     <View className="flex-row items-baseline">
                       <Text className="text-gray-900">
@@ -241,7 +302,6 @@ export default function PricingScreen({
                       Weekly Plan
                     </Text>
                     <Text className="text-gray-900">
-                      {/* Prefer RevenueCat provided week string (already localized) */}
                       {weeklyPackage?.product.pricePerWeekString} / week
                     </Text>
                   </View>
@@ -298,16 +358,38 @@ export default function PricingScreen({
 
         {/* Fixed Footer with CTA */}
         <View className="px-6 pt-4 bg-white border-t border-gray-200">
-          {/* Billing Info */}
-          {/*<Text className="text-sm text-gray-600 text-center mb-3 font-medium">
-            {getBillingText()}
-          </Text>*/}
+          {/* Progress Bar */}
+          {processingPayment && (
+            <View className="mb-4">
+              <View className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <Animated.View
+                  style={animatedProgress}
+                  className="h-full bg-blue-600 rounded-full"
+                />
+              </View>
+              {/* Progress Message */}
+              {progressMessage && (
+                <Text className="text-sm font-medium text-center mt-2">
+                  {progressMessage}
+                </Text>
+              )}
+            </View>
+          )}
 
           {/* CTA Button */}
           <OnboardingButton
             title={getButtonText()}
             onPress={handlePurchase}
             disabled={processingPayment || loading || user == null}
+            loading={processingPayment}
+            icon={processingPayment ? undefined : "trending-up"}
+            customLoadingIcon={
+              processingPayment ? (
+                <Animated.View style={animatedRotation}>
+                  <Feather name="settings" size={20} color="white" />
+                </Animated.View>
+              ) : undefined
+            }
           />
 
           {/* Trust Line */}

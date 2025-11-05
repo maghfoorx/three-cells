@@ -14,6 +14,7 @@ interface OnboardingButtonProps {
   icon?: keyof typeof Feather.glyphMap;
   loading?: boolean;
   disabled?: boolean;
+  customLoadingIcon?: React.ReactNode;
 }
 
 export default function OnboardingButton({
@@ -23,6 +24,7 @@ export default function OnboardingButton({
   icon,
   loading = false,
   disabled = false,
+  customLoadingIcon,
 }: OnboardingButtonProps) {
   const isPrimary = variant === "primary";
   const scale = useSharedValue(1);
@@ -57,7 +59,11 @@ export default function OnboardingButton({
         } ${disabled || loading ? "opacity-50" : ""}`}
       >
         {loading ? (
-          <ActivityIndicator color={isPrimary ? "white" : "#374151"} />
+          customLoadingIcon ? (
+            <>{customLoadingIcon}</>
+          ) : (
+            <ActivityIndicator color={isPrimary ? "white" : "#374151"} />
+          )
         ) : (
           <>
             {icon && (
