@@ -2,6 +2,8 @@ import { useForm, Controller } from "react-hook-form";
 import {
   CalendarIcon,
   Square3Stack3DIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
 } from "react-native-heroicons/outline";
 
 import color from "color";
@@ -23,7 +25,7 @@ import { z } from "zod";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { format } from "date-fns";
+import { addDays, format, isAfter, subDays } from "date-fns";
 import { router } from "expo-router";
 import { SCORE_COLORS } from "@/utils/types";
 import DailyHighlights from "./pages/track/DailyHighlights";
@@ -33,6 +35,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import clsx from "clsx";
 
 const formSchema = z.object({
   summary: z.string().min(1, "Summary is required"),
@@ -174,6 +177,10 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
   const scrollViewRef = useRef<ScrollView>(null);
   const [showFullScreenEditor, setShowFullScreenEditor] = useState(false);
   const parsedDate = format(date, "yyyy-MM-dd");
+
+  const previousDay = format(subDays(date, 1), "yyyy-MM-dd");
+  const nextDay = format(addDays(date, 1), "yyyy-MM-dd");
+  const isNextDayInFuture = isAfter(addDays(date, 1), new Date());
 
   const handleOpenEditor = () => {
     setShowFullScreenEditor(true);
@@ -320,14 +327,38 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
       >
         {/* Header */}
         <View className="px-6 py-4 flex flex-row justify-between items-center">
-          <View>
-            <Text className="text-2xl font-bold text-gray-900">
-              {format(parsedDate, "EEEE")}
-            </Text>
-            <Text className="text-base text-gray-500 mt-1">
-              {format(parsedDate, "MMMM do, yyyy")}
-            </Text>
+          <View className="flex flex-row rounded-r-full rounded-l-full bg-white/80">
+            <Pressable
+              onPress={() => router.navigate(`/track/${previousDay}`)}
+              className="w-12 h-12 items-center justify-center"
+            >
+              <ChevronLeftIcon size={20} color="#6B7280" />
+            </Pressable>
+            <View className="my-2 border-[0.5px] border-gray-600"></View>
+            <Pressable
+              onPress={() => router.navigate(`/track/${nextDay}`)}
+              className={"w-12 h-12 items-center justify-center"}
+              disabled={isNextDayInFuture}
+            >
+              <ChevronRightIcon
+                size={20}
+                color={isNextDayInFuture ? "#E5E7EB" : "#6B7280"}
+              />
+            </Pressable>
           </View>
+
+          {!isToday && (
+            <View>
+              <Pressable
+                onPress={navigateToToday}
+                className="h-12 rounded-l-full rounded-r-full px-6 py-1 bg-white flex items-center justify-center"
+              >
+                <Text className="text-sm" style={{ color: "#6B7280" }}>
+                  Go to today
+                </Text>
+              </Pressable>
+            </View>
+          )}
 
           <View className="flex flex-row rounded-r-full rounded-l-full bg-white/80">
             <Pressable
@@ -345,17 +376,14 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
             </Pressable>
           </View>
         </View>
-
-        {!isToday && (
-          <View className="px-6 mb-2">
-            <TouchableOpacity
-              onPress={navigateToToday}
-              className="flex items-center justify-center bg-blue-200/80 py-2"
-            >
-              <Text>Go to today</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        <View className="px-6 py-4">
+          <Text className="text-2xl text-center font-bold text-gray-900">
+            {format(parsedDate, "EEEE")}
+          </Text>
+          <Text className="text-base text-center text-gray-500 mt-1">
+            {format(parsedDate, "MMMM do, yyyy")}
+          </Text>
+        </View>
 
         <ScrollView
           ref={scrollViewRef}
