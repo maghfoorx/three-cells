@@ -12,6 +12,7 @@ import LoadingScreen from "@/components/LoadingScreen";
 import { openLink } from "@/utils/openLink";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
+import ShinyBadge from "@/components/pages/subscribe/ShinyBadge";
 
 type ProductIdentifier =
   | "com.threecells.weekly"
@@ -188,10 +189,8 @@ export default function PricingScreen({
             >
               <View className="p-4 relative">
                 {/* Save Badge */}
-                <View className="absolute -top-2 right-4 bg-green-500 px-3 py-1 rounded-full">
-                  <Text className="text-xs font-bold text-white">
-                    BEST VALUE
-                  </Text>
+                <View className="absolute -top-3 right-4 ">
+                  <ShinyBadge />
                 </View>
 
                 <View className="flex-row items-center justify-between">
@@ -204,7 +203,7 @@ export default function PricingScreen({
                     </Text>
                     <View className="flex-row items-baseline">
                       <Text className="text-gray-900">
-                        {yearlyPackage.product.pricePerYearString} / year
+                        {yearlyPackage?.product.pricePerYearString} / year
                       </Text>
                     </View>
                   </View>
