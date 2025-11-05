@@ -37,9 +37,8 @@ const DailyHighlights = ({ date }: DailyHighlightsProps) => {
   if (isLoading) {
     return (
       <View className="bg-gray-50 rounded-md p-4">
-        <View className="h-4 bg-gray-200 rounded w-32 mb-3" />
-        <View className="h-3 bg-gray-200 rounded w-full mb-2" />
-        <View className="h-3 bg-gray-200 rounded w-3/4" />
+        <View className="h-4 bg-gray-200 rounded w-32 mb-2" />
+        <View className="h-3 bg-gray-200 rounded w-full" />
       </View>
     );
   }
