@@ -45,8 +45,6 @@ export default function PricingScreen({
     }
   }, [user]);
 
-  console.log(JSON.stringify(offerings), "ARE_OFFERINGS");
-
   const loadOfferings = async () => {
     try {
       setLoading(true);
@@ -91,6 +89,8 @@ export default function PricingScreen({
 
       const productIdentifier =
         entitlement.productIdentifier as ProductIdentifier;
+
+      console.log(productIdentifier, "PRODUCT_IDENTIFIER");
 
       const result = await updateUserSubscription({
         productId: productIdentifier as any,
@@ -147,10 +147,10 @@ export default function PricingScreen({
           {/* Header - Non-scrolling hero */}
           <View className="items-center mb-8 mt-4">
             <Text className="text-3xl font-bold text-gray-900 text-center mb-3">
-              Journal + Habits + Tasks that stick — daily.
+              Finally build your best life
             </Text>
             <Text className="text-base text-gray-600 text-center leading-relaxed mb-2">
-              The only productivity system you'll actually use
+              The only app that will help you achieve your goals
             </Text>
 
             {/* Social Proof */}
@@ -168,7 +168,10 @@ export default function PricingScreen({
               </View>
               <Text className="text-sm text-gray-700 italic mb-2">
                 "I've tried everything. This is the first app that's minimal and
-                has everything I need. I actually use it every day."
+                has everything I need. I actually use it every day. Within 30
+                days I consistently started working out. Journaling has also
+                helped see what I do on my best days. The app is very simple,
+                clean and does not spam me with notifications."
               </Text>
               <Text className="text-xs text-gray-500">
                 — Mags, Software Engineer
