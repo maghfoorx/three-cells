@@ -57,6 +57,10 @@ export default function AccountPage() {
     );
   };
 
+  const isEmailHiddenByApple = user?.email?.includes(
+    "@privaterelay.appleid.com",
+  );
+
   const isLoading = user === undefined;
 
   if (isLoading) {
@@ -79,13 +83,17 @@ export default function AccountPage() {
           {/* User Profile Section */}
           <View className="flex gap-4 bg-gray-100 rounded-md py-4 px-4">
             <View className="flex flex-row gap-4 items-center">
-              <Image
-                source={{ uri: user?.image }}
-                style={{ width: 50, height: 50, borderRadius: 25 }}
-              />
+              {user?.image != null && (
+                <Image
+                  source={{ uri: user?.image }}
+                  style={{ width: 50, height: 50, borderRadius: 25 }}
+                />
+              )}
               <View>
                 <Text className="font-semibold text-lg">{user?.name}</Text>
-                <Text>{user?.email}</Text>
+                {!isEmailHiddenByApple && user?.email != null && (
+                  <Text>{user?.email}</Text>
+                )}
               </View>
             </View>
           </View>
@@ -105,9 +113,10 @@ export default function AccountPage() {
 
           {hasActiveSubscription && (
             <View className="px-4 py-4 bg-yellow-100 mt-4 rounded-md">
-              <Text className="text-xl font-semibold mb-2">Weekly Plan</Text>
+              <Text className="text-xl font-semibold mb-2">Subscribed</Text>
               <Text className="mb-4">
-                You are currently subscribed to the weekly plan.
+                You are currently subscribed to three cells and have access to
+                all features!
               </Text>
               <TouchableOpacity
                 onPress={() => {
@@ -243,7 +252,7 @@ const ExportYourDataSection = () => {
   return (
     <View className="px-4 py-4 bg-green-50 mt-4 rounded-md">
       <Text className="text-xl font-semibold mb-2">Export Data</Text>
-      <Text className="mb-4">Export your data in CSV format :)</Text>
+      <Text className="mb-4">Export your data in CSV format</Text>
       <TouchableOpacity
         onPress={handleDownload}
         className={"py-3 px-4 rounded-md bg-green-400"}
