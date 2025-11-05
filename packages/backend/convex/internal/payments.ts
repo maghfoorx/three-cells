@@ -45,6 +45,7 @@ export const updateRevenueCatSubscription = internalMutationGeneric({
       v.literal("com.threecells.weekly"),
       v.literal("com.threecells.weekly.notrial"),
       v.literal("com.threecells.lifetime"),
+      v.literal("com.threecells.yearly.new"),
     ),
     expiresAt: v.union(v.number(), v.null()),
   },
@@ -56,9 +57,11 @@ export const updateRevenueCatSubscription = internalMutationGeneric({
         hasLifetimeAccess: true,
       });
     } else if (
-      ["com.threecells.weekly", "com.threecells.weekly.notrial"].includes(
-        args.productId,
-      )
+      [
+        "com.threecells.weekly",
+        "com.threecells.weekly.notrial",
+        "com.threecells.yearly.new",
+      ].includes(args.productId)
     ) {
       await ctx.db.patch(userId, {
         isSubscribed: true,
@@ -76,6 +79,7 @@ export const unsubscribeRevenueCatSubscription = internalMutationGeneric({
       v.literal("com.threecells.weekly"),
       v.literal("com.threecells.weekly.notrial"),
       v.literal("com.threecells.lifetime"),
+      v.literal("com.threecells.yearly.new"),
     ),
   },
   handler: async (ctx, args) => {
@@ -94,9 +98,11 @@ export const unsubscribeRevenueCatSubscription = internalMutationGeneric({
         hasLifetimeAccess: false,
       });
     } else if (
-      ["com.threecells.weekly", "com.threecells.weekly.notrial"].includes(
-        args.productId,
-      )
+      [
+        "com.threecells.weekly",
+        "com.threecells.weekly.notrial",
+        "com.threecells.yearly.new",
+      ].includes(args.productId)
     ) {
       await ctx.db.patch(userId, {
         isSubscribed: false,

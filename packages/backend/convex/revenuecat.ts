@@ -7,7 +7,8 @@ import { type Id } from "./_generated/dataModel";
 type ProductIdentifier =
   | "com.threecells.weekly"
   | "com.threecells.weekly.notrial"
-  | "com.threecells.lifetime";
+  | "com.threecells.lifetime"
+  | "com.threecells.yearly.new";
 
 // ----------------------
 // Webhook handler
@@ -19,12 +20,11 @@ export const fulfillRevenueCat = internalAction({
       const _payload = JSON.parse(payload);
 
       const event = _payload.event;
-
-      console.log(JSON.stringify(event), "REVENUE_CAT_EVENT");
-
       const productId = event.product_id as ProductIdentifier;
-
       const userId = event?.app_user_id as Id<"users">;
+
+      console.log(event.type, productId, userId, "REVENUE_CAT_EVENT");
+
       if (!userId) throw new Error("Missing app_user_id in payload");
 
       switch (event.type) {
@@ -100,6 +100,7 @@ export const addSusbscription = mutation({
       v.literal("com.threecells.weekly"),
       v.literal("com.threecells.weekly.notrial"),
       v.literal("com.threecells.lifetime"),
+      v.literal("com.threecells.yearly.new"),
     ),
     expiresAt: v.union(v.float64(), v.null()),
   },
@@ -116,7 +117,8 @@ export const addSusbscription = mutation({
       });
     } else if (
       args.productId === "com.threecells.weekly" ||
-      args.productId === "com.threecells.weekly.notrial"
+      args.productId === "com.threecells.weekly.notrial" ||
+      args.productId === "com.threecells.yearly.new"
     ) {
       await ctx.db.patch(userId, {
         isSubscribed: true,
