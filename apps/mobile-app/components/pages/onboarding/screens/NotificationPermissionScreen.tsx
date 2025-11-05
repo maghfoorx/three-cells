@@ -153,7 +153,7 @@ export default function NotificationPermissionScreen({
           <OnboardingButton
             title={
               permissionGranted
-                ? "Notifications Enabled ✓"
+                ? "Notifications Enabled"
                 : "Enable Notifications"
             }
             onPress={

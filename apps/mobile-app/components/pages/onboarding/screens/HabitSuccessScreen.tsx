@@ -1,13 +1,6 @@
 import { useEffect, useRef } from "react";
 import InAppReview from "react-native-in-app-review";
-import {
-  View,
-  Text,
-  Vibration,
-  Animated,
-  ScrollView,
-  Image,
-} from "react-native";
+import { View, Text, Vibration, ScrollView, Image } from "react-native";
 import LottieView from "lottie-react-native";
 import { TrophyIcon } from "react-native-heroicons/outline";
 import OnboardingContainer from "../OnboardingContainer";
@@ -23,47 +16,29 @@ export default function HabitSuccessScreen({
   onNext,
   habitName,
 }: HabitSuccessScreenProps) {
-  const scaleAnim = useRef(new Animated.Value(0)).current;
-  const fadeAnim = useRef(new Animated.Value(0)).current;
   const confettiRef = useRef<LottieView>(null);
 
   useEffect(() => {
     // Start vibration
     Vibration.vibrate([100, 50, 100, 50, 200]);
 
-    // Start UI animations
-    setTimeout(() => {
-      Animated.sequence([
-        Animated.timing(scaleAnim, {
-          toValue: 1,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 400,
-          useNativeDriver: true,
-        }),
-      ]).start();
+    // Play confetti immediately
+    confettiRef.current?.play();
 
-      // Play confetti
-      confettiRef.current?.play();
-
-      // ask for app review
-      if (InAppReview.isAvailable()) {
-        InAppReview.RequestInAppReview()
-          .then((hasFlowFinishedSuccessfully) => {
-            console.log(
-              "In-app review flow completed:",
-              hasFlowFinishedSuccessfully,
-            );
-          })
-          .catch((error) => {
-            console.warn("In-app review error:", error);
-          });
-      }
-    }, 200);
-  }, [scaleAnim, fadeAnim]);
+    // ask for app review
+    if (InAppReview.isAvailable()) {
+      InAppReview.RequestInAppReview()
+        .then((hasFlowFinishedSuccessfully) => {
+          console.log(
+            "In-app review flow completed:",
+            hasFlowFinishedSuccessfully,
+          );
+        })
+        .catch((error) => {
+          console.warn("In-app review error:", error);
+        });
+    }
+  }, []);
 
   return (
     <OnboardingContainer>
@@ -84,10 +59,7 @@ export default function HabitSuccessScreen({
             </View>
 
             {/* Success Message */}
-            <Animated.View
-              style={{ opacity: fadeAnim }}
-              className="items-center gap-4"
-            >
+            <View className="items-center gap-4">
               <View className="items-center gap-4">
                 <Text className="text-4xl font-bold text-gray-900 text-center">
                   Congratulations! 🎉
@@ -114,7 +86,7 @@ export default function HabitSuccessScreen({
                   "{habitName}"
                 </Text>
               </View>
-            </Animated.View>
+            </View>
           </View>
         </ScrollView>
 

@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  Pressable,
+} from "react-native";
 import OnboardingContainer from "../OnboardingContainer";
 import OnboardingButton from "../OnboardingButton";
 import ProgressIndicator from "../ProgressIndicator";
@@ -95,7 +102,7 @@ export default function HabitCategoriesScreen({
 
           <View className="flex gap-2">
             {habitCategories.map((category) => (
-              <TouchableOpacity
+              <Pressable
                 key={category.id}
                 onPress={() => toggleCategory(category.id)}
                 className={`bg-white rounded-xl p-4 border-2 ${
@@ -120,7 +127,7 @@ export default function HabitCategoriesScreen({
                     </View>
                   )}
                 </View>
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </View>
         </ScrollView>
