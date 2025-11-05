@@ -1,15 +1,11 @@
 import { useState, useEffect } from "react";
 import { router } from "expo-router";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  Pressable,
-} from "react-native";
+import { View, Text, ScrollView, Alert, Pressable } from "react-native";
 import { Feather, FontAwesome } from "@expo/vector-icons";
-import Purchases, { PurchasesOfferings } from "react-native-purchases";
+import Purchases, {
+  PurchasesOfferings,
+  PurchasesPackage,
+} from "react-native-purchases";
 import OnboardingContainer from "@/components/pages/onboarding/OnboardingContainer";
 import OnboardingButton from "@/components/pages/onboarding/OnboardingButton";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -46,7 +42,9 @@ export default function PricingScreen({
         router.replace("/");
       }
     }
-  }, [user?._id]);
+  }, [user]);
+
+  console.log(JSON.stringify(offerings), "ARE_OFFERINGS");
 
   const loadOfferings = async () => {
     try {
@@ -113,28 +111,10 @@ export default function PricingScreen({
   };
 
   const getButtonText = () => {
-    if (processingPayment) return "Processing...";
-    if (selectedPackage === "lifetime") return "Get Lifetime Access";
-    if (selectedPackage === "yearly") return "Start Free Trial";
-    return "Start Weekly Plan";
-  };
-
-  const getBillingText = () => {
-    if (selectedPackage === "yearly") {
-      const yearlyPrice =
-        offerings?.current?.annual?.product.priceString || "$48";
-      return `Then ${yearlyPrice}/year`;
-    }
-    if (selectedPackage === "weekly") {
-      const weeklyPrice =
-        offerings?.current?.availablePackages.find(
-          (pkg) => pkg.identifier === "weekly_notrial",
-        )?.product.priceString || "$3";
-      return `Billed ${weeklyPrice}/week`;
-    }
-    const lifetimePrice =
-      offerings?.current?.lifetime?.product.priceString || "$30";
-    return `One-time payment of ${lifetimePrice}`;
+    if (processingPayment) return "Unlocking...";
+    if (selectedPackage === "lifetime") return "Get Lifetime Access 🙌";
+    if (selectedPackage === "yearly") return "Start Free Trial 🙌";
+    return "Start Weekly Plan 🙌";
   };
 
   const getTrustLine = () => {
@@ -144,31 +124,7 @@ export default function PricingScreen({
     return "No commitment. Cancel anytime.";
   };
 
-  const calculateMonthlyCost = (yearlyPrice: string) => {
-    const price = parseFloat(yearlyPrice.replace(/[^0-9.]/g, ""));
-    return `$${(price / 12).toFixed(0)}/mo`;
-  };
-
-  const calculateSavings = () => {
-    const weeklyPrice = parseFloat(
-      offerings?.current?.availablePackages
-        .find((pkg) => pkg.identifier === "weekly_notrial")
-        ?.product.priceString?.replace(/[^0-9.]/g, "") || "3",
-    );
-    const yearlyPrice = parseFloat(
-      offerings?.current?.annual?.product.priceString?.replace(
-        /[^0-9.]/g,
-        "",
-      ) || "48",
-    );
-    const weeklyAnnual = weeklyPrice * 52;
-    const savings = Math.round(
-      ((weeklyAnnual - yearlyPrice) / weeklyAnnual) * 100,
-    );
-    return savings;
-  };
-
-  const yearlyPackage = offerings?.current?.annual;
+  const yearlyPackage = offerings?.current?.annual as PurchasesPackage;
   const weeklyPackage = offerings?.current?.availablePackages.find(
     (pkg) => pkg.identifier === "weekly_notrial",
   );
@@ -234,7 +190,7 @@ export default function PricingScreen({
                 {/* Save Badge */}
                 <View className="absolute -top-2 right-4 bg-green-500 px-3 py-1 rounded-full">
                   <Text className="text-xs font-bold text-white">
-                    SAVE {calculateSavings()}%
+                    BEST VALUE
                   </Text>
                 </View>
 
@@ -247,13 +203,8 @@ export default function PricingScreen({
                       7-day free trial included
                     </Text>
                     <View className="flex-row items-baseline">
-                      <Text className="font-extrabold text-gray-900">
-                        {yearlyPackage?.product.priceString}
-                      </Text>
-                      <Text className="text-sm text-gray-500 ml-2">
-                        {calculateMonthlyCost(
-                          yearlyPackage?.product.priceString || "$48",
-                        )}
+                      <Text className="text-gray-900">
+                        {yearlyPackage.product.pricePerYearString} / year
                       </Text>
                     </View>
                   </View>
@@ -265,7 +216,7 @@ export default function PricingScreen({
                     } items-center justify-center`}
                   >
                     {selectedPackage === "yearly" && (
-                      <Feather name="check" size={14} color="white" />
+                      <Feather name="check" size={12} color="white" />
                     )}
                   </View>
                 </View>
@@ -287,11 +238,9 @@ export default function PricingScreen({
                     <Text className="font-bold text-gray-900 mb-1">
                       Weekly Plan
                     </Text>
-                    <Text className="font-extrabold text-gray-900">
-                      {weeklyPackage?.product.priceString || "$3"}
-                      <Text className="text-sm text-gray-500 font-normal">
-                        /week
-                      </Text>
+                    <Text className="text-gray-900">
+                      {/* Prefer RevenueCat provided week string (already localized) */}
+                      {weeklyPackage?.product.pricePerWeekString} / week
                     </Text>
                   </View>
                   <View
@@ -302,7 +251,7 @@ export default function PricingScreen({
                     } items-center justify-center`}
                   >
                     {selectedPackage === "weekly" && (
-                      <Feather name="check" size={14} color="white" />
+                      <Feather name="check" size={12} color="white" />
                     )}
                   </View>
                 </View>
@@ -324,11 +273,8 @@ export default function PricingScreen({
                     <Text className="font-bold text-gray-900 mb-1">
                       Lifetime Access
                     </Text>
-                    <Text className="text-sm text-gray-600 mb-2">
-                      One-time payment
-                    </Text>
-                    <Text className="font-extrabold text-gray-900">
-                      {lifetimePackage?.product.priceString || "$30"}
+                    <Text className="text-gray-900">
+                      {lifetimePackage?.product.priceString} one-time payment
                     </Text>
                   </View>
                   <View
@@ -339,7 +285,7 @@ export default function PricingScreen({
                     } items-center justify-center`}
                   >
                     {selectedPackage === "lifetime" && (
-                      <Feather name="check" size={14} color="white" />
+                      <Feather name="check" size={12} color="white" />
                     )}
                   </View>
                 </View>
