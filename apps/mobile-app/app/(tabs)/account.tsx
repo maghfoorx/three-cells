@@ -68,7 +68,7 @@ export default function AccountPage() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
       <View className="flex-1">
         {/* Header */}
         <View className="px-6 py-4 flex flex-row justify-between items-center">
