@@ -171,22 +171,43 @@ const HabitDateButton = ({
 };
 
 UserHabitCard.Skeleton = () => {
+  const dates = useMemo(() => {
+    const rawEnd = new Date();
+    const rawStart = addDays(rawEnd, -6);
+    return Array.from({ length: 7 }, (_, i) => addDays(rawStart, i));
+  }, []);
+
   return (
     <motion.div
       layout
-      className="rounded-sm border shadow-sm p-4 flex flex-col gap-4"
+      className="rounded-sm border shadow-sm p-4 flex flex-col gap-4 bg-white"
     >
-      <Skeleton className="h-8 w-[200px] rounded-sm" />
-      <div className="grid grid-cols-7 gap-2">
-        {Array.from({ length: 7 }).map((_, i) => {
-          return (
-            <div key={i}>
-              <Skeleton className="w-full h-10 rounded-sm" />
-            </div>
-          );
-        })}
+      {/* Habit name skeleton */}
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-[18px] w-32" />
+        </div>
       </div>
-      <Skeleton className="h-[34px] w-[200px] rounded-sm" />
+
+      {/* Days grid with spinners */}
+      <div className="grid grid-cols-7 gap-2">
+        {dates.map((date) => (
+          <div key={date.getTime()} className="flex flex-col items-center">
+            <span className="text-sm font-semibold uppercase">
+              {format(date, "EEE")}
+            </span>
+            <span className="text-xs font-thin text-muted-foreground">
+              {format(date, "d")}
+            </span>
+            <div className="h-9 flex items-center justify-center">
+              <Loader2 className="animate-spin text-gray-400" size={20} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Stats skeleton */}
+      <Skeleton className="h-4 w-40" />
     </motion.div>
   );
 };

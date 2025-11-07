@@ -47,12 +47,12 @@ const DynamicTrackLink = () => {
 
 const mainNavItems: NavGroup[] = [
   {
-    label: "Tasks",
+    label: "Habits",
     items: [
       {
-        title: "Tasks",
-        href: "/tasks",
-        icon: ClipboardList,
+        title: "Habits",
+        href: "/habits",
+        icon: ChartNoAxesCombined,
       },
     ],
   },
@@ -76,12 +76,12 @@ const mainNavItems: NavGroup[] = [
     ],
   },
   {
-    label: "Habits",
+    label: "Tasks",
     items: [
       {
-        title: "Habits",
-        href: "/habits",
-        icon: ChartNoAxesCombined,
+        title: "Tasks",
+        href: "/tasks",
+        icon: ClipboardList,
       },
     ],
   },
