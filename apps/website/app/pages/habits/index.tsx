@@ -17,6 +17,8 @@ export default function HabitsPage() {
             <div className="flex flex-col gap-2">
               <UserHabitCard.Skeleton />
               <UserHabitCard.Skeleton />
+              <UserHabitCard.Skeleton />
+              <UserHabitCard.Skeleton />
             </div>
           )}
           <AnimatePresence>

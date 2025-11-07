@@ -15,6 +15,11 @@ import {
 } from "~/components/ui/card";
 import type { DataModel } from "@packages/backend/convex/_generated/dataModel";
 import { api } from "@packages/backend/convex/_generated/api";
+import { Skeleton } from "~/components/ui/skeleton";
+import PerformanceGraph from "./PerformanceGraph";
+import { useState } from "react";
+import { Button } from "~/components/ui/button";
+import StreaksView from "./StreaksGraph";
 
 export default function SingleHabitPage() {
   const params = useParams();
@@ -31,7 +36,10 @@ export default function SingleHabitPage() {
 
   return (
     <div className="flex flex-col h-full flex-1 gap-3 rounded-xl rounded-t-none p-2">
-      <h1 className="font-semibold text-3xl px-4 py-2">{habit?.name}</h1>
+      {habit === undefined && <Skeleton className="h-13 w-48" />}
+      {habit?.name !== undefined && (
+        <h1 className="font-semibold text-3xl px-4 py-2">{habit?.name}</h1>
+      )}
       <div className="flex-1 relative">
         <div className="absolute h-full w-full overflow-y-auto space-y-3">
           <AnimatePresence>
@@ -41,10 +49,19 @@ export default function SingleHabitPage() {
             />
           </AnimatePresence>
 
-          {stats && <HabitStats stats={stats} />}
+          {/* Add the Performance Graph */}
+          <PerformanceGraph
+            habitId={habitId}
+            habitColor={habit?.colour ?? "#00000"}
+          />
+
+          <StreaksView
+            habitId={habitId}
+            habitColor={habit?.colour ?? "#00000"}
+          />
 
           <div className="space-y-6">
-            {stats && <ProgressRings stats={stats} />}
+            <ProgressRings stats={stats} />
             <RecentActivity recentActivity={recentActivity} />
           </div>
         </div>
@@ -63,7 +80,11 @@ const HabitStats = ({ stats }: { stats: any }) => {
           <Flame className="h-4 w-4 text-orange-500" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.currentStreak}</div>
+          {stats?.currentStreak != null ? (
+            <div className="text-2xl font-bold">{stats?.currentStreak}</div>
+          ) : (
+            <Skeleton className="h-8 w-6" />
+          )}
           <p className="text-xs text-muted-foreground">days in a row</p>
         </CardContent>
       </Card>
@@ -74,7 +95,11 @@ const HabitStats = ({ stats }: { stats: any }) => {
           <Award className="h-4 w-4 text-yellow-500" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.longestStreak}</div>
+          {stats?.longestStreak != null ? (
+            <div className="text-2xl font-bold">{stats?.longestStreak}</div>
+          ) : (
+            <Skeleton className="h-8 w-6" />
+          )}
           <p className="text-xs text-muted-foreground">personal record</p>
         </CardContent>
       </Card>
@@ -85,7 +110,11 @@ const HabitStats = ({ stats }: { stats: any }) => {
           <Calendar className="h-4 w-4 text-blue-500" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.thisMonth}</div>
+          {stats?.thisMonth != null ? (
+            <div className="text-2xl font-bold">{stats?.thisMonth}</div>
+          ) : (
+            <Skeleton className="h-8 w-6" />
+          )}
           <p className="text-xs text-muted-foreground">completed days</p>
         </CardContent>
       </Card>
@@ -95,6 +124,7 @@ const HabitStats = ({ stats }: { stats: any }) => {
 
 // Simplified progress rings - no more calculations!
 const ProgressRings = ({ stats }: { stats: any }) => {
+  console.log(stats, "ARE_STATS");
   return (
     <Card className="rounded-sm">
       <CardHeader>
@@ -105,17 +135,31 @@ const ProgressRings = ({ stats }: { stats: any }) => {
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span>This Week</span>
-            <span>{stats.progress.weekCount}/7 days</span>
+            {stats?.progress?.weekCount != null ? (
+              <span>{stats.progress.weekCount}/7 days</span>
+            ) : (
+              <Skeleton className="h-4 w-10" />
+            )}
           </div>
-          <Progress value={stats.progress.week} className="h-2" />
+          <Progress
+            value={stats?.progress?.week != null ? stats.progress.week : 0}
+            className="h-2"
+          />
         </div>
 
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span>This Month</span>
-            <span>{stats.progress.monthCount} days</span>
+            {stats?.progress?.monthCount != null ? (
+              <span>{stats.progress.monthCount} days</span>
+            ) : (
+              <Skeleton className="h-4 w-10" />
+            )}
           </div>
-          <Progress value={stats.progress.month} className="h-2" />
+          <Progress
+            value={stats?.progress?.month != null ? stats.progress.month : 0}
+            className="h-2"
+          />
         </div>
       </CardContent>
     </Card>

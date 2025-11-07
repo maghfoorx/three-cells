@@ -12,8 +12,14 @@ import { useMutation, useQuery } from "convex/react";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Button } from "~/components/ui/button";
 import { Check, Cross, Loader2, X } from "lucide-react";
-import { useMemo, useState, useCallback } from "react";
-import { Link } from "react-router";
+import {
+  useMemo,
+  useState,
+  useCallback,
+  type MouseEventHandler,
+  type MouseEvent,
+} from "react";
+import { Link, useNavigate } from "react-router";
 import { handleHookMutationError } from "~/lib/handleHookMutationError";
 import { Skeleton } from "~/components/ui/skeleton";
 import type { DataModel } from "@packages/backend/convex/_generated/dataModel";
@@ -24,6 +30,7 @@ export function UserHabitCard({
 }: {
   habit: DataModel["userHabits"]["document"];
 }) {
+  const navigate = useNavigate();
   const { start, end, dates } = useMemo(() => {
     const rawEnd = new Date();
     const rawStart = addDays(rawEnd, -6);
@@ -46,24 +53,23 @@ export function UserHabitCard({
   }, [habit.colour]);
 
   return (
-    <div
-      className="rounded-sm border shadow-sm p-4 flex flex-col gap-4"
+    <Link
+      to={`/habits/${habit._id}`}
+      viewTransition
+      className="cursor-pointer rounded-sm border shadow-sm p-4 flex flex-col gap-4 hover:opacity-85 group"
       style={{
         backgroundColor: habitCardColour,
+        textDecoration: "none", // <- remove underline
       }}
     >
       <div className="flex justify-between items-center">
-        <Link
-          to={`/habits/${habit._id}`}
-          viewTransition
-          className="text-sm font-medium text-gray-800 flex items-center gap-2"
-        >
+        <div className="text-sm font-medium text-gray-800 flex items-center gap-2 group-hover:underline">
           <span
             className="w-3 h-3 rounded-full"
             style={{ backgroundColor: habit.colour }}
           ></span>
           {habit.name}
-        </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-7 gap-2">
@@ -78,6 +84,10 @@ export function UserHabitCard({
           );
         })}
       </div>
+      {submissionsForHabit?.currentMonthPerformancePercentage == null &&
+        submissionsForHabit?.lastXDaysSubmissions == null && (
+          <Skeleton className="w-32 h-4" />
+        )}
       {submissionsForHabit?.currentMonthPerformancePercentage != null &&
         submissionsForHabit?.lastXDaysSubmissions != null && (
           <div>
@@ -86,7 +96,7 @@ export function UserHabitCard({
             this month
           </div>
         )}
-    </div>
+    </Link>
   );
 }
 
@@ -106,17 +116,22 @@ const HabitDateButton = ({
     api.habits.toggleYesNoHabitSubmission,
   );
 
-  const toggleSubmission = useCallback(async () => {
-    setIsToggling(true);
-    try {
-      const formattedDate = format(date, "yyyy-MM-dd");
-      await toggleYesNoHabitSubmission({ habitId, dateFor: formattedDate });
-    } catch (err) {
-      handleHookMutationError(err);
-    } finally {
-      setIsToggling(false);
-    }
-  }, [date, habitId, toggleYesNoHabitSubmission]);
+  const toggleSubmission = useCallback(
+    async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+      e.stopPropagation();
+      e.preventDefault();
+      setIsToggling(true);
+      try {
+        const formattedDate = format(date, "yyyy-MM-dd");
+        await toggleYesNoHabitSubmission({ habitId, dateFor: formattedDate });
+      } catch (err) {
+        handleHookMutationError(err);
+      } finally {
+        setIsToggling(false);
+      }
+    },
+    [date, habitId, toggleYesNoHabitSubmission],
+  );
 
   const isChecked = submissions?.some((s) =>
     isSameDay(new Date(s.dateFor), date),
@@ -133,8 +148,8 @@ const HabitDateButton = ({
       <Button
         variant="ghost"
         size="sm"
-        className="rounded-sm"
-        onClick={toggleSubmission}
+        className="rounded-sm cursor-pointer"
+        onClick={(event) => toggleSubmission(event)}
       >
         <motion.div
           key={isChecked ? "checked" : "unchecked"}
@@ -161,7 +176,7 @@ UserHabitCard.Skeleton = () => {
       layout
       className="rounded-sm border shadow-sm p-4 flex flex-col gap-4"
     >
-      <Skeleton className="h-6 w-[200px] rounded-sm" />
+      <Skeleton className="h-8 w-[200px] rounded-sm" />
       <div className="grid grid-cols-7 gap-2">
         {Array.from({ length: 7 }).map((_, i) => {
           return (
@@ -171,7 +186,7 @@ UserHabitCard.Skeleton = () => {
           );
         })}
       </div>
-      <Skeleton className="h-6 w-[200px] rounded-sm" />
+      <Skeleton className="h-[34px] w-[200px] rounded-sm" />
     </motion.div>
   );
 };

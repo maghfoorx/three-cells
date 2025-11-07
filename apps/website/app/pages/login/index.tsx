@@ -2,6 +2,7 @@ import { Button } from "~/components/ui/button";
 import { useAuthActions } from "@convex-dev/auth/react";
 import type { Route } from "./+types/index";
 import GoogleLogo from "./components/GoogleLogo";
+import AppleLogo from "~/components/AppleLogo";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -17,13 +18,22 @@ export default function LoginPage() {
     <main className="flex flex-col gap-2 items-center">
       <div className="flex w-full flex-col gap-4">
         <Button
-          onClick={() => void signIn("google", { redirectTo: "/tasks" })}
+          onClick={() => void signIn("google", { redirectTo: "/track" })}
           variant="outline"
           className="w-full gap-2"
           size={"lg"}
         >
           <GoogleLogo className="h-5 w-5" />
           Continue with Google
+        </Button>
+        <Button
+          onClick={() => void signIn("apple", { redirectTo: "/track" })}
+          variant="outline"
+          className="w-full gap-2"
+          size={"lg"}
+        >
+          <AppleLogo />
+          Continue with Apple
         </Button>
       </div>
     </main>

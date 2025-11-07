@@ -1,4 +1,6 @@
+import { Link } from "react-router";
 import AppleLogo from "~/components/AppleLogo";
+import { Globe, Globe2, Globe2Icon, GlobeLock } from "lucide-react";
 import { cn } from "~/lib/utils";
 
 export default function Home() {
@@ -30,8 +32,9 @@ const HeroSection = () => {
               Built by someone who tried everything else first
             </p>
           </div>
-          <div>
+          <div className="flex flex-row gap-2">
             <AppStoreButton />
+            <WebButton variant="white" />
           </div>
         </div>
         <div className="flex justify-center">
@@ -302,6 +305,27 @@ const FinalCTASection = () => {
         </div>
       </div>
     </section>
+  );
+};
+
+const WebButton = ({ variant = "black" }: { variant?: "black" | "white" }) => {
+  const baseClasses =
+    "inline-flex items-center gap-3 px-4 py-2 bg-white rounded-lg border-2 border-gray-700";
+  const variantClasses = "bg-black text-white decoration";
+
+  return (
+    <Link to="/track" className={cn(baseClasses, variantClasses)}>
+      <Globe2Icon width={30} height={30} color="white" />
+
+      <div className="flex flex-col items-start text-left leading-none">
+        <div className="text-xs font-normal text-white decoration-white">
+          Start on the
+        </div>
+        <div className="text-lg font-semibold -mt-1 text-white decoration-white">
+          Web Version
+        </div>
+      </div>
+    </Link>
   );
 };
 
