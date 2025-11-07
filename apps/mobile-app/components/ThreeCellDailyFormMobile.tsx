@@ -260,7 +260,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
             date_for:
               typeof values.date_for === "string"
                 ? values.date_for
-                : format(new Date(values.date_for), "yyyy-MM-dd"),
+                : format(values.date_for as Date, "yyyy-MM-dd"),
           },
         });
         lastSavedRef.current = { ...values };
