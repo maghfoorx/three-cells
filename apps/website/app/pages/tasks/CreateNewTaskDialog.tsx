@@ -77,6 +77,15 @@ export default function CreateNewTaskDialog() {
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      const active = document.activeElement;
+      const isTyping =
+        active &&
+        (active.tagName === "INPUT" ||
+          active.tagName === "TEXTAREA" ||
+          (active as HTMLElement).isContentEditable);
+
+      if (isTyping) return;
+
       // handle form submission
       if (
         event.key === "Enter" &&
@@ -87,7 +96,7 @@ export default function CreateNewTaskDialog() {
         form.handleSubmit(handleCreateNewTask)();
       }
 
-      // open a new not
+      // open a new note
       if (event.key === "N" && event.shiftKey) {
         event.preventDefault();
         if (dialogOpen === false) {
@@ -119,16 +128,10 @@ export default function CreateNewTaskDialog() {
                   <ClipboardPlus />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent className="rounded-sm">
-                <div className="flex flex-row gap-2 items-center">
-                  <div>New task</div>
-                  <kbd className="rounded-sm bg-background px-2 py-1 font-sans text-xs text-black">
-                    Shift
-                  </kbd>
-                  <kbd className="rounded-sm bg-background px-2 py-1 font-sans text-xs text-black">
-                    N
-                  </kbd>
-                </div>
+              <TooltipContent className="rounded-sm p-0">
+                <kbd className="rounded-sm bg-primary px-2 py-1 text-[9px] text-white">
+                  Shift + N
+                </kbd>
               </TooltipContent>
             </Tooltip>
           </div>

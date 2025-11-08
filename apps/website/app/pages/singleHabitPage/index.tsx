@@ -36,7 +36,11 @@ export default function SingleHabitPage() {
 
   return (
     <div className="flex flex-col h-full flex-1 gap-3 rounded-xl rounded-t-none p-2">
-      {habit === undefined && <Skeleton className="h-13 w-48" />}
+      {habit?.name === undefined && (
+        <h1 className="font-semibold text-3xl px-4 py-2 blur-md">
+          You're Awesome
+        </h1>
+      )}
       {habit?.name !== undefined && (
         <h1 className="font-semibold text-3xl px-4 py-2">{habit?.name}</h1>
       )}
@@ -61,7 +65,7 @@ export default function SingleHabitPage() {
           />
 
           <div className="space-y-6">
-            <ProgressRings stats={stats} />
+            <ProgressRings habit={habit} stats={stats} />
             <RecentActivity recentActivity={recentActivity} />
           </div>
         </div>
@@ -123,8 +127,14 @@ const HabitStats = ({ stats }: { stats: any }) => {
 };
 
 // Simplified progress rings - no more calculations!
-const ProgressRings = ({ stats }: { stats: any }) => {
-  console.log(stats, "ARE_STATS");
+const ProgressRings = ({
+  stats,
+  habit,
+}: {
+  stats: any;
+  habit: DataModel["userHabits"]["document"] | undefined;
+}) => {
+  console.log(habit?.colour, "ARE_STATS");
   return (
     <Card className="rounded-sm">
       <CardHeader>
@@ -144,6 +154,7 @@ const ProgressRings = ({ stats }: { stats: any }) => {
           <Progress
             value={stats?.progress?.week != null ? stats.progress.week : 0}
             className="h-2"
+            color={habit?.colour ?? undefined}
           />
         </div>
 
@@ -159,6 +170,7 @@ const ProgressRings = ({ stats }: { stats: any }) => {
           <Progress
             value={stats?.progress?.month != null ? stats.progress.month : 0}
             className="h-2"
+            color={habit?.colour ?? undefined}
           />
         </div>
       </CardContent>
