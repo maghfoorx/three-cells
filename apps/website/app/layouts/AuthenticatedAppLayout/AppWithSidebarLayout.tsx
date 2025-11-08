@@ -122,6 +122,7 @@ import FullscreenSpinner from "~/components/FullscreenSpinner";
 import BuyThreeCellsButton from "~/components/BuyThreeCellsButton";
 import BuyThreeCellsCard from "~/components/PriceCard";
 import { api } from "@packages/backend/convex/_generated/api";
+import EditHabitDialog from "~/pages/habits/EditHabitDialog";
 
 function AppSidebarHeader({
   breadcrumbs = [],
@@ -132,12 +133,17 @@ function AppSidebarHeader({
   const params = useParams();
 
   const routeBasedActions = useMemo(() => {
+    console.log(location, params, "LOCATION_PARAMS");
     if (location.pathname === "/tasks") {
       return <CreateNewTaskDialog />;
     }
 
     if (location.pathname === "/habits") {
       return <CreateNewHabitDialog />;
+    }
+
+    if (params?.habitId != null) {
+      return <EditHabitDialog habitId={params.habitId} />;
     }
 
     return null;
