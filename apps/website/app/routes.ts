@@ -29,6 +29,10 @@ export default [
     // habits pages
     route("/habits", "pages/habits/index.tsx"),
     route("/habits/:habitId", "pages/singleHabitPage/index.tsx"),
+
+    // metrics pages
+    route("/metrics", "pages/metrics/index.tsx"),
+    route("/metrics/:metricId", "pages/singleMetricPage/index.tsx"),
   ]),
 
   layout("layouts/LegalPagesLayout.tsx", [

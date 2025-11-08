@@ -15,6 +15,7 @@ import { Toaster } from "./components/ui/sonner";
 import PromptClientToRefresh from "./components/PromptClientToRefresh";
 import { TooltipProvider } from "./components/ui/tooltip";
 import FullscreenSpinner from "./components/FullscreenSpinner";
+import AddMetricEntryDialog from "./pages/metrics/AddMetricEntryDialog";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
@@ -107,12 +108,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+const AllDialogs = () => {
+  return (
+    <>
+      <AddMetricEntryDialog />
+    </>
+  );
+};
+
 export default function App() {
   return (
     <TooltipProvider delayDuration={0}>
       <ConvexAuthProvider client={convex}>
         <PromptClientToRefresh />
         <Outlet />
+        <AllDialogs />
       </ConvexAuthProvider>
     </TooltipProvider>
   );

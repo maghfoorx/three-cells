@@ -123,6 +123,9 @@ import BuyThreeCellsButton from "~/components/BuyThreeCellsButton";
 import BuyThreeCellsCard from "~/components/PriceCard";
 import { api } from "@packages/backend/convex/_generated/api";
 import EditHabitDialog from "~/pages/habits/EditHabitDialog";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import CreateNewMetricDialog from "~/pages/metrics/CreateNewMetricDialog";
+import EditMetricDialog from "~/pages/singleMetricPage/EditMetricDialog";
 
 function AppSidebarHeader({
   breadcrumbs = [],
@@ -133,7 +136,6 @@ function AppSidebarHeader({
   const params = useParams();
 
   const routeBasedActions = useMemo(() => {
-    console.log(location, params, "LOCATION_PARAMS");
     if (location.pathname === "/tasks") {
       return <CreateNewTaskDialog />;
     }
@@ -142,8 +144,18 @@ function AppSidebarHeader({
       return <CreateNewHabitDialog />;
     }
 
+    if (location.pathname === "/metrics") {
+      return <CreateNewMetricDialog />;
+    }
+
     if (params?.habitId != null) {
-      return <EditHabitDialog habitId={params.habitId} />;
+      return <EditHabitDialog habitId={params.habitId as Id<"userHabits">} />;
+    }
+
+    if (params?.metricId != null) {
+      return (
+        <EditMetricDialog metricId={params.metricId as Id<"userMetrics">} />
+      );
     }
 
     return null;
@@ -158,6 +170,17 @@ function AppSidebarHeader({
           className="text-xs flex flew-row items-center"
         >
           <ArrowLeft size={14} /> <span>Habits</span>
+        </Link>
+      );
+    }
+    if (params?.metricId != null) {
+      return (
+        <Link
+          to={"/metrics"}
+          viewTransition
+          className="text-xs flex flew-row items-center"
+        >
+          <ArrowLeft size={14} /> <span>Metrics</span>
         </Link>
       );
     }

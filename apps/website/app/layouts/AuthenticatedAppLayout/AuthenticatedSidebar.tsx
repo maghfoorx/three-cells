@@ -9,6 +9,7 @@ import {
   ClipboardList,
   ChartNoAxesCombined,
   Contact,
+  TrendingUpDownIcon,
 } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import {
@@ -82,6 +83,16 @@ const mainNavItems: NavGroup[] = [
         title: "Tasks",
         href: "/tasks",
         icon: ClipboardList,
+      },
+    ],
+  },
+  {
+    label: "Metrics",
+    items: [
+      {
+        title: "Metrics",
+        href: "/metrics",
+        icon: TrendingUpDownIcon,
       },
     ],
   },
