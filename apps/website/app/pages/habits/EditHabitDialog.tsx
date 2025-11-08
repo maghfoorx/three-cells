@@ -143,16 +143,13 @@ export default function EditHabitDialog({
   const deleteHabit = useMutation(api.habits.deleteHabit);
   const handleConfirmDelete = async () => {
     try {
-      // call the delete mutation
-      handleDialogOpenChange(false);
-      navigate("/habits");
       await deleteHabit({ habitId });
-      // close the confirm then the edit dialog
       setConfirmOpen(false);
       setDialogOpen(false);
+      navigate("/habits");
     } catch (err) {
       console.error("Delete error:", err);
-      handleHookMutationError(err); // optional
+      handleHookMutationError(err);
     }
   };
 
