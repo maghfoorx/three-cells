@@ -251,7 +251,7 @@ function MetricTrendChart({
     if (isLoading) {
       return (
         <div className="flex items-center justify-center h-full">
-          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-24 w-full bg-white" />
         </div>
       );
     }

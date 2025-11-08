@@ -32,11 +32,8 @@ export function NavFooter({
     >
       <SidebarGroupContent>
         {hasAccess && (
-          <div className="bg-linear-30 from-white to-blue-300 rounded-md px-4 py-2">
-            <div className="font-semibold flex flex-row gap-1 items-center">
-              <Check size={16} /> <span>Lifetime Access</span>
-            </div>
-            <div>You have full access to all features of three cells</div>
+          <div className="bg-linear-30 from-white to-green-300 rounded-md px-4 py-2">
+            <div className="font-semibold text-center">LIFETIME ACCESS</div>
           </div>
         )}
         <SidebarMenu className="mt-2">

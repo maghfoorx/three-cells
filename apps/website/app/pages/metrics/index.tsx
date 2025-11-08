@@ -16,7 +16,7 @@ export default function MetricsPage() {
         <div className="absolute h-full w-full overflow-y-auto space-y-3 px-1 md:px-2">
           {isLoading && (
             <>
-              {Array.from({ length: 3 }, (_, i) => (
+              {Array.from({ length: 1 }, (_, i) => (
                 <UserMetricCard.Skeleton key={i} />
               ))}
             </>

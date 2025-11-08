@@ -14,7 +14,17 @@ export default function AppSidebarLayout({
   }, [viewer]);
 
   if (viewer === undefined) {
-    return <FullscreenSpinner />;
+    return (
+      <AppShell variant="sidebar">
+        <AppSidebar />
+        <AppContent variant="sidebar">
+          <AppSidebarHeader breadcrumbs={breadcrumbs} />
+          <div className="flex-1 flex flex-col items-center justify-center gap-6 p-2 text-center">
+            <Skeleton className="h-full w-full bg-secondary" />
+          </div>
+        </AppContent>
+      </AppShell>
+    );
   }
 
   if (viewer === null) {
@@ -126,6 +136,7 @@ import EditHabitDialog from "~/pages/habits/EditHabitDialog";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import CreateNewMetricDialog from "~/pages/metrics/CreateNewMetricDialog";
 import EditMetricDialog from "~/pages/singleMetricPage/EditMetricDialog";
+import { Skeleton } from "~/components/ui/skeleton";
 
 function AppSidebarHeader({
   breadcrumbs = [],
