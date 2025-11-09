@@ -175,6 +175,46 @@ export default function ThreeCellDailyForm() {
 
             <FormField
               control={form.control}
+              name="score"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabelWithInfo
+                    id="score"
+                    label="How did today feel?"
+                    information={FIELD_EXPLANATIONS.score}
+                  />
+                  <FormControl>
+                    <div className="flex gap-1 justify-between">
+                      {SCORE_OPTIONS.map((option) => (
+                        <div
+                          key={option.value}
+                          className={cn(
+                            "group p-1 rounded-md border-2 border-transparent",
+                            option.color,
+                            {
+                              "border-gray-100 shadow-md":
+                                option.value === field.value,
+                            },
+                          )}
+                        >
+                          <img
+                            src={option.icon}
+                            alt={"Icon"}
+                            width={50}
+                            className={cn(option.color)}
+                            onClick={() => field.onChange(option.value)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="summary"
               render={({ field }) => (
                 <FormItem>
@@ -193,45 +233,6 @@ export default function ThreeCellDailyForm() {
                         className="min-h-[128px]"
                       />
                     )}
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="score"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabelWithInfo
-                    id="score"
-                    label="Score"
-                    information={FIELD_EXPLANATIONS.score}
-                  />
-                  <FormControl>
-                    <div className="flex gap-1 justify-between">
-                      {SCORE_OPTIONS.map((option) => (
-                        <div
-                          key={option.value}
-                          className={cn(
-                            "group p-1 rounded-md border-2 border-transparent",
-                            option.color,
-                            {
-                              "border-gray-100": option.value === field.value,
-                            },
-                          )}
-                        >
-                          <img
-                            src={option.icon}
-                            alt={"Icon"}
-                            width={50}
-                            className={cn(option.color)}
-                            onClick={() => field.onChange(option.value)}
-                          />
-                        </div>
-                      ))}
-                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -258,12 +259,12 @@ const FormLabelWithInfo = ({ id, label, information }: any) => {
       <FormLabel htmlFor={id} className="text-sm font-medium">
         {label}
       </FormLabel>
-      <Popover>
+      {/*<Popover>
         <PopoverTrigger>
           <Info className="h-4 w-4" />
         </PopoverTrigger>
         <PopoverContent className="max-w-[300px]">{information}</PopoverContent>
-      </Popover>
+      </Popover>*/}
     </div>
   );
 };
