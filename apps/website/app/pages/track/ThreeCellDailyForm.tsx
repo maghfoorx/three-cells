@@ -70,11 +70,36 @@ const FIELD_EXPLANATIONS = {
 };
 
 const SCORE_OPTIONS = [
-  { value: -2, emoji: "😭", color: "bg-red-500 hover:bg-red-600" },
-  { value: -1, emoji: "😞", color: "bg-orange-400 hover:bg-orange-500" },
-  { value: 0, emoji: "😐", color: "bg-yellow-400 hover:bg-yellow-500" },
-  { value: 1, emoji: "😊", color: "bg-lime-400 hover:bg-lime-500" },
-  { value: 2, emoji: "😁", color: "bg-green-500 hover:bg-green-600" },
+  {
+    value: -2,
+    emoji: "😭",
+    color: "bg-red-500 group-hover:bg-red-600 hover:bg-red-600",
+    icon: "/terrible.png",
+  },
+  {
+    value: -1,
+    emoji: "😞",
+    color: "bg-orange-400 group-hover:bg-orange-500 hover:bg-orange-500",
+    icon: "/bad.png",
+  },
+  {
+    value: 0,
+    emoji: "😐",
+    color: "bg-yellow-400 group-hover:bg-yellow-500 hover:bg-yellow-500",
+    icon: "/okay.png",
+  },
+  {
+    value: 1,
+    emoji: "😊",
+    color: "bg-lime-400 group-hover:bg-lime-500 hover:bg-lime-500",
+    icon: "/good.png",
+  },
+  {
+    value: 2,
+    emoji: "😁",
+    color: "bg-green-500 group-hover:bg-green-600 hover:bg-green-600",
+    icon: "/amazing.png",
+  },
 ];
 
 export default function ThreeCellDailyForm() {
@@ -185,24 +210,26 @@ export default function ThreeCellDailyForm() {
                     information={FIELD_EXPLANATIONS.score}
                   />
                   <FormControl>
-                    <div className="flex h-[40px] gap-1">
+                    <div className="flex gap-1 justify-between">
                       {SCORE_OPTIONS.map((option) => (
-                        <Button
+                        <div
                           key={option.value}
-                          type="button"
-                          onClick={() => field.onChange(option.value)}
                           className={cn(
-                            "min-w-[50px] flex-1 p-0 text-white transition-all",
+                            "group p-1 rounded-md border-2 border-transparent",
                             option.color,
                             {
-                              "ring-2 ring-black": field.value === option.value,
+                              "border-gray-100": option.value === field.value,
                             },
                           )}
                         >
-                          <span className="text-xs">
-                            {option.emoji} {option.value}
-                          </span>
-                        </Button>
+                          <img
+                            src={option.icon}
+                            alt={"Icon"}
+                            width={50}
+                            className={cn(option.color)}
+                            onClick={() => field.onChange(option.value)}
+                          />
+                        </div>
                       ))}
                     </div>
                   </FormControl>
