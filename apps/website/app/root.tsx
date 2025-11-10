@@ -45,7 +45,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <script
           defer
           data-domain="three-cells.com"
-          src="https://p.maghfoor.com/js/script.js"
+          src="https://p.maghfoor.com/js/script.outbound-links.pageview-props.tagged-events.js"
         />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
