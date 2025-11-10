@@ -1,7 +1,12 @@
 import Google from "@auth/core/providers/google";
 import Apple from "@auth/core/providers/apple";
 import { convexAuth, getAuthUserId } from "@convex-dev/auth/server";
-import { mutation, query } from "./_generated/server";
+import {
+  internalMutation,
+  internalQuery,
+  mutation,
+  query,
+} from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
@@ -71,6 +76,29 @@ export const viewer = query({
     if (!userId) return null;
 
     return await ctx.db.get(userId);
+  },
+});
+
+export const internalViewerQuery = internalQuery({
+  args: {},
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) return null;
+
+    return await ctx.db.get(userId);
+  },
+});
+
+export const setStripeId = internalMutation({
+  args: {
+    userId: v.id("users"),
+    stripeUserId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.patch(args.userId, {
+      stripeUserId: args.stripeUserId,
+    });
   },
 });
 

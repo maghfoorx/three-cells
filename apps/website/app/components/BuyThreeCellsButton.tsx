@@ -9,16 +9,18 @@ import { api } from "@packages/backend/convex/_generated/api";
 const BuyThreeCellsButton = ({
   className = "",
   title,
+  product,
 }: {
   className?: string;
   title?: string;
+  product: "yearly" | "lifetime" | "monthly";
 }) => {
   const [paymentUrlLoading, setPaymentUrlLoading] = React.useState(false);
   const payAndSendMessage = useAction(api.stripe.pay);
   async function handleSendMessage(event: FormEvent) {
     event.preventDefault();
     setPaymentUrlLoading(true);
-    const paymentUrl = await payAndSendMessage({ product: "lifetime" });
+    const paymentUrl = await payAndSendMessage({ product: product });
     window.location.href = paymentUrl!;
   }
 

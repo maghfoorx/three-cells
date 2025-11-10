@@ -19,8 +19,11 @@ const schema = defineSchema({
     hasLifetimeAccess: v.boolean(), // true if they ever bought lifetime
     subscriptionExpiresAt: v.optional(v.union(v.number(), v.null())), // timestamp for current sub expiry
     timezone: v.optional(v.union(v.string(), v.null())),
-  }).index("email", ["email"]),
 
+    stripeUserId: v.optional(v.string()),
+  })
+    .index("email", ["email"])
+    .index("stripeUserId", ["stripeUserId"]),
   user_tasks: defineTable({
     userId: v.id("users"),
     category_id: v.optional(v.id("user_tasks_categories")),
@@ -194,6 +197,17 @@ const schema = defineSchema({
     motivationReason: v.string(),
     selectedCateogires: v.array(v.string()),
   }).index("by_user", ["userId"]),
+
+  stripePrices: defineTable({
+    product: v.string(),
+    amount: v.number(),
+    currency: v.string(),
+    stripeProductId: v.optional(v.string()),
+    stripePriceId: v.string(),
+    updatedAt: v.number(),
+  })
+    .index("by_product", ["product"])
+    .index("by_stripePriceId", ["stripePriceId"]),
 });
 
 export default schema;

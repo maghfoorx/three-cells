@@ -38,6 +38,36 @@ export const savePurchase = internalMutationGeneric({
   },
 });
 
+export const updateStripeSubscription = internalMutationGeneric({
+  args: {
+    userId: v.id("users"),
+    product: v.union(
+      v.literal("yearly"),
+      v.literal("monthly"),
+      v.literal("lifetime"),
+    ),
+    stripeCustomerId: v.string(),
+    expiresAt: v.union(v.number(), v.null()),
+  },
+  handler: async (ctx, args) => {
+    const userId = args.userId;
+
+    if (args.product === "lifetime") {
+      await ctx.db.patch(userId, {
+        hasLifetimeAccess: true,
+        stripeUserId: args.stripeCustomerId,
+      });
+    } else if (["monthly", "yearly"].includes(args.product)) {
+      await ctx.db.patch(userId, {
+        isSubscribed: true,
+        subscriptionExpiresAt:
+          args.expiresAt != null ? args.expiresAt : undefined,
+        stripeUserId: args.stripeCustomerId,
+      });
+    }
+  },
+});
+
 export const updateRevenueCatSubscription = internalMutationGeneric({
   args: {
     userId: v.id("users"),
@@ -69,6 +99,31 @@ export const updateRevenueCatSubscription = internalMutationGeneric({
           args.expiresAt != null ? args.expiresAt : undefined,
       });
     }
+  },
+});
+
+export const unsubscribeStripeSubscription = internalMutationGeneric({
+  args: {
+    stripeUserId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("stripeUserId", (q) => q.eq("stripeUserId", args.stripeUserId))
+      .first();
+
+    if (!user) {
+      // No user found — safely exit
+      console.warn(
+        `User with stripe id ${args.stripeUserId} not found. Skipping unsubscribe.`,
+      );
+      return;
+    }
+
+    await ctx.db.patch(user._id, {
+      isSubscribed: false,
+      subscriptionExpiresAt: null,
+    });
   },
 });
 

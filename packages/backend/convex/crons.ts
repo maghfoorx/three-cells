@@ -10,4 +10,10 @@ crons.hourly(
   internal.userNotifications.index.checkAndSendHabitReminders,
 );
 
+crons.interval(
+  "sync-stripe-prices",
+  { hours: 168 }, // Sync every 7 days
+  internal.stripe.syncPrices,
+);
+
 export default crons;

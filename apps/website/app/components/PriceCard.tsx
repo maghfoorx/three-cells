@@ -1,41 +1,97 @@
-import type React from "react";
-import { Check } from "lucide-react";
-import { useState, useRef } from "react";
-import BuyThreeCellsButton from "./BuyThreeCellsButton";
-import { Link } from "react-router";
-import { Button } from "./ui/button";
+import React, { useState, useRef } from "react";
+import { Check, LoaderCircle } from "lucide-react";
+import { Button } from "~/components/ui/button";
+import { Skeleton } from "~/components/ui/skeleton";
+import { useAction, useQuery } from "convex/react";
+import { api } from "@packages/backend/convex/_generated/api";
 
-export default function BuyThreeCellsCard({
-  login = false,
-}: {
-  login?: boolean;
-}) {
+const PricingCard = ({ login = false }: { login?: boolean }) => {
+  const stripePrices = useQuery(api.stripe.getPrices);
+  console.log(stripePrices, "ARE_STRIPE_PRICES");
+  const [selectedPlan, setSelectedPlan] = useState<
+    "monthly" | "yearly" | "lifetime"
+  >("yearly");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
+  const [paymentUrlLoading, setPaymentUrlLoading] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
-
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-
     setMousePosition({ x, y });
   };
 
-  const includedFeatures = [
+  // Format price from cents to currency
+  const formatPrice = (amount: number) => {
+    const price = amount / 100;
+    return `£${price.toFixed(2)}`;
+  };
+
+  // Calculate monthly price if paid monthly for comparison
+  const getMonthlyEquivalent = () => {
+    if (!stripePrices?.monthly || !stripePrices?.yearly) return null;
+    const monthlyPrice = stripePrices.monthly.amount / 100;
+    const yearlyPrice = stripePrices.yearly.amount / 100;
+    const monthlyIfPaidMonthly = monthlyPrice * 12;
+    return `£${monthlyIfPaidMonthly.toFixed(2)}`;
+  };
+
+  const plans = {
+    monthly: {
+      price: stripePrices?.monthly
+        ? formatPrice(stripePrices.monthly.amount)
+        : null,
+      period: "per month",
+      save: null,
+      description: "Cancel anytime",
+      oldPrice: null,
+    },
+    yearly: {
+      price: stripePrices?.yearly
+        ? formatPrice(stripePrices.yearly.amount)
+        : null,
+      period: "per year",
+      save: "Popular",
+      description: "Best value",
+      oldPrice: getMonthlyEquivalent(),
+    },
+    lifetime: {
+      price: stripePrices?.lifetime
+        ? formatPrice(stripePrices.lifetime.amount)
+        : null,
+      period: "one-time",
+      save: null,
+      description: "Pay once, yours forever",
+      oldPrice: null,
+    },
+  };
+
+  const benefits = [
     "Daily journaling to find your success pattern",
+    "One-tap habit tracking with heatmaps",
     "Clean, distraction-free task management",
-    "Build long lasting habits easily",
     "Beautiful all-in-one interface",
   ];
+
+  const payAndSendMessage = useAction(api.stripe.pay);
+  async function handlePurchase() {
+    setPaymentUrlLoading(true);
+    const paymentUrl = await payAndSendMessage({ product: selectedPlan });
+    window.location.href = paymentUrl!;
+  }
+
+  const currentPlan = plans[selectedPlan];
+  const isLoading = !stripePrices;
+  // const isLoading = true;
 
   return (
     <div className="w-full max-w-md mx-auto">
       <div
         ref={cardRef}
-        className="relative p-4 bg-gradient-to-br from-primary to-secondary rounded-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer"
+        className="relative bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100"
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -46,97 +102,112 @@ export default function BuyThreeCellsCard({
           } as React.CSSProperties
         }
       >
+        {/* Subtle hover effect */}
         <div
-          className="absolute inset-0 rounded-3xl opacity-20"
-          style={{
-            backgroundImage: `repeating-linear-gradient(
-              45deg,
-              transparent,
-              transparent 8px,
-              rgba(0,0,0,0.1) 8px,
-              rgba(0,0,0,0.1) 16px
-            )`,
-          }}
-        />
-
-        <div
-          className={`absolute inset-0 rounded-3xl transition-opacity duration-300 pointer-events-none ${
+          className={`absolute inset-0 transition-opacity duration-300 pointer-events-none ${
             isHovered ? "opacity-100" : "opacity-0"
           }`}
           style={{
-            background: `radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.15), transparent 40%)`,
+            background: `radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(0,0,0,0.02), transparent 40%)`,
           }}
         />
 
-        <div
-          className={`absolute inset-0 rounded-3xl transition-opacity duration-300 pointer-events-none ${
-            isHovered ? "opacity-100" : "opacity-0"
-          }`}
-          style={{
-            background: `radial-gradient(300px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.1), transparent 50%)`,
-          }}
-        />
-
-        {/* Save badge */}
-        <div className="absolute top-6 right-6 z-10">
-          <div className="bg-primary text-gray-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 transition-all duration-300 hover:bg-secondary hover:scale-105">
-            40% Off <div className="w-2 h-2 bg-gray-800 rounded-full"></div>
-          </div>
-        </div>
-
-        {/* Main content card */}
-        <div className="relative bg-foreground rounded-2xl p-8 text-white overflow-hidden">
-          <div
-            className={`absolute inset-0 transition-opacity duration-300 pointer-events-none ${
-              isHovered ? "opacity-100" : "opacity-0"
-            }`}
-            style={{
-              background: `radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(59, 130, 246, 0.1), transparent 50%)`,
-            }}
-          />
-
+        <div className="relative p-8">
           {/* Header */}
-          <div className="relative z-10 mb-8">
-            {/* Pricing */}
-            <div className="flex items-baseline gap-2 mb-2">
-              <span className="text-4xl text-gray-500 line-through">£20</span>
-              <span className="text-5xl font-light text-white">£12</span>
-              <span className="text-gray-400 text-base">One-time</span>
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+              One app. Three things.
+            </h2>
+            <p className="text-gray-600">
+              The only productivity system you'll actually use
+            </p>
+          </div>
+
+          {/* Plan Tabs */}
+          <div className="flex gap-2 mb-8 bg-gray-100 p-1 rounded-lg">
+            {(["monthly", "yearly", "lifetime"] as const).map((plan) => (
+              <button
+                key={plan}
+                onClick={() => setSelectedPlan(plan)}
+                className={`flex-1 py-2.5 px-3 rounded-md text-sm font-medium transition-all duration-200 relative ${
+                  selectedPlan === plan
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                <span className="capitalize">{plan}</span>
+                {plans[plan].save && (
+                  <div className="absolute -top-2 -right-1 bg-green-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                    {plans[plan].save}
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Pricing */}
+          <div className="text-center mb-8">
+            <div className="flex items-baseline justify-center gap-2 mb-1">
+              {currentPlan?.oldPrice != null && (
+                <>
+                  {isLoading ? (
+                    <Skeleton className="h-8 w-16" />
+                  ) : (
+                    <span className="text-2xl text-gray-400 line-through">
+                      {currentPlan.oldPrice}
+                    </span>
+                  )}
+                </>
+              )}
+              {isLoading ? (
+                <Skeleton className="h-14 w-32" />
+              ) : (
+                <span className="text-5xl font-bold text-gray-900">
+                  {currentPlan.price}
+                </span>
+              )}
             </div>
-            <div className="text-white text-left text-xl">
-              Lifetime access. No subscription.
+            <div className="text-gray-600 mb-1">{currentPlan.period}</div>
+            <div className="text-sm text-gray-500">
+              {currentPlan.description}
             </div>
           </div>
 
-          {/* Dotted separator */}
-          <div className="relative z-10 border-t border-dotted border-gray-600 mb-8"></div>
-
-          {/* Features list */}
-          <div className="relative z-10 space-y-4 mb-8">
-            {includedFeatures.map((feature, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-3 transition-all duration-200 hover:translate-x-1"
-              >
-                <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-200 hover:bg-green-500 hover:scale-110">
-                  <Check className="w-4 h-4 text-white" />
+          {/* Benefits */}
+          <div className="space-y-3 mb-8">
+            {benefits.map((benefit, index) => (
+              <div key={index} className="flex items-start gap-3 group">
+                <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-transform duration-200 group-hover:scale-110">
+                  <Check className="w-3 h-3 text-white" />
                 </div>
-                <span className="text-gray-300 text-sm">{feature}</span>
+                <span className="text-gray-700 text-sm leading-relaxed">
+                  {benefit}
+                </span>
               </div>
             ))}
           </div>
 
           {/* CTA Button */}
-          {!login && <BuyThreeCellsButton />}
-          {login && (
-            <Link to={"/track"}>
-              <Button className="relative z-10 w-full text-gray-900 hover:bg-gray-100 rounded-sm py-6 text-base font-medium transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
-                Get Three Cells
-              </Button>
-            </Link>
-          )}
+          <Button
+            disabled={paymentUrlLoading || isLoading}
+            onClick={handlePurchase}
+            className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-lg py-6 text-base font-medium transition-all duration-200 hover:shadow-lg disabled:opacity-50"
+          >
+            {paymentUrlLoading ? (
+              <LoaderCircle className="animate-spin w-5 h-5" />
+            ) : (
+              `Get started with ${selectedPlan}`
+            )}
+          </Button>
+
+          {/* Footer note */}
+          {/*<p className="text-center text-xs text-gray-500 mt-4">
+            Free to start • Available on iPhone
+          </p>*/}
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default PricingCard;

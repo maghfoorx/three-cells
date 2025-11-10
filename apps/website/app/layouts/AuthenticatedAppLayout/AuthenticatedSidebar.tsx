@@ -48,16 +48,6 @@ const DynamicTrackLink = () => {
 
 const mainNavItems: NavGroup[] = [
   {
-    label: "Habits",
-    items: [
-      {
-        title: "Habits",
-        href: "/habits",
-        icon: ChartNoAxesCombined,
-      },
-    ],
-  },
-  {
     label: "Ideal life",
     items: [
       {
@@ -73,6 +63,16 @@ const mainNavItems: NavGroup[] = [
         title: "Yearly View",
         href: `/yearly-view`,
         icon: Calendar,
+      },
+    ],
+  },
+  {
+    label: "Habits",
+    items: [
+      {
+        title: "Habits",
+        href: "/habits",
+        icon: ChartNoAxesCombined,
       },
     ],
   },
