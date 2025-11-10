@@ -34,7 +34,7 @@ const HeroSection = () => {
           </div>
           <div className="flex flex-col md:flex-row gap-2">
             <AppStoreButton />
-            <WebButton variant="white" />
+            <WebButton />
           </div>
         </div>
         <div className="flex justify-center">
@@ -317,10 +317,8 @@ const WebButton = () => {
       <Globe2Icon className="w-8 h-8 flex-shrink-0" color="#d1d5dc" />
 
       <div className="flex flex-col items-start text-left leading-tight">
-        <div className="text-[10px] font-normal text-gray-300">
-          Start on the
-        </div>
-        <div className="text-gray-300 font-semibold">Web Version</div>
+        <div className="text-[10px] font-normal text-white">Start on the</div>
+        <div className="text-white font-semibold">Web Version</div>
       </div>
     </Link>
   );
