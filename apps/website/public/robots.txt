@@ -1,0 +1,5 @@
+# robots.txt for your React Router project
+# Allow all search engines and crawlers to access the site
+
+User-agent: *
+Allow: /
