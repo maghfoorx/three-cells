@@ -52,7 +52,18 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
         return args.existingUserId;
       }
 
-      console.log(args, "ARE_ARGS_FN_createOrUpdateUser");
+      if (args.profile.email) {
+        const existingUser = await ctx.db
+          .query("users")
+          .filter((q) => q.eq(q.field("email"), args.profile.email))
+          .first();
+
+        if (existingUser) {
+          return existingUser._id;
+        }
+      }
+
+      // No existing user found, create a new one
       const userId = await ctx.db.insert("users", {
         email: args.profile.email,
         name: args.profile.name ?? "Anonymous",
