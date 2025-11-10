@@ -1,5 +1,4 @@
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { flushSync } from "react-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import color from "color";
 import { z } from "zod";
