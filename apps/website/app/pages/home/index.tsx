@@ -32,7 +32,7 @@ const HeroSection = () => {
               Built by someone who tried everything else first
             </p>
           </div>
-          <div className="flex flex-row gap-2">
+          <div className="flex flex-col md:flex-row gap-2">
             <AppStoreButton />
             <WebButton variant="white" />
           </div>
@@ -308,53 +308,37 @@ const FinalCTASection = () => {
   );
 };
 
-const WebButton = ({ variant = "black" }: { variant?: "black" | "white" }) => {
-  const baseClasses =
-    "inline-flex items-center gap-3 px-4 py-2 bg-white rounded-lg border-2 border-gray-700";
-  const variantClasses = "bg-black text-white decoration";
-
+const WebButton = () => {
   return (
-    <Link to="/track" className={cn(baseClasses, variantClasses)}>
-      <Globe2Icon width={30} height={30} color="white" />
+    <Link
+      to="/track"
+      className="inline-flex justify-center items-center gap-3 px-5 py-3 bg-black text-white rounded-lg border-2 border-gray-700 hover:bg-gray-900 transition-colors"
+    >
+      <Globe2Icon className="w-8 h-8 flex-shrink-0" color="#d1d5dc" />
 
-      <div className="flex flex-col items-start text-left leading-none">
-        <div className="text-xs font-normal text-white decoration-white">
+      <div className="flex flex-col items-start text-left leading-tight">
+        <div className="text-[10px] font-normal text-gray-300">
           Start on the
         </div>
-        <div className="text-lg font-semibold -mt-1 text-white decoration-white">
-          Web Version
-        </div>
+        <div className="text-gray-300 font-semibold">Web Version</div>
       </div>
     </Link>
   );
 };
 
-const AppStoreButton = ({
-  variant = "black",
-}: {
-  variant?: "black" | "white";
-}) => {
-  const baseClasses =
-    "inline-flex items-center gap-3 px-4 py-2 bg-white rounded-lg border-2 border-gray-700";
-  const variantClasses =
-    variant === "white" ? "bg-black text-white" : "text-white";
-
+const AppStoreButton = () => {
   return (
     <a
       href="https://apps.apple.com/us/app/three-cells-your-life-system/id6747948986"
-      // href="itms-apps://apps.apple.com/us/app/three-cells-your-life-system/id6747948986"
-      // target="_blank"
-      // rel="noopener noreferrer"
-      className={cn(baseClasses, variantClasses)}
-      // style={{ minWidth: "180px", height: "60px" }}
+      className="inline-flex justify-center items-center gap-3 px-5 py-3 bg-white text-black rounded-lg border-2 border-gray-300 hover:bg-gray-50 transition-colors"
     >
-      {/* Apple Logo */}
-      <AppleLogo width={40} height={40} />
+      <AppleLogo width={32} height={32} className="flex-shrink-0" />
 
-      {/* Text */}
-      <div className="flex flex-col items-start text-left leading-none">
-        <div className="text-xs font-normal">Download on the</div>
-        <div className="text-lg font-semibold -mt-1">App Store</div>
+      <div className="flex flex-col items-start text-left leading-tight">
+        <div className="text-[10px] font-normal text-gray-600">
+          Download on the
+        </div>
+        <div className="text-gray-600 font-semibold">App Store</div>
       </div>
     </a>
   );
