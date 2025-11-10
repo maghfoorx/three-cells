@@ -39,7 +39,7 @@ export default function AppSidebarLayout({
         <AppContent variant="sidebar">
           <AppSidebarHeader breadcrumbs={breadcrumbs} />
           <div className="flex flex-col items-center justify-center gap-6 p-8 text-center">
-            <h1 className="text-3xl text-gray-900">
+            <h1 className="text-3xl text-gray-900 hidden md:block">
               Your best life just <span className="font-semibold">one</span>{" "}
               step <span className="italic">away</span>
             </h1>

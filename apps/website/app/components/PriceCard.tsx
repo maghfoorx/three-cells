@@ -123,6 +123,19 @@ const PricingCard = ({ login = false }: { login?: boolean }) => {
             </p>
           </div>
 
+          {/* CTA Button for Mobile */}
+          <Button
+            disabled={paymentUrlLoading || isLoading}
+            onClick={handlePurchase}
+            className="mb-4 md:hidden w-full bg-gray-900 hover:bg-gray-800 text-white rounded-lg py-6 text-base font-medium transition-all duration-200 hover:shadow-lg disabled:opacity-50"
+          >
+            {paymentUrlLoading ? (
+              <LoaderCircle className="animate-spin w-5 h-5" />
+            ) : (
+              `Get started with ${selectedPlan}`
+            )}
+          </Button>
+
           {/* Plan Tabs */}
           <div className="flex gap-2 mb-8 bg-gray-100 p-1 rounded-lg">
             {(["monthly", "yearly", "lifetime"] as const).map((plan) => (
@@ -191,7 +204,7 @@ const PricingCard = ({ login = false }: { login?: boolean }) => {
           <Button
             disabled={paymentUrlLoading || isLoading}
             onClick={handlePurchase}
-            className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-lg py-6 text-base font-medium transition-all duration-200 hover:shadow-lg disabled:opacity-50"
+            className="hidden md:flex w-full bg-gray-900 hover:bg-gray-800 text-white rounded-lg py-6 text-base font-medium transition-all duration-200 hover:shadow-lg disabled:opacity-50"
           >
             {paymentUrlLoading ? (
               <LoaderCircle className="animate-spin w-5 h-5" />
