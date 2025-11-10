@@ -16,13 +16,9 @@ export function meta({}: Route.MetaArgs) {
 export default function LoginPage() {
   const { signIn } = useAuthActions();
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
-  const [lastUsedProvider, setLastUsedProvider] = useState<string | null>(null);
-
-  // Load last used provider from localStorage on mount
-  useEffect(() => {
-    const lastProvider = localStorage.getItem("lastUsedAuthProvider");
-    setLastUsedProvider(lastProvider);
-  }, []);
+  const [lastUsedProvider, setLastUsedProvider] = useState<string | null>(
+    localStorage.getItem("lastUsedAuthProvider") ?? null,
+  );
 
   const handleSignIn = async (provider: "google" | "apple") => {
     setLoadingProvider(provider);
