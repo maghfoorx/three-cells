@@ -133,7 +133,7 @@ export default function LoginPage() {
           </Button>
         </div>
       </div>
-      <div>
+      <div className="mt-4">
         <FeatureShowcase />
       </div>
     </main>
