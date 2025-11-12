@@ -2,6 +2,20 @@ import { useMemo, useState, type PropsWithChildren } from "react";
 import { AppSidebar } from "~/layouts/AuthenticatedAppLayout/AuthenticatedSidebar";
 import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
 import type { BreadcrumbItem } from "~/types";
+import { SidebarTrigger } from "../../components/ui/sidebar";
+import { type BreadcrumbItem as BreadcrumbItemType } from "~/types";
+import CreateNewTaskDialog from "~/pages/tasks/CreateNewTaskDialog";
+import { Link, Navigate, useLocation, useParams } from "react-router";
+import CreateNewHabitDialog from "~/pages/habits/CreateNewHabitDialog";
+import { ArrowLeft } from "lucide-react";
+import { useQuery } from "convex/react";
+import BuyThreeCellsCard from "~/components/PriceCard";
+import { api } from "@packages/backend/convex/_generated/api";
+import EditHabitDialog from "~/pages/habits/EditHabitDialog";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import CreateNewMetricDialog from "~/pages/metrics/CreateNewMetricDialog";
+import EditMetricDialog from "~/pages/singleMetricPage/EditMetricDialog";
+import { Skeleton } from "~/components/ui/skeleton";
 
 export default function AppSidebarLayout({
   children,
@@ -118,25 +132,6 @@ function AppContent({
     </main>
   );
 }
-
-import { Breadcrumbs } from "../../components/Breadcrumbs";
-import { SidebarTrigger } from "../../components/ui/sidebar";
-import { type BreadcrumbItem as BreadcrumbItemType } from "~/types";
-import CreateNewTaskDialog from "~/pages/tasks/CreateNewTaskDialog";
-import { Link, Navigate, useLocation, useParams } from "react-router";
-import CreateNewHabitDialog from "~/pages/habits/CreateNewHabitDialog";
-import { Button } from "~/components/ui/button";
-import { ArrowLeft, SquareArrowLeft } from "lucide-react";
-import { useQuery } from "convex/react";
-import FullscreenSpinner from "~/components/FullscreenSpinner";
-import BuyThreeCellsButton from "~/components/BuyThreeCellsButton";
-import BuyThreeCellsCard from "~/components/PriceCard";
-import { api } from "@packages/backend/convex/_generated/api";
-import EditHabitDialog from "~/pages/habits/EditHabitDialog";
-import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import CreateNewMetricDialog from "~/pages/metrics/CreateNewMetricDialog";
-import EditMetricDialog from "~/pages/singleMetricPage/EditMetricDialog";
-import { Skeleton } from "~/components/ui/skeleton";
 
 function AppSidebarHeader({
   breadcrumbs = [],

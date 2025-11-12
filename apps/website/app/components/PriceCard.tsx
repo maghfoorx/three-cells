@@ -7,7 +7,6 @@ import { api } from "@packages/backend/convex/_generated/api";
 
 const PricingCard = ({ login = false }: { login?: boolean }) => {
   const stripePrices = useQuery(api.stripe.getPrices);
-  console.log(stripePrices, "ARE_STRIPE_PRICES");
   const [selectedPlan, setSelectedPlan] = useState<
     "monthly" | "yearly" | "lifetime"
   >("yearly");
