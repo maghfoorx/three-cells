@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import FullscreenSpinner from "~/components/FullscreenSpinner";
 import { api } from "@packages/backend/convex/_generated/api";
 import type { DataModel } from "@packages/backend/convex/_generated/dataModel";
+import { Button } from "~/components/ui/button";
 
 type SortOption = "latest" | "score";
 
@@ -40,6 +41,14 @@ export default function ThreeCellLogView() {
         );
     }
   }, [allThreeCellEntries, sortBy]);
+
+  if (allThreeCellEntries !== undefined && allThreeCellEntries?.length === 0) {
+    return (
+      <div className="flex-1 flex flex-col">
+        <NoEntriesThreeCells />
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 flex flex-col space-y-4">
@@ -89,3 +98,63 @@ export default function ThreeCellLogView() {
     </div>
   );
 }
+
+const NoEntriesThreeCells = () => {
+  const navigate = useNavigate();
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center p-6">
+      <div className="max-w-xl w-full text-center">
+        <div className="mx-auto mb-6 w-48 h-48 rounded-2xl bg-gradient-to-br from-slate-50 to-white shadow-lg flex items-center justify-center">
+          {/* Simple SVG 'notebook' illustration */}
+          <svg
+            width="120"
+            height="120"
+            viewBox="0 0 64 64"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden
+          >
+            <rect
+              x="8"
+              y="10"
+              width="40"
+              height="44"
+              rx="3"
+              fill="#F8FAFC"
+              stroke="#E6E9EE"
+            />
+            <path
+              d="M18 16h18M18 22h18M18 28h18"
+              stroke="#CBD5E1"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <rect x="50" y="8" width="6" height="48" rx="1" fill="#E2E8F0" />
+            <circle cx="53" cy="18" r="1.4" fill="#94A3B8" />
+            <circle cx="53" cy="26" r="1.4" fill="#94A3B8" />
+            <circle cx="53" cy="34" r="1.4" fill="#94A3B8" />
+          </svg>
+        </div>
+
+        <h2 className="text-2xl font-semibold mb-2">No entries yet</h2>
+        <p className="text-sm text-muted-foreground mb-6">
+          Three Cells helps you capture how your day went, build streaks, and
+          track habits and metrics. Your journal entries will show up here once
+          you start logging your days.
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Button onClick={() => navigate("/track")} className="px-5 py-2">
+            Create today's entry
+          </Button>
+        </div>
+
+        <div className="mt-8 text-xs text-center text-muted-foreground">
+          Tip: Rate your day with one tap (Terrible → Amazing) and watch your
+          streaks grow. You can also track metrics like study hours or weight.
+        </div>
+      </div>
+    </div>
+  );
+};
