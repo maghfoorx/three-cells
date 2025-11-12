@@ -18,6 +18,9 @@ export default function AppScreenshotsCarousel() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isAnimatingRef = useRef(false);
+  const lastClickTimeRef = useRef(0);
+  const CLICK_DEBOUNCE_MS = 100;
 
   // Clone first and last images for smooth looping
   const extendedScreenshots = [
@@ -52,6 +55,7 @@ export default function AppScreenshotsCarousel() {
       setIsTransitioning(false);
       setCurrentIndex(1);
     }
+    isAnimatingRef.current = false;
   };
 
   useEffect(() => {
@@ -59,24 +63,38 @@ export default function AppScreenshotsCarousel() {
       // Disable transition, jump to proper slide instantly
       const timer = setTimeout(() => {
         setIsTransitioning(true);
+        isAnimatingRef.current = false;
       }, 50);
       return () => clearTimeout(timer);
     }
   }, [isTransitioning]);
 
+  const canClickNow = (): boolean => {
+    const now = Date.now();
+    if (now - lastClickTimeRef.current < CLICK_DEBOUNCE_MS) {
+      return false;
+    }
+    lastClickTimeRef.current = now;
+    return true;
+  };
+
   const goToNext = () => {
-    if (!isTransitioning) return; // ignore clicks while resetting
+    if (isAnimatingRef.current || !canClickNow()) return;
+    isAnimatingRef.current = true;
     setCurrentIndex((prev) => prev + 1);
     pauseAutoPlay();
   };
 
   const goToPrevious = () => {
-    if (!isTransitioning) return;
+    if (isAnimatingRef.current || !canClickNow()) return;
+    isAnimatingRef.current = true;
     setCurrentIndex((prev) => prev - 1);
     pauseAutoPlay();
   };
 
   const goToSlide = (index: number) => {
+    if (isAnimatingRef.current || !canClickNow()) return;
+    isAnimatingRef.current = true;
     setCurrentIndex(index + 1); // +1 because of the leading clone
     pauseAutoPlay();
   };
@@ -101,11 +119,7 @@ export default function AppScreenshotsCarousel() {
         <div ref={containerRef} className="relative overflow-hidden rounded-sm">
           <div
             onTransitionEnd={handleTransitionEnd}
-            className={`flex ${
-              isTransitioning
-                ? "transition-transform duration-500 ease-out"
-                : ""
-            }`}
+            className={`flex ${isTransitioning ? "transition-transform duration-500 ease-out" : ""}`}
             style={{
               transform: `translateX(-${currentIndex * 100}%)`,
             }}
@@ -116,7 +130,7 @@ export default function AppScreenshotsCarousel() {
                 className="w-full flex-shrink-0 flex justify-center items-center px-4"
               >
                 <img
-                  src={screenshot}
+                  src={screenshot || "/placeholder.svg"}
                   alt={`App screenshot ${index + 1}`}
                   className="w-64 sm:w-72 md:w-80 h-auto max-w-full"
                   loading="lazy"
