@@ -14,7 +14,7 @@ const screenshots = [
 ];
 
 export default function AppScreenshotsCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(1);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -25,6 +25,13 @@ export default function AppScreenshotsCarousel() {
     ...screenshots,
     screenshots[0],
   ];
+
+  useEffect(() => {
+    extendedScreenshots.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
 
   useEffect(() => {
     if (!isAutoPlaying) return;
@@ -110,6 +117,7 @@ export default function AppScreenshotsCarousel() {
                   src={screenshot}
                   alt={`App screenshot ${index + 1}`}
                   className="w-64 sm:w-72 md:w-80 h-auto max-w-full"
+                  loading="lazy"
                 />
               </div>
             ))}
