@@ -40,12 +40,12 @@ const HeroSection = () => {
               Built by someone who tried everything else first
             </p>
           </div>
-          <div className="flex flex-col md:flex-row gap-2">
+          <div className="flex flex-col md:flex-row gap-2 justify-center lg:justify-start">
             <AppStoreButton />
             <WebButton />
           </div>
           {/* ⭐ Rating text with stars */}
-          <div className="flex items-center justify-center lg:justify-start mt-1 text-gray-600 text-sm">
+          <div className="flex flex-col md:flex-row items-center justify-center lg:justify-start mt-1 text-gray-600 text-sm">
             <div className="flex items-center gap-1 mr-1">
               <Star size={16} className="text-yellow-500 fill-yellow-500" />
               <Star size={16} className="text-yellow-500 fill-yellow-500" />
@@ -53,7 +53,7 @@ const HeroSection = () => {
               <Star size={16} className="text-yellow-500 fill-yellow-500" />
               <StarHalf size={16} className="text-yellow-500 fill-yellow-500" />
             </div>
-            Rated 4.4 stars on App Store
+            Rated 4.4 stars on App Store (4,500+ downloads)
           </div>
         </div>
         <div className="flex justify-center">
