@@ -1,12 +1,20 @@
 import { Link } from "react-router";
 import AppleLogo from "~/components/AppleLogo";
-import { Globe, Globe2, Globe2Icon, GlobeLock } from "lucide-react";
-import { cn } from "~/lib/utils";
+import { Globe2Icon } from "lucide-react";
+import AppScreenshotsCarousel from "./components/AppScreenShotsCarousel";
+import { Card, CardHeader, CardContent } from "~/components/ui/card";
+import FeaturesBentoGrid from "./components/FeaturesBentoGrid";
+import { AppStoreButton, WebButton } from "./components/CTAButtons";
+import WhyUsersSection from "./components/WhyUsersUseThreeCells";
 
 export default function Home() {
   return (
     <main className="bg-white">
       <HeroSection />
+      <FeaturesBentoGrid />
+      <WhyUsersSection />
+      <AppScreenshotsCarousel />
+
       {/*<ProblemSection />*/}
       <SolutionSection />
       {/*<HowItWorksSection />*/}
@@ -18,7 +26,7 @@ export default function Home() {
 
 const HeroSection = () => {
   return (
-    <section className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
+    <section className="max-w-6xl mx-auto px-4 sm:px-6 py-12 pb-0 sm:py-20">
       <div className="grid lg:grid-cols-2 gap-4 lg:gap-16 items-center">
         <div className="flex flex-col gap-2 text-center lg:text-left">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-gray-900">
@@ -38,9 +46,12 @@ const HeroSection = () => {
           </div>
         </div>
         <div className="flex justify-center">
-          <img
-            src="/main-app.png"
-            alt="Three Cells daily productivity app interface showing journal, habits, and tasks"
+          <video
+            src="/app-demo-video.webm"
+            preload="true"
+            autoPlay
+            loop
+            muted
             className="w-72 sm:w-80 h-auto max-w-full"
           />
         </div>
@@ -266,12 +277,14 @@ const FinalCTASection = () => {
           stop app-hopping and started building better habits
         </p>
 
-        <AppStoreButton />
+        <div className="flex flex-col gap-3 md:flex-row items-center justify-center">
+          <AppStoreButton />
+          <WebButton />
+        </div>
 
         <div className="mt-2 sm:mt-4">
           <p className="text-gray-400 text-sm sm:text-base">
-            <span className="font-medium text-white">Free to start</span> •
-            Available on iPhone
+            Available on iPhone and Web
           </p>
         </div>
         <div className="flex flex-row gap-6 items-center justify-center mt-8">
@@ -305,39 +318,5 @@ const FinalCTASection = () => {
         </div>
       </div>
     </section>
-  );
-};
-
-const WebButton = () => {
-  return (
-    <Link
-      to="/track"
-      className="inline-flex justify-center items-center gap-3 px-5 py-3 bg-black text-white rounded-lg border-2 border-gray-700 hover:bg-gray-900 transition-colors plausible-event-name=Web+Button+Click"
-    >
-      <Globe2Icon className="w-8 h-8 flex-shrink-0" color="#d1d5dc" />
-
-      <div className="flex flex-col items-start text-left leading-tight">
-        <div className="text-[10px] font-normal text-white">Start on the</div>
-        <div className="text-white font-semibold">Web Version</div>
-      </div>
-    </Link>
-  );
-};
-
-const AppStoreButton = () => {
-  return (
-    <a
-      href="https://apps.apple.com/us/app/three-cells-your-life-system/id6747948986"
-      className="inline-flex justify-center items-center gap-3 px-5 py-3 bg-white text-black rounded-lg border-2 border-gray-300 hover:bg-gray-50 transition-colors plausible-event-name=AppStore+Button+Click"
-    >
-      <AppleLogo width={32} height={32} className="flex-shrink-0" />
-
-      <div className="flex flex-col items-start text-left leading-tight">
-        <div className="text-[10px] font-normal text-gray-600">
-          Download on the
-        </div>
-        <div className="text-gray-600 font-semibold">App Store</div>
-      </div>
-    </a>
   );
 };
