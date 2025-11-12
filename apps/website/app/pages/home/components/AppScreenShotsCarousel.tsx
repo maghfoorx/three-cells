@@ -64,13 +64,15 @@ export default function AppScreenshotsCarousel() {
     }
   }, [isTransitioning]);
 
-  const goToPrevious = () => {
-    setCurrentIndex((prev) => prev - 1);
+  const goToNext = () => {
+    if (!isTransitioning) return; // ignore clicks while resetting
+    setCurrentIndex((prev) => prev + 1);
     pauseAutoPlay();
   };
 
-  const goToNext = () => {
-    setCurrentIndex((prev) => prev + 1);
+  const goToPrevious = () => {
+    if (!isTransitioning) return;
+    setCurrentIndex((prev) => prev - 1);
     pauseAutoPlay();
   };
 
