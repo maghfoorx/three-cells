@@ -5,6 +5,8 @@ import {
   route,
 } from "@react-router/dev/routes";
 import { lazy } from "react";
+import { redirect } from "react-router";
+import { Navigate } from "react-router";
 
 const SingleHabitPageLazy = lazy(() => import("./pages/singleHabitPage/index"));
 
@@ -39,4 +41,7 @@ export default [
     route("/privacy", "pages/privacy/index.tsx"),
     route("/terms", "pages/terms/index.tsx"),
   ]),
+
+  // web redirect for hackernews
+  route("/web", "pages/web/index.tsx"),
 ] satisfies RouteConfig;
