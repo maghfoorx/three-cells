@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import AppleLogo from "~/components/AppleLogo";
-import { Globe2Icon } from "lucide-react";
+import { Globe2Icon, Star, StarHalf } from "lucide-react";
 import AppScreenshotsCarousel from "./components/AppScreenShotsCarousel";
 import { Card, CardHeader, CardContent } from "~/components/ui/card";
 import FeaturesBentoGrid from "./components/FeaturesBentoGrid";
@@ -43,6 +43,17 @@ const HeroSection = () => {
           <div className="flex flex-col md:flex-row gap-2">
             <AppStoreButton />
             <WebButton />
+          </div>
+          {/* ⭐ Rating text with stars */}
+          <div className="flex items-center justify-center lg:justify-start mt-1 text-gray-600 text-sm">
+            <div className="flex items-center gap-1 mr-1">
+              <Star size={16} className="text-yellow-500 fill-yellow-500" />
+              <Star size={16} className="text-yellow-500 fill-yellow-500" />
+              <Star size={16} className="text-yellow-500 fill-yellow-500" />
+              <Star size={16} className="text-yellow-500 fill-yellow-500" />
+              <StarHalf size={16} className="text-yellow-500 fill-yellow-500" />
+            </div>
+            Rated 4.4 stars on App Store
           </div>
         </div>
         <div className="flex justify-center">
