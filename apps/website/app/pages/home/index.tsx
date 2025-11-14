@@ -58,13 +58,19 @@ const HeroSection = () => {
         </div>
         <div className="flex justify-center">
           <video
-            src="/app-demo-video.webm"
-            preload="true"
+            playsInline
+            webkit-playsinline="true"
+            muted
             autoPlay
             loop
-            muted
+            preload="auto"
             className="w-72 sm:w-80 h-auto max-w-full"
-          />
+          >
+            {/* Safari / iOS: MOV with HEVC alpha or ProRes (if you need alpha) */}
+            <source src="/app-demo-video-ios.mov" type="video/quicktime" />
+            {/* Chrome/Firefox with alpha (on supported platforms) */}
+            <source src="/app-demo-video.webm" type="video/webm" />
+          </video>
         </div>
       </div>
     </section>
