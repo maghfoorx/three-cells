@@ -64,7 +64,7 @@ const HeroSection = () => {
             autoPlay
             loop
             preload="auto"
-            className="w-72 sm:w-80 h-auto max-w-full"
+            className="w-72 sm:w-80 h-auto max-w-full aspect-[9/19] object-cover"
           >
             {/* Safari / iOS: MOV with HEVC alpha or ProRes (if you need alpha) */}
             <source src="/app-demo-video-ios.mov" type="video/quicktime" />
@@ -278,6 +278,14 @@ const TestimonialsSection = () => {
           </p>
           <p className="font-semibold text-gray-900">Mabroor</p>
         </div>
+        <a href="https://twelve.tools" target="_blank">
+          <img
+            src="https://twelve.tools/badge0-dark.svg"
+            alt="Featured on Twelve Tools"
+            width="150"
+            height="54"
+          />
+        </a>
       </div>
     </section>
   );
