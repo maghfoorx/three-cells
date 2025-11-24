@@ -8,6 +8,7 @@ import { AppStoreButton, WebButton } from "./components/CTAButtons";
 import WhyUsersSection from "./components/WhyUsersUseThreeCells";
 import ApplicationLogo from "~/components/ApplicationLogo";
 import AppLogoIcon from "~/components/AppLogoIcon";
+import Footer from "~/components/Footer";
 
 export default function Home() {
   return (
@@ -21,7 +22,7 @@ export default function Home() {
       <SolutionSection />
       {/*<HowItWorksSection />*/}
       <TestimonialsSection />
-      <FinalCTASection />
+      <Footer />
     </main>
   );
 }
