@@ -57,7 +57,7 @@ const HeroSection = () => {
               <Star size={16} className="text-yellow-500 fill-yellow-500" />
               <StarHalf size={16} className="text-yellow-500 fill-yellow-500" />
             </div>
-            Rated 4.4 stars on App Store (4,500+ downloads)
+            Rated 4.4 stars on App Store (5,100+ downloads)
           </div>
         </div>
         <div className="flex justify-center">
