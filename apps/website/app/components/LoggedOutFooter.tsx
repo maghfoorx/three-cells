@@ -3,10 +3,10 @@ import { Link } from "react-router";
 export default function LoggedOutFooter() {
   return (
     <footer className="pt-10 pb-6 flex gap-2 text-sm">
-      <Link to="/privacy" className="hover:underline">
+      <Link to="/privacy" className="hover:underline" viewTransition>
         Privacy policy
       </Link>
-      <Link to="/terms" className="hover:underline">
+      <Link to="/terms" className="hover:underline" viewTransition>
         Terms of service
       </Link>
       <a href="mailto:hello@three-cells.com">Contact us via email</a>

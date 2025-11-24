@@ -4,5 +4,12 @@ export default {
   // Config options...
   // Server-side render by default, to enable SPA mode set this to `false`
   ssr: false,
-  prerender: ["/", "/privacy", "/terms"],
+  prerender: [
+    "/",
+    "/privacy",
+    "/terms",
+
+    // blog post pages
+    "/notion",
+  ],
 } satisfies Config;

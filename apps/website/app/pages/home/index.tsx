@@ -6,6 +6,8 @@ import { Card, CardHeader, CardContent } from "~/components/ui/card";
 import FeaturesBentoGrid from "./components/FeaturesBentoGrid";
 import { AppStoreButton, WebButton } from "./components/CTAButtons";
 import WhyUsersSection from "./components/WhyUsersUseThreeCells";
+import ApplicationLogo from "~/components/ApplicationLogo";
+import AppLogoIcon from "~/components/AppLogoIcon";
 
 export default function Home() {
   return (
@@ -29,6 +31,7 @@ const HeroSection = () => {
     <section className="max-w-6xl mx-auto px-4 sm:px-6 py-12 pb-0 sm:py-20">
       <div className="grid lg:grid-cols-2 gap-4 lg:gap-16 items-center">
         <div className="flex flex-col gap-2 text-center lg:text-left">
+          <AppLogoIcon className="size-52 mx-auto" />
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-gray-900">
             Self Improvement Made Simple
           </h1>

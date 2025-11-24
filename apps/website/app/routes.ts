@@ -44,4 +44,7 @@ export default [
 
   // web redirect for hackernews
   route("/web", "pages/web/index.tsx"),
+
+  // blog psots
+  route("/notion", "pages/blog/notion.tsx"),
 ] satisfies RouteConfig;
