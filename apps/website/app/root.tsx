@@ -51,7 +51,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         {/* Static Meta Tags for SEO and Social */}
-        <title>Daily journal, habits & tasks app that actually works</title>
+        <title>Build lasting habits and journal daily</title>
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
         <meta
@@ -60,14 +60,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
         <meta
           name="keywords"
-          content="Simplex method, productivity, best life"
+          content="Simplex method, productivity, best life, habits, journaling, tasks, metric tracking, weight loss, focused hours"
         />
 
         {/* Open Graph */}
         <meta property="og:title" content="Three Cells" />
         <meta
           property="og:description"
-          content="Discover your best life with just three questions a day."
+          content="Three Cells is where you build lasting, journal daily and track metrics you care about. Remove app fatigue and just use one app that has everything you need to build your best life."
         />
         <meta
           property="og:image"
