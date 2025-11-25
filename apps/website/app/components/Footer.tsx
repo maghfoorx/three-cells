@@ -28,12 +28,12 @@ export const Footer = () => {
         <div className="pt-10 grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Column 1: App Info / Brand */}
           <div className="col-span-2 md:col-span-1">
-            <h4 className="text-xl font-bold mb-3">Three Cells</h4>
-            <p className="text-sm text-gray-400 max-w-xs">
+            <div className="text-xl font-bold mb-3">Three Cells</div>
+            <p className="text-sm text-gray-300 max-w-xs">
               Self Improvement Made Simple. The minimal habit tracker, journal,
               and metrics app combined into one beautiful system.
             </p>
-            <p className="text-xs text-gray-500 mt-4">
+            <p className="text-xs text-gray-300 mt-4">
               &copy; {new Date().getFullYear()} Three Cells. All rights
               reserved.
             </p>
@@ -41,7 +41,7 @@ export const Footer = () => {
 
           {/* Column 2: Resources/Support */}
           <div>
-            <h4 className="text-white text-lg font-semibold mb-3">Support</h4>
+            <div className="text-white text-lg font-semibold mb-3">Support</div>
             <ul className="space-y-2">
               <li>
                 <a
@@ -59,7 +59,7 @@ export const Footer = () => {
 
           {/* Column 3: Blog Posts (New Column) */}
           <div>
-            <h4 className="text-lg font-semibold mb-3">Latest Posts</h4>
+            <div className="text-lg font-semibold mb-3">Latest Posts</div>
             <ul className="space-y-2">
               <li>
                 <Link
@@ -78,7 +78,7 @@ export const Footer = () => {
 
           {/* Column 4: Legal */}
           <div>
-            <h4 className="text-lg font-semibold mb-3">Legal</h4>
+            <div className="text-lg font-semibold mb-3">Legal</div>
             <ul className="space-y-2">
               <li>
                 <Link

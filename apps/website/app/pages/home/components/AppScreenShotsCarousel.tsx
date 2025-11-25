@@ -161,6 +161,7 @@ export default function AppScreenshotsCarousel() {
         <div className="flex justify-center gap-2 mt-6 sm:mt-8">
           {screenshots.map((_, index) => (
             <button
+              title="Carousel button"
               key={index}
               onClick={() => goToSlide(index)}
               className={`transition-all duration-300 rounded-full ${

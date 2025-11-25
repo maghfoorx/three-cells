@@ -1,4 +1,3 @@
-import type { SVGAttributes, HTMLAttributes } from "react";
 import { cn } from "~/lib/utils";
 
 export default function AppLogoIcon({ className }: { className: string }) {
@@ -7,6 +6,7 @@ export default function AppLogoIcon({ className }: { className: string }) {
       <img
         loading="lazy"
         src="/meditating.webp"
+        alt="Three Cells application logo"
         className={cn("aspect-square", className)}
       />
     </div>
