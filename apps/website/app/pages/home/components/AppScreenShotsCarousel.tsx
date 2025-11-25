@@ -2,15 +2,15 @@ import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const screenshots = [
-  "/demo-ss/journal.png",
-  "/demo-ss/habits.png",
-  "/demo-ss/metrics.png",
-  "/demo-ss/single-habit.png",
-  "/demo-ss/calendar-view.png",
-  "/demo-ss/log.png",
-  "/demo-ss/metric-entry.png",
-  "/demo-ss/single-metric.png",
-  "/demo-ss/tasks.png",
+  "/demo-ss/journal.webp",
+  "/demo-ss/habits.webp",
+  "/demo-ss/metrics.webp",
+  "/demo-ss/single-habit.webp",
+  "/demo-ss/calendar-view.webp",
+  "/demo-ss/log.webp",
+  "/demo-ss/metric-entry.webp",
+  "/demo-ss/single-metric.webp",
+  "/demo-ss/tasks.webp",
 ];
 
 export default function AppScreenshotsCarousel() {
