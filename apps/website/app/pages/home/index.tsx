@@ -61,7 +61,6 @@ const HeroSection = () => {
             muted
             autoPlay
             loop
-            preload="metadata"
             width="320" // Example based on w-80 being approx 320px
             height="675" // Calculate 320 * (19/9)
             className="w-72 sm:w-80 h-auto max-w-full aspect-[9/19] object-cover"

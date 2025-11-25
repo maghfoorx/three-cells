@@ -67,6 +67,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
         <link rel="preload" as="image" href="/main-app.webp" />
         <link rel="preload" as="image" href="/meditating.webp" />
+        <link
+          rel="preload"
+          as="video"
+          type="video/webm"
+          href="/app-demo-video.webm"
+        />
 
         <meta
           name="description"
