@@ -50,6 +50,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+        <link
+          rel="preload"
+          as="style"
+          href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+          media="print"
+          onLoad="this.media='all'"
+        />
+
         {/* Static Meta Tags for SEO and Social */}
         <title>Three Cells - Lifestyle app for motivated people</title>
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />

@@ -8,6 +8,7 @@ export default function AppLogoIcon({ className }: { className: string }) {
         src="/meditating.webp"
         alt="Three Cells application logo"
         className={cn("aspect-square", className)}
+        fetchPriority="high"
       />
     </div>
   );
