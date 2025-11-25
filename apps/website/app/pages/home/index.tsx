@@ -1,12 +1,8 @@
-import { Link } from "react-router";
-import AppleLogo from "~/components/AppleLogo";
 import { Globe2Icon, Star, StarHalf } from "lucide-react";
 import AppScreenshotsCarousel from "./components/AppScreenShotsCarousel";
-import { Card, CardHeader, CardContent } from "~/components/ui/card";
 import FeaturesBentoGrid from "./components/FeaturesBentoGrid";
 import { AppStoreButton, WebButton } from "./components/CTAButtons";
 import WhyUsersSection from "./components/WhyUsersUseThreeCells";
-import ApplicationLogo from "~/components/ApplicationLogo";
 import AppLogoIcon from "~/components/AppLogoIcon";
 import Footer from "~/components/Footer";
 
@@ -17,10 +13,7 @@ export default function Home() {
       <FeaturesBentoGrid />
       <WhyUsersSection />
       <AppScreenshotsCarousel />
-
-      {/*<ProblemSection />*/}
       <SolutionSection />
-      {/*<HowItWorksSection />*/}
       <TestimonialsSection />
       <Footer />
     </main>
@@ -34,14 +27,15 @@ const HeroSection = () => {
         <div className="flex flex-col gap-2 text-center lg:text-left">
           <AppLogoIcon className="size-52 mx-auto" />
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-gray-900">
-            Self Improvement Made Simple
+            Turn Motivation into Discipline
           </h1>
-          <div className="">
+          <div className="flex flex-col gap-2">
             <h2 className="text-lg sm:text-xl md:text-2xl text-gray-600">
-              Daily journal, habits & tasks app that actually works
+              Build lasting habits. Journal daily to find your best days. Track
+              metrics that push you forward.
             </h2>
             <p className="text-base sm:text-lg text-gray-600 mt-2">
-              Built by someone who tried everything else first
+              Made by someone who tried everything else first
             </p>
           </div>
           <div className="flex flex-col md:flex-row gap-2 justify-center lg:justify-start">
@@ -68,7 +62,10 @@ const HeroSection = () => {
             autoPlay
             loop
             preload="auto"
+            width="320" // Example based on w-80 being approx 320px
+            height="675" // Calculate 320 * (19/9)
             className="w-72 sm:w-80 h-auto max-w-full aspect-[9/19] object-cover"
+            poster="/main-app.webp"
           >
             {/* Safari / iOS: MOV with HEVC alpha or ProRes (if you need alpha) */}
             <source src="/app-demo-video-ios.mov" type="video/quicktime" />
@@ -121,7 +118,8 @@ const SolutionSection = () => {
         <div className="text-center">
           <div className="mb-6 sm:mb-8">
             <img
-              src="/main-app.png"
+              src="/main-app.webp"
+              loading="lazy"
               alt="Daily journaling feature with three simple reflection questions"
               className="w-48 sm:w-64 h-auto mx-auto max-w-full"
             />
@@ -144,6 +142,7 @@ const SolutionSection = () => {
               src="/habits-ss.png"
               alt="Beautiful habit tracking with visual heatmaps and progress streaks"
               className="w-48 sm:w-64 h-auto mx-auto max-w-full"
+              loading="lazy"
             />
           </div>
           <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-900">
@@ -162,6 +161,7 @@ const SolutionSection = () => {
               src="/tasks-ss.png"
               alt="Clean, distraction-free task management interface"
               className="w-48 sm:w-64 h-auto mx-auto max-w-full"
+              loading="lazy"
             />
           </div>
           <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-900">
@@ -288,63 +288,9 @@ const TestimonialsSection = () => {
             alt="Featured on Twelve Tools"
             width="150"
             height="54"
+            loading="lazy"
           />
         </a>
-      </div>
-    </section>
-  );
-};
-
-const FinalCTASection = () => {
-  return (
-    <section className="bg-black text-white py-16 sm:py-20">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">
-          Ready to get your life together?
-        </h2>
-        <p className="mt-4 text-xl sm:text-2xl mb-8 sm:mb-12 text-gray-300 max-w-2xl mx-auto">
-          stop app-hopping and started building better habits
-        </p>
-
-        <div className="flex flex-col gap-3 md:flex-row items-center justify-center">
-          <AppStoreButton />
-          <WebButton />
-        </div>
-
-        <div className="mt-2 sm:mt-4">
-          <p className="text-gray-400 text-sm sm:text-base">
-            Available on iPhone and Web
-          </p>
-        </div>
-        <div className="flex flex-row gap-6 items-center justify-center mt-8">
-          <a
-            href="/privacy"
-            className="text-white"
-            style={{
-              color: "white",
-            }}
-          >
-            Privacy Policy
-          </a>
-          <a
-            href="/terms"
-            className="text-white"
-            style={{
-              color: "white",
-            }}
-          >
-            Terms of Service
-          </a>
-          <a
-            href="mailto:hello@three-cells.com"
-            className=""
-            style={{
-              color: "white",
-            }}
-          >
-            Contact Us
-          </a>
-        </div>
       </div>
     </section>
   );

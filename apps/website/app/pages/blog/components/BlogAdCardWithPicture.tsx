@@ -30,7 +30,7 @@ export default function BlogAdCardWithPicture() {
         {/* Note: I removed the fixed 'width' prop to let the image container size it. */}
         {/* Use max-h-48 or max-w-48 to control the size visually if needed. */}
         <img
-          src="/main-app.png"
+          src="/main-app.webp"
           alt="Screenshot of the Three Cells habit tracker and journal app"
           className="max-h-96 w-auto"
         />

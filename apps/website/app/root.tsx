@@ -51,8 +51,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         {/* Static Meta Tags for SEO and Social */}
-        <title>Build lasting habits and journal daily</title>
+        <title>Three Cells - Lifestyle app for motivated people</title>
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+        <link rel="preload" as="image" href="/main-app.webp" />
+        <link rel="preload" as="image" href="/meditating.webp" />
 
         <meta
           name="description"
