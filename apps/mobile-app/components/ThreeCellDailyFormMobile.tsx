@@ -178,9 +178,9 @@ export default function ThreeCellDailyForm({ date }: { date: string }) {
 
   const visualDateObj = parse(date, "yyyy-MM-dd", new Date());
 
-  const previousDay = format(subDays(date, 1), "yyyy-MM-dd");
-  const nextDay = format(addDays(date, 1), "yyyy-MM-dd");
-  const isNextDayInFuture = isAfter(addDays(date, 1), new Date());
+  const previousDay = format(subDays(visualDateObj, 1), "yyyy-MM-dd");
+  const nextDay = format(addDays(visualDateObj, 1), "yyyy-MM-dd");
+  const isNextDayInFuture = isAfter(addDays(visualDateObj, 1), new Date());
 
   const handleOpenEditor = () => {
     setShowFullScreenEditor(true);
