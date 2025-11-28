@@ -25,7 +25,7 @@ import { z } from "zod";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { addDays, format, isAfter, subDays } from "date-fns";
+import { addDays, format, isAfter, parse, subDays } from "date-fns";
 import { router } from "expo-router";
 import { SCORE_COLORS } from "@/utils/types";
 import DailyHighlights from "./pages/track/DailyHighlights";
@@ -35,7 +35,6 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import clsx from "clsx";
 
 const formSchema = z.object({
   summary: z.string().min(1, "Summary is required"),
@@ -173,10 +172,11 @@ function FullScreenTextEditor({
   );
 }
 
-export default function ThreeCellDailyForm({ date }: { date: Date }) {
+export default function ThreeCellDailyForm({ date }: { date: string }) {
   const scrollViewRef = useRef<ScrollView>(null);
   const [showFullScreenEditor, setShowFullScreenEditor] = useState(false);
-  const parsedDate = format(date, "yyyy-MM-dd");
+
+  const visualDateObj = parse(date, "yyyy-MM-dd", new Date());
 
   const previousDay = format(subDays(date, 1), "yyyy-MM-dd");
   const nextDay = format(addDays(date, 1), "yyyy-MM-dd");
@@ -187,14 +187,14 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
   };
 
   const todayDate = format(new Date(), "yyyy-MM-dd");
-  const isToday = todayDate === parsedDate;
+  const isToday = todayDate === date;
 
   const navigateToToday = () => {
     router.replace(`/track/${todayDate}`);
   };
 
   const data = useQuery(api.threeCells.threeCellForDate, {
-    date: parsedDate,
+    date: date,
   });
 
   const {
@@ -207,7 +207,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
     defaultValues: {
       summary: "",
       score: 1,
-      date_for: parsedDate,
+      date_for: date,
     },
   });
 
@@ -218,7 +218,6 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSavedRef = useRef<z.infer<typeof formSchema> | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [originalSummary, setOriginalSummary] = useState("");
 
   useEffect(() => {
     const newValues = data
@@ -230,7 +229,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
       : {
           summary: "",
           score: 0,
-          date_for: parsedDate,
+          date_for: date,
         };
 
     // Only reset if the data actually changed to prevent unnecessary re-renders
@@ -243,9 +242,8 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
       reset(newValues);
       setInitialValues(newValues);
       lastSavedRef.current = newValues;
-      setOriginalSummary(newValues.summary);
     }
-  }, [data, reset, parsedDate, initialValues]);
+  }, [data, reset, date, initialValues]);
 
   const submitThreeCellEntry = useMutation(api.threeCells.submitThreeCellEntry);
 
@@ -257,10 +255,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
           input: {
             summary: values.summary,
             score: values.score,
-            date_for:
-              typeof values.date_for === "string"
-                ? values.date_for
-                : format(values.date_for as Date, "yyyy-MM-dd"),
+            date_for: values.date_for,
           },
         });
         lastSavedRef.current = { ...values };
@@ -378,10 +373,10 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
         </View>
         <View className="px-6 py-4">
           <Text className="text-2xl text-center font-bold text-gray-900">
-            {format(parsedDate, "EEEE")}
+            {format(visualDateObj, "EEEE")}
           </Text>
           <Text className="text-base text-center text-gray-500 mt-1">
-            {format(parsedDate, "MMMM do, yyyy")}
+            {format(visualDateObj, "MMMM do, yyyy")}
           </Text>
         </View>
 
@@ -395,7 +390,7 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
           }}
           keyboardShouldPersistTaps="handled"
         >
-          <DailyHighlights date={date} />
+          <DailyHighlights dateString={date} />
 
           {/* Mood Selection */}
           <View className="mt-8">
@@ -538,7 +533,6 @@ export default function ThreeCellDailyForm({ date }: { date: Date }) {
                         summary: text,
                       };
                       await saveEntry(updatedValues);
-                      setOriginalSummary(text);
                     }}
                     onClose={() => {
                       setShowFullScreenEditor(false);

@@ -7,12 +7,10 @@ import { format } from "date-fns";
 import { api } from "@packages/backend/convex/_generated/api";
 
 interface DailyHighlightsProps {
-  date: Date;
+  dateString: string;
 }
 
-const DailyHighlights = ({ date }: DailyHighlightsProps) => {
-  const dateString = format(date, "yyyy-MM-dd");
-
+const DailyHighlights = ({ dateString }: DailyHighlightsProps) => {
   const habitData = useQuery(api.habits.getHabitsForDate, { date: dateString });
   const taskData = useQuery(api.tasks.getTasksForDate, { date: dateString });
   const metricsData = useQuery(api.userMetrics.queries.getMetricsForDate, {

@@ -14,13 +14,15 @@ const schema = defineSchema({
     isAnonymous: v.optional(v.boolean()),
 
     // Derived fields
-    hasCompletedOnboarding: v.boolean(),
+    hasCompletedOnboarding: v.boolean(), // this is the mobile app onboarding flag
     isSubscribed: v.boolean(), // true if they have an active subscription
     hasLifetimeAccess: v.boolean(), // true if they ever bought lifetime
     subscriptionExpiresAt: v.optional(v.union(v.number(), v.null())), // timestamp for current sub expiry
     timezone: v.optional(v.union(v.string(), v.null())),
 
     stripeUserId: v.optional(v.string()),
+
+    webOnboardingCompleted: v.optional(v.boolean()),
   })
     .index("email", ["email"])
     .index("stripeUserId", ["stripeUserId"]),
