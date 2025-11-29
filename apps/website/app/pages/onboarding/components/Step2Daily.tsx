@@ -16,6 +16,9 @@ import { Textarea } from "~/components/ui/textarea";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 import { motion } from "framer-motion";
+import { useMutation } from "convex/react";
+import { api } from "@packages/backend/convex/_generated/api";
+import { format } from "date-fns";
 
 const formSchema = z.object({
     summary: z.string().min(1, "Summary is required"),
@@ -100,8 +103,21 @@ export default function Step2Daily({ onNext, onBack }: Step2DailyProps) {
         },
     });
 
-    const onSubmit = (values: FormSchema) => {
-        onNext(values);
+    const submitThreeCellEntry = useMutation(api.threeCells.submitThreeCellEntry);
+
+    const onSubmit = async (values: FormSchema) => {
+        try {
+            const input = {
+                summary: values.summary,
+                score: values.score,
+                date_for: format(new Date(), "yyyy-MM-dd"), // Use current date for onboarding
+            };
+
+            await submitThreeCellEntry({ input });
+            onNext(values);
+        } catch (error) {
+            console.error("Submission failed:", error);
+        }
     };
 
     const cardColor = color(

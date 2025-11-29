@@ -18,6 +18,9 @@ import { cn } from "~/lib/utils";
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 
+import { useMutation } from "convex/react";
+import { api } from "@packages/backend/convex/_generated/api";
+
 const formSchema = z.object({
     name: z.string().min(1, "Habit name is required"),
     colour: z.string().min(1),
@@ -66,8 +69,20 @@ export default function Step1Habit({ onNext }: Step1HabitProps) {
         return color(form.watch("colour")).mix(color("white"), 0.6).hex();
     }, [form.watch("colour")]);
 
-    const handleSubmit = (data: FormSchema) => {
-        onNext(data);
+    const createHabit = useMutation(api.habits.createNewUserHabit);
+
+    const handleSubmit = async (data: FormSchema) => {
+        try {
+            await createHabit({
+                name: data.name,
+                colour: data.colour,
+                habitQuestion: data.habitQuestion,
+            });
+            onNext(data);
+        } catch (error) {
+            console.error("Failed to create habit:", error);
+            // Optionally handle error (e.g. show toast)
+        }
     };
 
     return (
