@@ -30,7 +30,7 @@ import {
 } from "~/components/ui/select";
 import { cn } from "~/lib/utils";
 import { useMemo, useState } from "react";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { handleHookMutationError } from "~/lib/handleHookMutationError";
 import { api } from "@packages/backend/convex/_generated/api";
 
@@ -82,6 +82,13 @@ const getRandomColour = () =>
 
 export default function CreateNewMetricDialog() {
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  const viewer = useQuery(api.auth.viewer);
+
+  const hasAccess = useMemo(() => {
+    return viewer?.isSubscribed || viewer?.hasLifetimeAccess;
+  }, [viewer]);
+
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -136,7 +143,7 @@ export default function CreateNewMetricDialog() {
   return (
     <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
       <DialogTrigger asChild>
-        <Button variant={"outline"}>
+        <Button variant={"outline"} disabled={!hasAccess}>
           <CircleFadingPlus />
         </Button>
       </DialogTrigger>
