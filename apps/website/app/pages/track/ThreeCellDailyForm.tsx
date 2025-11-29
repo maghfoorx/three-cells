@@ -37,7 +37,7 @@ import { api } from "@packages/backend/convex/_generated/api";
 const formSchema = z.object({
   summary: z.string().min(1, "Summary is required"),
   score: z.number().min(-2).max(2),
-  date_for: z.date(),
+  date_for: z.string(),
 });
 
 const FIELD_EXPLANATIONS = {
@@ -114,7 +114,7 @@ export default function ThreeCellDailyForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      date_for: parsedDate,
+      date_for: dateFor,
       summary: "",
       score: 0,
     },
@@ -125,7 +125,7 @@ export default function ThreeCellDailyForm() {
       const threeCellForDate = {
         summary: data.summary,
         score: data.score,
-        date_for: parse(data.dateFor, "yyyy-MM-dd", new Date()),
+        date_for: data.dateFor,
       };
 
       form.reset({
@@ -133,7 +133,7 @@ export default function ThreeCellDailyForm() {
       });
     } else {
       form.reset({
-        date_for: parsedDate,
+        date_for: dateFor,
         summary: "",
         score: 0,
       });
