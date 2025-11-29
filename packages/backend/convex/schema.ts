@@ -200,6 +200,14 @@ const schema = defineSchema({
     selectedCateogires: v.array(v.string()),
   }).index("by_user", ["userId"]),
 
+  webOnboarding: defineTable({
+    userId: v.id("users"),
+    currentStep: v.number(),
+    data: v.optional(v.any()), // Store step data as JSON/any
+    isCompleted: v.boolean(),
+    updatedAt: v.number(),
+  }).index("by_user", ["userId"]),
+
   stripePrices: defineTable({
     product: v.string(),
     amount: v.number(),

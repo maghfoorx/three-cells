@@ -37,6 +37,8 @@ export default [
     route("/metrics/:metricId", "pages/singleMetricPage/index.tsx"),
   ]),
 
+  route("/onboarding", "pages/onboarding/index.tsx"),
+
   layout("layouts/LegalPagesLayout.tsx", [
     route("/privacy", "pages/privacy/index.tsx"),
     route("/terms", "pages/terms/index.tsx"),

@@ -22,6 +22,7 @@ import type * as threeCells from "../threeCells.js";
 import type * as userMetrics_mutations from "../userMetrics/mutations.js";
 import type * as userMetrics_queries from "../userMetrics/queries.js";
 import type * as userNotifications_index from "../userNotifications/index.js";
+import type * as webOnboarding from "../webOnboarding.js";
 
 import type {
   ApiFromModules,
@@ -52,6 +53,7 @@ declare const fullApi: ApiFromModules<{
   "userMetrics/mutations": typeof userMetrics_mutations;
   "userMetrics/queries": typeof userMetrics_queries;
   "userNotifications/index": typeof userNotifications_index;
+  webOnboarding: typeof webOnboarding;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

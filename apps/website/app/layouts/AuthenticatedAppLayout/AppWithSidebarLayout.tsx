@@ -23,7 +23,7 @@ export default function AppSidebarLayout({
 }: PropsWithChildren<{ breadcrumbs?: BreadcrumbItem[] }>) {
   const viewer = useQuery(api.auth.viewer);
 
-  const hasAccess = useMemo(() => {
+  const hasPaidAccess = useMemo(() => {
     return viewer?.isSubscribed || viewer?.hasLifetimeAccess;
   }, [viewer]);
 
@@ -46,22 +46,12 @@ export default function AppSidebarLayout({
   }
 
   // if user unsubscribed then show something else.
-  if (!hasAccess) {
-    return (
-      <AppShell variant="sidebar">
-        <AppSidebar />
-        <AppContent variant="sidebar">
-          <AppSidebarHeader breadcrumbs={breadcrumbs} />
-          <div className="flex flex-col items-center justify-center gap-6 p-8 text-center">
-            <h1 className="text-3xl text-gray-900 hidden md:block">
-              Your best life just <span className="font-semibold">one</span>{" "}
-              step <span className="italic">away</span>
-            </h1>
-            <BuyThreeCellsCard />
-          </div>
-        </AppContent>
-      </AppShell>
-    );
+  if (
+    !hasPaidAccess &&
+    !viewer?.webOnboardingCompleted &&
+    !viewer?.hasCompletedOnboarding
+  ) {
+    return <Navigate to={"/onboarding"} />;
   }
 
   return (
@@ -80,7 +70,7 @@ interface AppShellProps {
   variant?: "header" | "sidebar";
 }
 
-function AppShell({ children, variant = "header" }: AppShellProps) {
+export function AppShell({ children, variant = "header" }: AppShellProps) {
   const [isOpen, setIsOpen] = useState(() =>
     typeof window !== "undefined"
       ? localStorage.getItem("sidebar") !== "false"
@@ -114,7 +104,7 @@ interface AppContentProps extends React.ComponentProps<"main"> {
   variant?: "header" | "sidebar";
 }
 
-function AppContent({
+export function AppContent({
   variant = "header",
   children,
   ...props
@@ -133,7 +123,7 @@ function AppContent({
   );
 }
 
-function AppSidebarHeader({
+export function AppSidebarHeader({
   breadcrumbs = [],
 }: {
   breadcrumbs?: BreadcrumbItemType[];

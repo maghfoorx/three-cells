@@ -62,7 +62,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
 
         {/* Static Meta Tags for SEO and Social */}
-        <title>Three Cells - Lifestyle app for motivated people</title>
+        <title>Three Cells - Turn Motivation into Discipline</title>
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
         <link rel="preload" as="image" href="/main-app.webp" />
