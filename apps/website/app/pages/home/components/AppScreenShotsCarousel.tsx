@@ -29,12 +29,7 @@ export default function AppScreenshotsCarousel() {
     screenshots[0],
   ];
 
-  useEffect(() => {
-    extendedScreenshots.forEach((src) => {
-      const img = new Image();
-      img.src = src;
-    });
-  }, []);
+
 
   useEffect(() => {
     if (!isAutoPlaying) return;
@@ -164,11 +159,10 @@ export default function AppScreenshotsCarousel() {
               title="Carousel button"
               key={index}
               onClick={() => goToSlide(index)}
-              className={`transition-all duration-300 rounded-full ${
-                index + 1 === currentIndex
+              className={`transition-all duration-300 rounded-full ${index + 1 === currentIndex
                   ? "w-8 h-2 bg-black"
                   : "w-2 h-2 bg-gray-300 hover:bg-gray-400"
-              }`}
+                }`}
             />
           ))}
         </div>

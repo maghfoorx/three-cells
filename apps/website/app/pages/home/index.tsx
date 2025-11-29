@@ -1,21 +1,33 @@
+import { Suspense, lazy } from "react";
 import { Globe2Icon, Star, StarHalf } from "lucide-react";
-import AppScreenshotsCarousel from "./components/AppScreenShotsCarousel";
-import FeaturesBentoGrid from "./components/FeaturesBentoGrid";
 import { AppStoreButton, WebButton } from "./components/CTAButtons";
-import WhyUsersSection from "./components/WhyUsersUseThreeCells";
 import AppLogoIcon from "~/components/AppLogoIcon";
-import Footer from "~/components/Footer";
+
+const AppScreenshotsCarousel = lazy(
+  () => import("./components/AppScreenShotsCarousel")
+);
+const FeaturesBentoGrid = lazy(() => import("./components/FeaturesBentoGrid"));
+const WhyUsersSection = lazy(() => import("./components/WhyUsersUseThreeCells"));
+const Footer = lazy(() => import("~/components/Footer"));
 
 export default function Home() {
   return (
     <main className="bg-white">
       <HeroSection />
-      <FeaturesBentoGrid />
-      <WhyUsersSection />
-      <AppScreenshotsCarousel />
+      <Suspense fallback={<div className="h-96" />}>
+        <FeaturesBentoGrid />
+      </Suspense>
+      <Suspense fallback={<div className="h-96" />}>
+        <WhyUsersSection />
+      </Suspense>
+      <Suspense fallback={<div className="h-96" />}>
+        <AppScreenshotsCarousel />
+      </Suspense>
       <SolutionSection />
       <TestimonialsSection />
-      <Footer />
+      <Suspense fallback={<div className="h-32" />}>
+        <Footer />
+      </Suspense>
     </main>
   );
 }

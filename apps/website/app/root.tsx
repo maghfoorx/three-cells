@@ -26,10 +26,7 @@ export const links: Route.LinksFunction = () => [
     href: "https://fonts.gstatic.com",
     crossOrigin: "anonymous",
   },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-  },
+
   {
     rel: "manifest",
     href: "/manifest.json",
@@ -59,20 +56,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
           media="print"
+          onLoad={(e) => {
+            e.currentTarget.media = "all";
+          }}
         />
+        <noscript>
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+          />
+        </noscript>
 
         {/* Static Meta Tags for SEO and Social */}
         <title>Three Cells - Turn Motivation into Discipline</title>
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
         <link rel="preload" as="image" href="/main-app.webp" />
-        <link rel="preload" as="image" href="/meditating.webp" />
-        <link
-          rel="preload"
-          as="video"
-          type="video/webm"
-          href="/app-demo-video.webm"
-        />
+
+
 
         <meta
           name="description"
