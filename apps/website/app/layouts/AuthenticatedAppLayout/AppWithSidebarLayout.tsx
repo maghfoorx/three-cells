@@ -16,6 +16,7 @@ import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import CreateNewMetricDialog from "~/pages/metrics/CreateNewMetricDialog";
 import EditMetricDialog from "~/pages/singleMetricPage/EditMetricDialog";
 import { Skeleton } from "~/components/ui/skeleton";
+import PricingCard from "~/components/PriceCard";
 
 export default function AppSidebarLayout({
   children,
@@ -45,13 +46,28 @@ export default function AppSidebarLayout({
     return <Navigate to={"/login"} />;
   }
 
-  // if user unsubscribed then show something else.
+  // if user hasn't paid and hasn't completed web or app onboarding
   if (
     !hasPaidAccess &&
     !viewer?.webOnboardingCompleted &&
     !viewer?.hasCompletedOnboarding
   ) {
     return <Navigate to={"/onboarding"} />;
+  }
+
+  if (!hasPaidAccess && (viewer?.webOnboardingCompleted || viewer?.hasCompletedOnboarding)) {
+    return (
+      <AppShell variant="sidebar">
+        <AppSidebar />
+        <AppContent variant="sidebar">
+          <AppSidebarHeader breadcrumbs={breadcrumbs} />
+          <div className="flex-1 flex flex-col items-center justify-center gap-6 p-2 text-center">
+            <div className="text-xl font-semibold">Discipline one step away</div>
+            <PricingCard />
+          </div>
+        </AppContent>
+      </AppShell>
+    );
   }
 
   return (
