@@ -17,6 +17,7 @@ export default function AppScreenshotsCarousel() {
   const [currentIndex, setCurrentIndex] = useState(1);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(true);
+  const [isInView, setIsInView] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const isAnimatingRef = useRef(false);
   const lastClickTimeRef = useRef(0);
@@ -29,17 +30,40 @@ export default function AppScreenshotsCarousel() {
     screenshots[0],
   ];
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+      },
+      { threshold: 0.1 } // Start playing when 10% visible
+    );
 
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
-    if (!isAutoPlaying) return;
+    // Safety check: if index goes out of bounds (can happen if tab was backgrounded)
+    // reset to a valid index without transition
+    if (currentIndex >= extendedScreenshots.length || currentIndex < 0) {
+      setIsTransitioning(false);
+      setCurrentIndex(1);
+      return;
+    }
+  }, [currentIndex, extendedScreenshots.length]);
+
+  useEffect(() => {
+    if (!isAutoPlaying || !isInView) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => prev + 1);
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, isInView]);
 
   const handleTransitionEnd = () => {
     // If we reach the clone of the last or first slide, jump instantly
@@ -137,7 +161,7 @@ export default function AppScreenshotsCarousel() {
           {/* Arrows */}
           <button
             onClick={goToPrevious}
-            className="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 items-center justify-center rounded-full bg-white shadow-lg hover:bg-gray-50 transition-colors"
+            className="flex absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 items-center justify-center rounded-full bg-white shadow-lg hover:bg-gray-50 transition-colors"
             aria-label="Previous screenshot"
           >
             <ChevronLeft className="w-6 h-6 text-gray-900" />
@@ -145,7 +169,7 @@ export default function AppScreenshotsCarousel() {
 
           <button
             onClick={goToNext}
-            className="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 items-center justify-center rounded-full bg-white shadow-lg hover:bg-gray-50 transition-colors"
+            className="flex absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 items-center justify-center rounded-full bg-white shadow-lg hover:bg-gray-50 transition-colors"
             aria-label="Next screenshot"
           >
             <ChevronRight className="w-6 h-6 text-gray-900" />
@@ -160,8 +184,8 @@ export default function AppScreenshotsCarousel() {
               key={index}
               onClick={() => goToSlide(index)}
               className={`transition-all duration-300 rounded-full ${index + 1 === currentIndex
-                  ? "w-8 h-2 bg-black"
-                  : "w-2 h-2 bg-gray-300 hover:bg-gray-400"
+                ? "w-8 h-2 bg-black"
+                : "w-2 h-2 bg-gray-300 hover:bg-gray-400"
                 }`}
             />
           ))}
