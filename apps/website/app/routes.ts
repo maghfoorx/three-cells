@@ -49,4 +49,7 @@ export default [
 
   // blog psots
   route("/notion", "pages/blog/notion.tsx"),
+
+  // spa fallback shell
+  route("/__app_shell", "pages/fallback/index.tsx"),
 ] satisfies RouteConfig;

@@ -11,5 +11,8 @@ export default {
 
     // blog post pages
     "/notion",
+
+    // spa fallback shell
+    "/__app_shell",
   ],
 } satisfies Config;
