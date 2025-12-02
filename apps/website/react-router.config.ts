@@ -10,9 +10,8 @@ export default {
     "/terms",
 
     // blog post pages
-    "/notion",
     "/blog",
-    "/blog/test",
+    "/blog/habit",
     "/blog/notion",
 
     // spa fallback shell
