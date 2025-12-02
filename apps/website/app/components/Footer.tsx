@@ -59,11 +59,20 @@ export const Footer = () => {
 
           {/* Column 3: Blog Posts (New Column) */}
           <div>
-            <div className="text-lg font-semibold mb-3">Latest Posts</div>
+            <Link
+              to="/blog"
+              className="text-lg font-semibold mb-3"
+              style={{
+                color: "white",
+              }}
+              viewTransition
+            >
+              Blog
+            </Link>
             <ul className="space-y-2">
               <li>
                 <Link
-                  to="/notion"
+                  to="/blog/notion"
                   className="text-gray-400 hover:text-white transition duration-150 ease-in-out text-sm"
                   style={{
                     color: "white",
