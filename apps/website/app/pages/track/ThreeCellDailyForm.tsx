@@ -17,7 +17,6 @@ import { SCORE_COLORS } from "~/types";
 import { Card } from "~/components/ui/card";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
-import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 import { Info, LoaderCircle } from "lucide-react";
@@ -29,8 +28,6 @@ import {
 import { Calendar } from "~/components/ui/calendar";
 import { useEffect } from "react";
 import { Skeleton } from "~/components/ui/skeleton";
-import { showSuccessToast } from "~/lib/showSuccessToast";
-import { showErrorToast } from "~/lib/showErrorToast";
 import { api } from "@packages/backend/convex/_generated/api";
 
 // Add validation schema

@@ -3,11 +3,12 @@ import TestMDX from "./posts/habit.mdx";
 import Footer from "~/components/Footer";
 import LoggedOutHeader from "~/components/LoggedOutHeader";
 import type { MetaFunction } from "react-router";
+import type { Route } from "./+types";
 
 // Custom components for MDX styling (if any additional ones are needed globally)
 const mdxComponents = {};
 
-export const meta: MetaFunction = () => {
+export function meta({ }: Route.MetaArgs) {
     return [
         {
             title: "Mastering Habit Tracking: The 3-Step System to Consistency",

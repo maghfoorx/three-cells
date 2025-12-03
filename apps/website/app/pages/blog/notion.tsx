@@ -4,14 +4,14 @@ import Footer from "~/components/Footer";
 
 import LoggedOutHeader from "~/components/LoggedOutHeader";
 import BlogAdCard from "./components/BlogAdCard";
-import type { MetaFunction } from "react-router";
+import type { Route } from "./+types";
 
 // Custom components for MDX styling
 const mdxComponents = {
   BlogAdCard,
 };
 
-export const meta: MetaFunction = () => {
+export function meta({ }: Route.MetaArgs) {
   return [
     {
       title:

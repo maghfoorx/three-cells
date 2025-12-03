@@ -1,4 +1,15 @@
 import { Link } from "react-router";
+import type { Route } from "./+types";
+
+export function meta({ }: Route.MetaArgs) {
+    return [
+        { title: "Three Cells - Blog" },
+        {
+            name: "description",
+            content: "Thoughts on habits, consistency, and building a life you love.",
+        },
+    ];
+}
 
 interface BlogPost {
     slug: string;

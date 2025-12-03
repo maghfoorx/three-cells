@@ -52,8 +52,8 @@ export default [
 
   layout("pages/blog/layout.tsx", [
     route("/blog", "pages/blog/index.tsx"),
-    route("/blog/habit", "pages/blog/posts/habit.mdx"),
-    route("/blog/notion", "pages/blog/posts/notion.mdx"),
+    route("/blog/habit", "pages/blog/habit.tsx"),
+    route("/blog/notion", "pages/blog/notion.tsx"),
   ]),
 
   // spa fallback shell
