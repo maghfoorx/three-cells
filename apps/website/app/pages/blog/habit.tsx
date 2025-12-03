@@ -23,18 +23,10 @@ export function meta({ }: Route.MetaArgs) {
 
 export default function TestBlogPostPage() {
     return (
-        <>
-            <main className="max-w-4xl flex flex-col gap-4 items-center mx-auto px-4">
-                <LoggedOutHeader />
-                <article className="prose max-w-4xl w-full">
-                    <MDXProvider components={mdxComponents}>
-                        <TestMDX />
-                    </MDXProvider>
-                </article>
-            </main>
-            <div className="mt-8">
-                <Footer />
-            </div>
-        </>
+        <article className="prose max-w-4xl w-full">
+            <MDXProvider components={mdxComponents}>
+                <TestMDX />
+            </MDXProvider>
+        </article>
     );
 }
