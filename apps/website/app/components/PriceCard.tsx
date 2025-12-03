@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Check, LoaderCircle } from "lucide-react";
+import { Check, LoaderCircle, Star, StarHalf } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
 import { useAction, useQuery } from "convex/react";
@@ -72,7 +72,6 @@ const PricingCard = ({ login = false }: { login?: boolean }) => {
     "Daily journaling to find your success pattern",
     "One-tap habit tracking with heatmaps",
     "Clean, distraction-free task management",
-    "Beautiful all-in-one interface",
   ];
 
   const payAndSendMessage = useAction(api.stripe.pay);
@@ -87,7 +86,7 @@ const PricingCard = ({ login = false }: { login?: boolean }) => {
   // const isLoading = true;
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full max-w-md md:max-w-4xl mx-auto">
       <div
         ref={cardRef}
         className="relative bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100"
@@ -103,90 +102,124 @@ const PricingCard = ({ login = false }: { login?: boolean }) => {
       >
         {/* Subtle hover effect */}
         <div
-          className={`absolute inset-0 transition-opacity duration-300 pointer-events-none ${
-            isHovered ? "opacity-100" : "opacity-0"
-          }`}
+          className={`absolute inset-0 transition-opacity duration-300 pointer-events-none ${isHovered ? "opacity-100" : "opacity-0"
+            }`}
           style={{
             background: `radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(0,0,0,0.02), transparent 40%)`,
           }}
         />
 
-        <div className="relative p-8">
-          {/* Header */}
-          <div className="text-center mb-6">
+        <div className="relative p-8 grid grid-cols-1 md:grid-cols-2 md:gap-x-12 md:gap-y-4 items-center">
+          {/* 1. Header (Mobile: 1st, Desktop: Left Col, Row 1) */}
+          <div className="md:col-start-1 md:row-start-1 text-center md:text-left mb-6 md:mb-0">
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-              One app. Three things.
+              Your best life one step away
             </h2>
-            <p className="text-gray-600">
+            <p className="text-gray-600 mb-3">
               The only productivity system you'll actually use
+            </p>
+
+            {/* Social Proof */}
+            <div className="flex flex-col items-center md:items-start justify-center gap-1">
+              <div className="flex items-center gap-0.5">
+                <Star size={16} className="text-yellow-400 fill-yellow-400" />
+                <Star size={16} className="text-yellow-400 fill-yellow-400" />
+                <Star size={16} className="text-yellow-400 fill-yellow-400" />
+                <Star size={16} className="text-yellow-400 fill-yellow-400" />
+                <StarHalf size={16} className="text-yellow-400 fill-yellow-400" />
+              </div>
+              <p className="text-xs text-gray-500 font-medium">
+                4.4 stars on App Store (5,100+ downloads)
+              </p>
+            </div>
+          </div>
+
+          {/* 2. Pricing Wrapper (Mobile: 2nd, Desktop: Right Col, Row 1-3) */}
+          <div className="md:col-start-2 md:row-start-1 md:row-span-3 bg-gray-50/50 md:bg-transparent rounded-xl p-4 md:p-0 mb-8 md:mb-0">
+            {/* Plan Tabs */}
+            <div className="flex gap-2 mb-8 bg-gray-100 p-1 rounded-lg">
+              {(["monthly", "yearly", "lifetime"] as const).map((plan) => (
+                <button
+                  key={plan}
+                  onClick={() => setSelectedPlan(plan)}
+                  className={`flex-1 py-2.5 px-3 rounded-md text-sm font-medium transition-all duration-200 relative ${selectedPlan === plan
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                    }`}
+                >
+                  <span className="capitalize">{plan}</span>
+                  {plans[plan].save && (
+                    <div className="absolute -top-2 -right-1 bg-green-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                      {plans[plan].save}
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Pricing */}
+            <div className="text-center mb-8">
+              <div className="flex items-baseline justify-center gap-2 mb-1">
+                {currentPlan?.oldPrice != null && (
+                  <>
+                    {isLoading ? (
+                      <Skeleton className="h-8 w-16" />
+                    ) : (
+                      <span className="text-2xl text-gray-400 line-through">
+                        {currentPlan.oldPrice}
+                      </span>
+                    )}
+                  </>
+                )}
+                {isLoading ? (
+                  <Skeleton className="h-14 w-32" />
+                ) : (
+                  <span className="text-5xl font-bold text-gray-900">
+                    {currentPlan.price}
+                  </span>
+                )}
+              </div>
+              <div className="text-gray-600 mb-1">{currentPlan.period}</div>
+              <div className="text-sm text-gray-500">
+                {currentPlan.description}
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <Button
+              disabled={paymentUrlLoading || isLoading}
+              onClick={handlePurchase}
+              className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-lg py-6 text-base font-medium transition-all duration-200 hover:shadow-lg disabled:opacity-50"
+            >
+              {paymentUrlLoading ? (
+                <LoaderCircle className="animate-spin w-5 h-5" />
+              ) : (
+                `Get started with ${selectedPlan}`
+              )}
+            </Button>
+          </div>
+
+          {/* 3. Testimonial (Mobile: 3rd, Desktop: Left Col, Row 3) */}
+          <div className="md:col-start-1 md:row-start-3 bg-gray-50 rounded-xl p-4 mb-8 md:mb-0 border border-gray-100">
+            <div className="flex gap-0.5 mb-2">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Star key={i} size={14} className="text-yellow-400 fill-yellow-400" />
+              ))}
+            </div>
+            <p className="text-sm text-gray-700 italic mb-2 leading-relaxed">
+              "I've tried everything. This is the first app that's minimal and
+              has everything I need. I actually use it every day. Within 30
+              days I consistently started working out. Journaling has also
+              helped see what I do on my best days. The app is very simple,
+              clean and does not spam me with notifications."
+            </p>
+            <p className="text-xs font-semibold text-gray-900">
+              — Mags, Software Engineer
             </p>
           </div>
 
-          {/* CTA Button for Mobile */}
-          <Button
-            disabled={paymentUrlLoading || isLoading}
-            onClick={handlePurchase}
-            className="mb-4 md:hidden w-full bg-gray-900 hover:bg-gray-800 text-white rounded-lg py-6 text-base font-medium transition-all duration-200 hover:shadow-lg disabled:opacity-50"
-          >
-            {paymentUrlLoading ? (
-              <LoaderCircle className="animate-spin w-5 h-5" />
-            ) : (
-              `Get started with ${selectedPlan}`
-            )}
-          </Button>
-
-          {/* Plan Tabs */}
-          <div className="flex gap-2 mb-8 bg-gray-100 p-1 rounded-lg">
-            {(["monthly", "yearly", "lifetime"] as const).map((plan) => (
-              <button
-                key={plan}
-                onClick={() => setSelectedPlan(plan)}
-                className={`flex-1 py-2.5 px-3 rounded-md text-sm font-medium transition-all duration-200 relative ${
-                  selectedPlan === plan
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
-              >
-                <span className="capitalize">{plan}</span>
-                {plans[plan].save && (
-                  <div className="absolute -top-2 -right-1 bg-green-500 text-white text-xs px-1.5 py-0.5 rounded-full">
-                    {plans[plan].save}
-                  </div>
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Pricing */}
-          <div className="text-center mb-8">
-            <div className="flex items-baseline justify-center gap-2 mb-1">
-              {currentPlan?.oldPrice != null && (
-                <>
-                  {isLoading ? (
-                    <Skeleton className="h-8 w-16" />
-                  ) : (
-                    <span className="text-2xl text-gray-400 line-through">
-                      {currentPlan.oldPrice}
-                    </span>
-                  )}
-                </>
-              )}
-              {isLoading ? (
-                <Skeleton className="h-14 w-32" />
-              ) : (
-                <span className="text-5xl font-bold text-gray-900">
-                  {currentPlan.price}
-                </span>
-              )}
-            </div>
-            <div className="text-gray-600 mb-1">{currentPlan.period}</div>
-            <div className="text-sm text-gray-500">
-              {currentPlan.description}
-            </div>
-          </div>
-
-          {/* Benefits */}
-          <div className="space-y-3 mb-8">
+          {/* 4. Benefits (Mobile: 4th, Desktop: Left Col, Row 2) */}
+          <div className="md:col-start-1 md:row-start-2 space-y-3 mb-8 md:mb-0">
             {benefits.map((benefit, index) => (
               <div key={index} className="flex items-start gap-3 group">
                 <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-transform duration-200 group-hover:scale-110">
@@ -198,24 +231,6 @@ const PricingCard = ({ login = false }: { login?: boolean }) => {
               </div>
             ))}
           </div>
-
-          {/* CTA Button */}
-          <Button
-            disabled={paymentUrlLoading || isLoading}
-            onClick={handlePurchase}
-            className="hidden md:flex w-full bg-gray-900 hover:bg-gray-800 text-white rounded-lg py-6 text-base font-medium transition-all duration-200 hover:shadow-lg disabled:opacity-50"
-          >
-            {paymentUrlLoading ? (
-              <LoaderCircle className="animate-spin w-5 h-5" />
-            ) : (
-              `Get started with ${selectedPlan}`
-            )}
-          </Button>
-
-          {/* Footer note */}
-          {/*<p className="text-center text-xs text-gray-500 mt-4">
-            Free to start • Available on iPhone
-          </p>*/}
         </div>
       </div>
     </div>

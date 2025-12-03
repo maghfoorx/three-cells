@@ -62,7 +62,6 @@ export default function AppSidebarLayout({
         <AppContent variant="sidebar">
           <AppSidebarHeader breadcrumbs={breadcrumbs} />
           <div className="flex-1 flex flex-col items-center justify-center gap-6 p-2 text-center">
-            <div className="text-xl font-semibold">Discipline one step away</div>
             <PricingCard />
           </div>
         </AppContent>
