@@ -13,7 +13,7 @@ import {
 } from "~/components/ui/form";
 import { useNavigate, useParams } from "react-router";
 import { parse, format } from "date-fns";
-import { SCORE_COLORS } from "~/types";
+import { SCORE_COLORS, SCORE_OPTIONS } from "~/types";
 import { Card } from "~/components/ui/card";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
@@ -65,39 +65,6 @@ const FIELD_EXPLANATIONS = {
     </div>
   ),
 };
-
-const SCORE_OPTIONS = [
-  {
-    value: -2,
-    emoji: "😭",
-    color: "bg-red-500 group-hover:bg-red-600 hover:bg-red-600",
-    icon: "/terrible.png",
-  },
-  {
-    value: -1,
-    emoji: "😞",
-    color: "bg-orange-400 group-hover:bg-orange-500 hover:bg-orange-500",
-    icon: "/bad.png",
-  },
-  {
-    value: 0,
-    emoji: "😐",
-    color: "bg-yellow-400 group-hover:bg-yellow-500 hover:bg-yellow-500",
-    icon: "/okay.png",
-  },
-  {
-    value: 1,
-    emoji: "😊",
-    color: "bg-lime-400 group-hover:bg-lime-500 hover:bg-lime-500",
-    icon: "/good.png",
-  },
-  {
-    value: 2,
-    emoji: "😁",
-    color: "bg-green-500 group-hover:bg-green-600 hover:bg-green-600",
-    icon: "/amazing.png",
-  },
-];
 
 export default function ThreeCellDailyForm() {
   const params = useParams();

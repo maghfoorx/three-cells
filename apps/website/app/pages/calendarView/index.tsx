@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { api } from "@packages/backend/convex/_generated/api";
+import { YearlyReviewCard } from "./YearlyReviewCard";
 
 interface MonthData {
   monthName: string;
@@ -15,6 +16,9 @@ interface MonthData {
 
 export default function CalendarViewPage() {
   const allThreeCellEntries = useQuery(api.threeCells.allThreeCellEntries);
+  const overallViewOfYear = useQuery(api.threeCells.overallViewOfYear, {
+    year: "2025"
+  });
 
   const scoreMap = useMemo(() => {
     const map = new Map<string, number>();
@@ -85,11 +89,28 @@ export default function CalendarViewPage() {
     return () => observer.disconnect();
   }, [loadMore]);
 
+  const overallView = useMemo(() => {
+    if (overallViewOfYear) {
+      return overallViewOfYear;
+    }
+
+    return {
+      [-2]: 0,
+      [-1]: 0,
+      [0]: 0,
+      [1]: 0,
+      [2]: 0,
+    };
+  }, [overallViewOfYear]);
+
   return (
     <div className="flex flex-col h-full flex-1 gap-4 rounded-xl rounded-t-none p-4">
       <div className="flex-1 relative">
         <div className="flex-1 absolute h-full w-full overflow-y-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
+          <div className="">
+            <YearlyReviewCard year="2025" scoreCounts={overallView} />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-6 pt-2">
             {loadedMonths.map((month) => (
               <MonthCard
                 key={month.id}

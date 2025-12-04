@@ -42,6 +42,47 @@ export const SCORE_COLORS: { [key: string]: string } = {
   "2": "#22c55e", // green-500
 };
 
+export const SCORE_OPTIONS = [
+  {
+    value: -2,
+    emoji: "😭",
+    color: "bg-red-500 group-hover:bg-red-600 hover:bg-red-600",
+    icon: "/mood-icons/terrible.webp",
+  },
+  {
+    value: -1,
+    emoji: "😞",
+    color: "bg-orange-400 group-hover:bg-orange-500 hover:bg-orange-500",
+    icon: "/mood-icons/bad.webp",
+  },
+  {
+    value: 0,
+    emoji: "😐",
+    color: "bg-yellow-400 group-hover:bg-yellow-500 hover:bg-yellow-500",
+    icon: "/mood-icons/okay.webp",
+  },
+  {
+    value: 1,
+    emoji: "😊",
+    color: "bg-lime-400 group-hover:bg-lime-500 hover:bg-lime-500",
+    icon: "/mood-icons/good.webp",
+  },
+  {
+    value: 2,
+    emoji: "😁",
+    color: "bg-green-500 group-hover:bg-green-600 hover:bg-green-600",
+    icon: "/mood-icons/amazing.webp",
+  },
+];
+
+export const SCORE_IMAGES: { [key: string]: string } = {
+  "-2": "/mood-icons/terrible.webp",
+  "-1": "/mood-icons/bad.webp",
+  "0": "/mood-icons/okay.webp",
+  "1": "/mood-icons/good.webp",
+  "2": "/mood-icons/amazing.webp",
+};
+
 export interface ThreeCellDailyFormType {
   summary: string;
   score: string;
