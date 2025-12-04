@@ -114,8 +114,8 @@ interface MonthCardProps {
 
 function MonthCard({ monthName, days, scoreMap }: MonthCardProps) {
   return (
-    <Card>
-      <CardHeader className="pb-2">
+    <Card className="py-0 py-4">
+      <CardHeader className="">
         <CardTitle className="text-lg">{monthName}</CardTitle>
       </CardHeader>
       <CardContent>
