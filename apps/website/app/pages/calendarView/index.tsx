@@ -1,11 +1,17 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useQuery } from "convex/react";
-import color from "color";
-import { format, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, subMonths } from "date-fns";
 import { SCORE_COLORS } from "~/types";
 import { useNavigate } from "react-router";
-import { Skeleton } from "~/components/ui/skeleton";
+
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { api } from "@packages/backend/convex/_generated/api";
+
+interface MonthData {
+  monthName: string;
+  days: Date[];
+  id: string;
+}
 
 export default function CalendarViewPage() {
   const allThreeCellEntries = useQuery(api.threeCells.allThreeCellEntries);
@@ -19,52 +25,81 @@ export default function CalendarViewPage() {
     }
     return map;
   }, [allThreeCellEntries]);
-  const currentYear = new Date().getFullYear();
-  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const currentMonthIndex = new Date().getMonth();
-
-  const months = Array.from({ length: 12 }, (_, i) => {
-    const start = startOfMonth(new Date(currentYear, i));
-    const end = endOfMonth(start);
-    const days = eachDayOfInterval({ start, end });
-    return { monthName: format(start, "MMMM"), days, monthIndex: i };
+  const [loadedMonths, setLoadedMonths] = useState<MonthData[]>(() => {
+    const current = new Date();
+    const currentYear = current.getFullYear();
+    return Array.from({ length: 12 }, (_, i) => {
+      const date = subMonths(current, i);
+      const start = startOfMonth(date);
+      const end = endOfMonth(start);
+      const days = eachDayOfInterval({ start, end });
+      const isCurrentYear = start.getFullYear() === currentYear;
+      return {
+        monthName: format(start, isCurrentYear ? "MMMM" : "MMMM yyyy"),
+        days,
+        id: format(start, "yyyy-MM"),
+      };
+    });
   });
 
-  useEffect(() => {
-    const el = scrollRef.current?.querySelector<HTMLDivElement>(
-      `[data-month-index="${currentMonthIndex}"]`,
-    );
-    if (el) {
-      el.scrollIntoView({ behavior: "instant", block: "start" });
-    }
+  const observerTarget = useRef<HTMLDivElement>(null);
+
+  const loadMore = useCallback(() => {
+    setLoadedMonths((prev) => {
+      const lastMonthDays = prev[prev.length - 1].days;
+      const lastMonthDate = lastMonthDays[0];
+      const currentYear = new Date().getFullYear();
+
+      const newMonths = Array.from({ length: 6 }, (_, i) => {
+        const date = subMonths(lastMonthDate, i + 1);
+        const start = startOfMonth(date);
+        const end = endOfMonth(start);
+        const days = eachDayOfInterval({ start, end });
+        const isCurrentYear = start.getFullYear() === currentYear;
+        return {
+          monthName: format(start, isCurrentYear ? "MMMM" : "MMMM yyyy"),
+          days,
+          id: format(start, "yyyy-MM"),
+        };
+      });
+
+      return [...prev, ...newMonths];
+    });
   }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   return (
     <div className="flex flex-col h-full flex-1 gap-4 rounded-xl rounded-t-none p-4">
-      <h1 className="text-2xl font-bold mb-6">📅 {currentYear} Year View</h1>
       <div className="flex-1 relative">
-        <div
-          ref={scrollRef}
-          className="flex-1 absolute h-full w-full overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {allThreeCellEntries === undefined
-            ? // Show ShadCN skeletons while loading data
-              Array.from({ length: 12 }).map((_, index) => (
-                <div key={index} className="border rounded-lg p-4">
-                  <Skeleton className="mb-3 h-[30px] w-[80%]" />
-                  <Skeleton className="h-[200px]" />
-                </div>
-              ))
-            : months.map((month, index) => (
-                <MonthCard
-                  key={index}
-                  monthName={month.monthName}
-                  days={month.days}
-                  monthIndex={month.monthIndex}
-                  scoreMap={scoreMap}
-                />
-              ))}
+        <div className="flex-1 absolute h-full w-full overflow-y-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
+            {loadedMonths.map((month) => (
+              <MonthCard
+                key={month.id}
+                monthName={month.monthName}
+                days={month.days}
+                scoreMap={scoreMap}
+              />
+            ))}
+          </div>
+          <div ref={observerTarget} className="h-10 w-full" />
         </div>
       </div>
     </div>
@@ -74,16 +109,19 @@ export default function CalendarViewPage() {
 interface MonthCardProps {
   monthName: string;
   days: Date[];
-  monthIndex: number;
   scoreMap: Map<string, number>;
 }
 
-function MonthCard({ monthName, days, monthIndex, scoreMap }: MonthCardProps) {
+function MonthCard({ monthName, days, scoreMap }: MonthCardProps) {
   return (
-    <div className="border rounded-lg p-4" data-month-index={monthIndex}>
-      <h2 className="text-lg font-semibold mb-3">{monthName}</h2>
-      <MonthGrid days={days} scoreMap={scoreMap} />
-    </div>
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg">{monthName}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <MonthGrid days={days} scoreMap={scoreMap} />
+      </CardContent>
+    </Card>
   );
 }
 
@@ -99,7 +137,7 @@ function MonthGrid({ days, scoreMap }: MonthGridProps) {
 
   const handleDateClicked = (date: Date) => {
     const formattedDate = format(date, "yyyy-MM-dd");
-    navigate(`/track/${formattedDate}`);
+    navigate(`/track/${formattedDate}`, { viewTransition: true });
   };
 
   return (
@@ -108,7 +146,7 @@ function MonthGrid({ days, scoreMap }: MonthGridProps) {
       {["S", "M", "T", "W", "T", "F", "S"].map((d, index) => (
         <div
           key={`weekday-${index}-month-${month}`}
-          className="font-medium text-center"
+          className="font-medium text-center text-muted-foreground text-xs"
         >
           {d}
         </div>
@@ -125,12 +163,12 @@ function MonthGrid({ days, scoreMap }: MonthGridProps) {
         const score = scoreMap.get(dateStr);
         const bgColor = score !== undefined ? SCORE_COLORS[score] : undefined;
 
-        const scoreDayTextColour = bgColor != undefined ? "white" : "black";
+        const scoreDayTextColour = bgColor != undefined ? "white" : "inherit";
 
         return (
           <div
             key={day.toISOString()}
-            className="text-center p-1 hover:bg-gray-100 rounded cursor-pointer"
+            className="text-center p-1 hover:bg-muted rounded cursor-pointer text-xs aspect-square flex items-center justify-center"
             style={{
               backgroundColor: bgColor,
               color: scoreDayTextColour,
