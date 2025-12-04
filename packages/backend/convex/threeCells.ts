@@ -89,18 +89,20 @@ export const overallViewOfYear = query({
     const allEnteries = await ctx.db
       .query("three_cells")
       .withIndex("by_user", (q) => q.eq("userId", userId))
-      .order("desc") // orders by _creationTime
       .collect();
 
     const entriesForYear = allEnteries.filter((entry) =>
       entry.dateFor.startsWith(year),
     );
 
-    const scoreMap = entriesForYear.reduce((acc, entry) => {
-      const score = entry.score;
-      acc[score] = (acc[score] || 0) + 1;
-      return acc;
-    }, {} as Record<number, number>);
+    const scoreMap = entriesForYear.reduce(
+      (acc, entry) => {
+        const score = entry.score;
+        acc[score] = (acc[score] || 0) + 1;
+        return acc;
+      },
+      {} as Record<number, number>,
+    );
 
     return scoreMap;
   },
