@@ -168,7 +168,8 @@ function MonthGrid({ days, scoreMap }: MonthGridProps) {
         return (
           <div
             key={day.toISOString()}
-            className="text-center p-1 hover:bg-muted rounded cursor-pointer text-xs aspect-square flex items-center justify-center"
+            className={`text-center p-1 rounded cursor-pointer text-xs aspect-square flex items-center justify-center transition-colors duration-500 ${bgColor ? "hover:opacity-80" : "hover:bg-muted"
+              }`}
             style={{
               backgroundColor: bgColor,
               color: scoreDayTextColour,
