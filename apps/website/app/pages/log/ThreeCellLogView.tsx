@@ -80,7 +80,7 @@ export default function ThreeCellLogView() {
               <div
                 key={entry._id}
                 style={{ backgroundColor: bg }}
-                className="rounded-lg p-4 shadow cursor-pointer"
+                className="rounded-md p-4 shadow cursor-pointer"
                 onClick={() => navigate(`/track/${entry.dateFor}`)}
               >
                 <div className="flex justify-between items-center text-sm font-medium">
