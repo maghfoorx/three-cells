@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import type { Route } from "./+types";
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: "Three Cells - Blog" },
     {
@@ -15,6 +15,7 @@ interface BlogPost {
   slug: string;
   title: string;
   description: string;
+  published: string;
 }
 
 const getPosts = () => {
@@ -30,10 +31,13 @@ const getPosts = () => {
         slug,
         title: mod.title,
         description: mod.description,
+        published: mod.published || "1970-01-01", // Fallback date
       });
     }
   }
-  return posts;
+  return posts.sort(
+    (a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()
+  );
 };
 
 export default function BlogIndex() {
