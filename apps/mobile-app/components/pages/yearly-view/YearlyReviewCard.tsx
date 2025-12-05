@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import * as d3 from "d3";
-import Svg, { Rect, Text as SvgText, G } from "react-native-svg";
+import Svg, { Rect, Text as SvgText, G, Image as SvgImage } from "react-native-svg";
 import { View, Text, Image, Animated, ActivityIndicator } from "react-native";
 import { SCORE_COLORS, MOOD_IMAGES } from "@/utils/types";
 import { useQuery } from "convex/react";
@@ -66,7 +66,7 @@ export function YearlyReviewCard({ year, scoreCounts }: YearlyReviewCardProps) {
         const maxCount = counts.length > 0 ? Math.max(...counts) : 1;
 
         // Layout constants
-        const LABEL_WIDTH = 24; // Space for -2, +2 etc
+        const LABEL_WIDTH = 32; // Increased space for mood images
         const RIGHT_PADDING = 80; // Space for "N days" label
         const barMaxWidth = chartWidth - LABEL_WIDTH - RIGHT_PADDING;
 
@@ -83,22 +83,17 @@ export function YearlyReviewCard({ year, scoreCounts }: YearlyReviewCardProps) {
                     const barWidth = widthScale(count);
 
                     const barColor = SCORE_COLORS[score.toString()] || "#ccc";
-                    const scoreLabel = score > 0 ? `+${score}` : `${score}`;
 
                     return (
                         <G key={score}>
-                            {/* Score Label on Left */}
-                            <SvgText
+                            {/* Mood Image on Left */}
+                            <SvgImage
                                 x={0}
-                                y={y + BAR_HEIGHT / 2 + 1}
-                                fontSize="14"
-                                fontWeight="600"
-                                fill="#374151"
-                                textAnchor="start"
-                                alignmentBaseline="middle"
-                            >
-                                {scoreLabel}
-                            </SvgText>
+                                y={y}
+                                width={BAR_HEIGHT}
+                                height={BAR_HEIGHT}
+                                href={MOOD_IMAGES[score.toString() as keyof typeof MOOD_IMAGES]}
+                            />
 
                             {/* Animated Bar */}
                             <AnimatedRect
@@ -142,7 +137,7 @@ export function YearlyReviewCard({ year, scoreCounts }: YearlyReviewCardProps) {
                         {year} overview
                     </Text>
                 </View>
-                <View style={{ height: CHART_HEIGHT }}>{renderStreaksChart()}</View>
+                <View style={{ height: CHART_HEIGHT }} className="px-4">{renderStreaksChart()}</View>
             </View>
         </View>
     );

@@ -201,7 +201,7 @@ function MonthGrid({
                   className={`text-sm font-medium ${isToday && !bgColor ? "text-blue-700" : ""
                     }`}
                   style={{
-                    color: bgColor
+                    color: score !== undefined ? "white" : bgColor
                       ? color(bgColor).isLight()
                         ? "#374151"
                         : "white"

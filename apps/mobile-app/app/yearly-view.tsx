@@ -79,9 +79,9 @@ export default function CalendarViewPage() {
             {/* Left side - Go to Today button */}
             <Pressable
               onPress={handleGoToToday}
-              className="bg-blue-50 px-3 py-2 rounded-lg"
+              className="bg-blue-50 px-3 py-2 rounded-full"
             >
-              <Text className="text-blue-700 text-sm font-medium">Today</Text>
+              <Text className="text-sm font-medium">Today</Text>
             </Pressable>
 
             {/* Center - Title */}
