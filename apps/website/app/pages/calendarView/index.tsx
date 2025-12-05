@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useQuery } from "convex/react";
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, subMonths } from "date-fns";
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  subMonths,
+} from "date-fns";
 import { SCORE_COLORS } from "~/types";
 import { useNavigate } from "react-router";
 
@@ -17,7 +23,7 @@ interface MonthData {
 export default function CalendarViewPage() {
   const allThreeCellEntries = useQuery(api.threeCells.allThreeCellEntries);
   const overallViewOfYear = useQuery(api.threeCells.overallViewOfYear, {
-    year: "2025"
+    year: "2025",
   });
 
   const scoreMap = useMemo(() => {
@@ -79,7 +85,7 @@ export default function CalendarViewPage() {
           loadMore();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     if (observerTarget.current) {
@@ -104,20 +110,21 @@ export default function CalendarViewPage() {
   }, [overallViewOfYear]);
 
   return (
-    <div className="flex flex-col h-full flex-1 gap-4 rounded-xl rounded-t-none p-4">
+    <div className="flex flex-col h-full flex-1 gap-4 rounded-xl rounded-t-none p-2">
       <div className="flex-1 relative">
         <div className="flex-1 absolute h-full w-full overflow-y-auto">
           <div className="">
             <YearlyReviewCard year="2025" scoreCounts={overallView} />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-6 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-6 pt-2" dir="rtl">
             {loadedMonths.map((month) => (
-              <MonthCard
-                key={month.id}
-                monthName={month.monthName}
-                days={month.days}
-                scoreMap={scoreMap}
-              />
+              <div key={month.id} dir="ltr" className="h-full">
+                <MonthCard
+                  monthName={month.monthName}
+                  days={month.days}
+                  scoreMap={scoreMap}
+                />
+              </div>
             ))}
           </div>
           <div ref={observerTarget} className="h-10 w-full" />
@@ -135,7 +142,7 @@ interface MonthCardProps {
 
 function MonthCard({ monthName, days, scoreMap }: MonthCardProps) {
   return (
-    <Card className="py-0 py-4 rounded-md">
+    <Card className="py-0 py-4 rounded-md h-full">
       <CardHeader className="">
         <CardTitle className="text-xs uppercase">{monthName}</CardTitle>
       </CardHeader>
