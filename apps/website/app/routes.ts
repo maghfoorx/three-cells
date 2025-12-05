@@ -53,6 +53,9 @@ export default [
     route("/blog", "pages/blog/index.tsx"),
     route("/blog/habit", "pages/blog/habit.tsx"),
     route("/blog/notion", "pages/blog/notion.tsx"),
+    route("/blog/28-books", "pages/blog/28-books.tsx"),
+    route("/blog/one-resolution", "pages/blog/one-resolution.tsx"),
+    route("/blog/8-months", "pages/blog/8-months.tsx"),
   ]),
 
   // spa fallback shell

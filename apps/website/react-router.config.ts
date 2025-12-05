@@ -13,6 +13,9 @@ export default {
     "/blog",
     "/blog/habit",
     "/blog/notion",
+    "/blog/28-books",
+    "/blog/one-resolution",
+    "/blog/8-months",
 
     // spa fallback shell
     "/__app_shell",
