@@ -192,17 +192,22 @@ function MonthGrid({ days, scoreMap }: MonthGridProps) {
         const bgColor = score !== undefined ? SCORE_COLORS[score] : undefined;
 
         const scoreDayTextColour = bgColor != undefined ? "white" : "inherit";
-
+        const isFuture = day > new Date();
         return (
           <div
             key={day.toISOString()}
             className={`text-center p-1 rounded cursor-pointer text-xs aspect-square flex items-center justify-center transition-colors duration-500 ${bgColor ? "hover:opacity-80" : "hover:bg-muted"
-              }`}
+              } ${isFuture ? "opacity-50" : ""}`}
             style={{
               backgroundColor: bgColor,
               color: scoreDayTextColour,
             }}
-            onClick={() => handleDateClicked(day)}
+            onClick={() => {
+              if (isFuture) {
+                return;
+              }
+              handleDateClicked(day)
+            }}
           >
             {day.getDate()}
           </div>
