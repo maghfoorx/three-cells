@@ -1,17 +1,33 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useMemo } from "react";
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
-import { format, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
+import { format } from "date-fns";
 import { useRouter } from "expo-router";
 import color from "color";
 import { SCORE_COLORS } from "@/utils/types";
+import { YearlyReviewCard } from "./YearlyReviewCard";
 
 const MONTH_CARD_HEIGHT = 320;
 
+export interface MonthData {
+  monthName: string;
+  days: Date[];
+  id: string;
+  monthIndex: number;
+}
+
+interface CalendarViewProps {
+  allThreeCellEntries: any;
+  months: MonthData[];
+  onEndReached: () => void;
+  overallViewOfYear: any;
+}
+
 export default function CalendarView({
   allThreeCellEntries,
-}: {
-  allThreeCellEntries: any;
-}) {
+  months,
+  onEndReached,
+  overallViewOfYear,
+}: CalendarViewProps) {
   const scoreMap = useMemo(() => {
     const map = new Map<string, number>();
     if (allThreeCellEntries) {
@@ -23,63 +39,44 @@ export default function CalendarView({
   }, [allThreeCellEntries]);
 
   const currentYear = new Date().getFullYear();
-  const scrollRef = useRef<FlatList>(null);
-  const monthPositions = useRef<{ [key: number]: number }>({});
-  const currentMonthIndex = new Date().getMonth();
 
-  const months = useMemo(() => {
-    return Array.from({ length: 12 }, (_, i) => {
-      const start = startOfMonth(new Date(currentYear, i));
-      const end = endOfMonth(start);
-      const days = eachDayOfInterval({ start, end });
-      return {
-        key: i.toString(),
-        monthName: format(start, "MMMM"),
-        days,
-        monthIndex: i,
-      };
-    });
-  }, [currentYear]);
+  const overallView = useMemo(() => {
+    if (overallViewOfYear) {
+      return overallViewOfYear;
+    }
 
-  const getItemLayout = (data: any, index: number) => ({
-    length: MONTH_CARD_HEIGHT,
-    offset: MONTH_CARD_HEIGHT * index,
-    index,
-  });
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (scrollRef.current && currentMonthIndex > 0) {
-        scrollRef.current.scrollToIndex({
-          index: currentMonthIndex - 1,
-          animated: true,
-        });
-      }
-    }, 100);
-    return () => clearTimeout(timeout);
-  }, [currentMonthIndex]);
+    return {
+      [-2]: 0,
+      [-1]: 0,
+      [0]: 0,
+      [1]: 0,
+      [2]: 0,
+    };
+  }, [overallViewOfYear]);
 
   return (
     <FlatList
-      ref={scrollRef}
-      getItemLayout={getItemLayout}
       data={months}
-      keyExtractor={(item) => item.key}
+      keyExtractor={(item) => item.id}
+      ListHeaderComponent={
+        <YearlyReviewCard
+          year={currentYear.toString()}
+          scoreCounts={overallView}
+        />
+      }
       renderItem={({ item }) => (
         <MonthCard
           monthName={item.monthName}
           days={item.days}
-          monthIndex={item.monthIndex}
           scoreMap={scoreMap}
-          onLayout={(y) => {
-            monthPositions.current[item.monthIndex] = y;
-          }}
         />
       )}
+      onEndReached={onEndReached}
+      onEndReachedThreshold={0.5}
       initialNumToRender={2}
       windowSize={3}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ padding: 16 }}
+      contentContainerStyle={{ paddingBottom: 16 }}
     />
   );
 }
@@ -88,14 +85,12 @@ type MonthCardProps = {
   monthName: string;
   days: Date[];
   scoreMap: Map<string, number>;
-  monthIndex: number;
-  onLayout?: (y: number) => void;
 };
 
-const MonthCard = ({ monthName, days, scoreMap, onLayout }: MonthCardProps) => {
+const MonthCard = ({ monthName, days, scoreMap }: MonthCardProps) => {
   return (
     <View
-      className="bg-white rounded-md shadow-sm mb-4"
+      className="bg-white rounded-md shadow-sm mb-4 mx-4"
       style={{
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
@@ -103,14 +98,12 @@ const MonthCard = ({ monthName, days, scoreMap, onLayout }: MonthCardProps) => {
         shadowRadius: 2,
         elevation: 1,
       }}
-      onLayout={(event) => {
-        const y = event.nativeEvent.layout.y;
-        onLayout?.(y);
-      }}
     >
       {/* Month Header */}
       <View className="px-4 py-4 border-b border-gray-100">
-        <Text className="text-lg font-semibold text-gray-900">{monthName}</Text>
+        <Text className="text-xs font-semibold text-gray-900 uppercase">
+          {monthName}
+        </Text>
       </View>
 
       {/* Calendar Grid */}
@@ -189,14 +182,15 @@ function MonthGrid({
             const bgColor =
               score !== undefined ? SCORE_COLORS[score] : undefined;
             const isToday = format(new Date(), "yyyy-MM-dd") === dateStr;
+            const isFuture = cell.day > new Date();
 
             return (
               <TouchableOpacity
                 key={cell.key}
+                disabled={isFuture}
                 onPress={() => handleDateClicked(cell.day)}
-                className={`flex-1 h-12 justify-center items-center mx-0.5 rounded-md ${
-                  isToday && !bgColor ? "bg-blue-50 border border-blue-200" : ""
-                }`}
+                className={`flex-1 h-12 justify-center items-center mx-0.5 rounded-md ${isToday && !bgColor ? "bg-blue-50 border border-blue-200" : ""
+                  } ${isFuture ? "opacity-30" : ""}`}
                 style={{
                   backgroundColor:
                     bgColor || (isToday ? "#EFF6FF" : "transparent"),
@@ -204,9 +198,8 @@ function MonthGrid({
                 activeOpacity={0.7}
               >
                 <Text
-                  className={`text-sm font-medium ${
-                    isToday && !bgColor ? "text-blue-700" : ""
-                  }`}
+                  className={`text-sm font-medium ${isToday && !bgColor ? "text-blue-700" : ""
+                    }`}
                   style={{
                     color: bgColor
                       ? color(bgColor).isLight()
