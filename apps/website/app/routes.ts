@@ -56,6 +56,8 @@ export default [
     route("/blog/28-books", "pages/blog/28-books.tsx"),
     route("/blog/one-resolution", "pages/blog/one-resolution.tsx"),
     route("/blog/8-months", "pages/blog/8-months.tsx"),
+    route("/blog/must-journal", "pages/blog/must-journal.tsx"),
+    route("/blog/dont-procrastinate", "pages/blog/dont-procrastinate.tsx"),
   ]),
 
   // spa fallback shell
