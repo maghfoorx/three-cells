@@ -18,6 +18,7 @@ export default {
     "/blog/8-months",
     "/blog/must-journal",
     "/blog/dont-procrastinate",
+    "/blog/2026-best-life",
 
     // spa fallback shell
     "/__app_shell",
