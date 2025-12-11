@@ -36,14 +36,28 @@ export default function SingleHabitPage() {
 
   return (
     <div className="flex flex-col h-full flex-1 gap-3 rounded-xl rounded-t-none p-2">
-      {habit?.name === undefined && (
-        <h1 className="font-semibold text-3xl px-4 py-2 blur-md">
-          You're Awesome
-        </h1>
-      )}
-      {habit?.name !== undefined && (
-        <h1 className="font-semibold text-3xl px-4 py-2">{habit?.name}</h1>
-      )}
+      <div className="px-4 flex items-center">
+        {habit?.name === undefined && (
+          <h1 className="font-semibold text-3xl px-4 py-2 blur-md">
+            You're Awesome
+          </h1>
+        )}
+        {habit?.name !== undefined && (
+          <>
+            {habit.icon ? (
+              <div className="w-8 h-8 rounded-sm overflow-hidden flex items-center justify-center flex-shrink-0">
+                <img src={`/${habit.icon}`} className="w-full h-full object-cover scale-150" alt="" />
+              </div>
+            ) : (
+              <span
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: habit.colour }}
+              ></span>
+            )}
+            <h1 className="font-semibold text-3xl px-4 py-2">{habit?.name}</h1>
+          </>
+        )}
+      </div>
       <div className="flex-1 relative">
         <div className="absolute h-full w-full overflow-y-auto space-y-3">
           <AnimatePresence>
@@ -195,9 +209,8 @@ const RecentActivity = ({ recentActivity }: { recentActivity: any[] }) => {
             >
               <div className="flex items-center gap-3">
                 <div
-                  className={`w-2 h-2 rounded-full ${
-                    submission.value ? "bg-green-500" : "bg-red-500"
-                  }`}
+                  className={`w-2 h-2 rounded-full ${submission.value ? "bg-green-500" : "bg-red-500"
+                    }`}
                 />
                 <span className="text-sm">
                   {format(new Date(submission.dateFor), "MMM d, yyyy")}

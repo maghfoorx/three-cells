@@ -64,10 +64,17 @@ export function UserHabitCard({
     >
       <div className="flex justify-between items-center">
         <div className="text-sm font-medium text-gray-800 flex items-center gap-2 group-hover:underline">
-          <span
-            className="w-3 h-3 rounded-full"
-            style={{ backgroundColor: habit.colour }}
-          ></span>
+
+          {habit.icon ? (
+            <div className="w-6 h-6 rounded-sm overflow-hidden flex items-center justify-center flex-shrink-0">
+              <img src={`/${habit.icon}`} className="w-full h-full object-cover scale-150" alt="" />
+            </div>
+          ) : (
+            <span
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: habit.colour }}
+            ></span>
+          )}
           {habit.name}
         </div>
       </div>

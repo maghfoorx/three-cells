@@ -41,6 +41,7 @@ export const createNewUserHabit = mutation({
     name: v.string(),
     colour: v.string(),
     habitQuestion: v.string(),
+    icon: v.optional(v.string()),
     enableNotifications: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
@@ -55,6 +56,7 @@ export const createNewUserHabit = mutation({
       userId,
       name: args.name,
       colour: args.colour,
+      icon: args.icon,
       habitQuestion: args.habitQuestion,
       type: "yes_no",
       enableNotifications: args?.enableNotifications ?? false,

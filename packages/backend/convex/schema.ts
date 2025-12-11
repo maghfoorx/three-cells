@@ -62,6 +62,8 @@ const schema = defineSchema({
     name: v.string(),
     description: v.optional(v.string()),
     colour: v.string(), // hex format
+    icon: v.optional(v.string()), // relative path to icon
+
 
     habitQuestion: v.string(),
 
