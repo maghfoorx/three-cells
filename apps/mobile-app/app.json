@@ -2,7 +2,7 @@
   "expo": {
     "name": "Three Cells",
     "slug": "three-cells",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "orientation": "portrait",
     "icon": "./assets/images/meditating.png",
     "scheme": "com.threecells.iosapp",
