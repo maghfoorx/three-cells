@@ -4,10 +4,12 @@ import { AppStoreButton, WebButton } from "./components/CTAButtons";
 import AppLogoIcon from "~/components/AppLogoIcon";
 
 const AppScreenshotsCarousel = lazy(
-  () => import("./components/AppScreenShotsCarousel")
+  () => import("./components/AppScreenShotsCarousel"),
 );
 const FeaturesBentoGrid = lazy(() => import("./components/FeaturesBentoGrid"));
-const WhyUsersSection = lazy(() => import("./components/WhyUsersUseThreeCells"));
+const WhyUsersSection = lazy(
+  () => import("./components/WhyUsersUseThreeCells"),
+);
 const Footer = lazy(() => import("~/components/Footer"));
 
 export default function Home() {
@@ -282,7 +284,9 @@ const TestimonialsSection = () => {
             everything I need to build my dream life. I actually use it every
             day."
           </p>
-          <p className="font-semibold text-gray-900">Mags, Software Engineer</p>
+          <p className="font-semibold text-gray-900">
+            Ahmed, Software Engineer
+          </p>
         </div>
 
         <div className="border-l-4 border-black pl-6 sm:pl-8">
