@@ -102,8 +102,9 @@ const PricingCard = ({ login = false }: { login?: boolean }) => {
       >
         {/* Subtle hover effect */}
         <div
-          className={`absolute inset-0 transition-opacity duration-300 pointer-events-none ${isHovered ? "opacity-100" : "opacity-0"
-            }`}
+          className={`absolute inset-0 transition-opacity duration-300 pointer-events-none ${
+            isHovered ? "opacity-100" : "opacity-0"
+          }`}
           style={{
             background: `radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(0,0,0,0.02), transparent 40%)`,
           }}
@@ -126,10 +127,13 @@ const PricingCard = ({ login = false }: { login?: boolean }) => {
                 <Star size={16} className="text-yellow-400 fill-yellow-400" />
                 <Star size={16} className="text-yellow-400 fill-yellow-400" />
                 <Star size={16} className="text-yellow-400 fill-yellow-400" />
-                <StarHalf size={16} className="text-yellow-400 fill-yellow-400" />
+                <StarHalf
+                  size={16}
+                  className="text-yellow-400 fill-yellow-400"
+                />
               </div>
               <p className="text-xs text-gray-500 font-medium">
-                4.4 stars on App Store (5,100+ downloads)
+                4.5 stars on App Store (5,400+ downloads)
               </p>
             </div>
           </div>
@@ -142,10 +146,11 @@ const PricingCard = ({ login = false }: { login?: boolean }) => {
                 <button
                   key={plan}
                   onClick={() => setSelectedPlan(plan)}
-                  className={`flex-1 py-2.5 px-3 rounded-md text-sm font-medium transition-all duration-200 relative ${selectedPlan === plan
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-600 hover:text-gray-900"
-                    }`}
+                  className={`flex-1 py-2.5 px-3 rounded-md text-sm font-medium transition-all duration-200 relative ${
+                    selectedPlan === plan
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
                 >
                   <span className="capitalize">{plan}</span>
                   {plans[plan].save && (
@@ -203,15 +208,19 @@ const PricingCard = ({ login = false }: { login?: boolean }) => {
           <div className="md:col-start-1 md:row-start-3 bg-gray-50 rounded-xl p-4 mb-8 md:mb-0 border border-gray-100">
             <div className="flex gap-0.5 mb-2">
               {[1, 2, 3, 4, 5].map((i) => (
-                <Star key={i} size={14} className="text-yellow-400 fill-yellow-400" />
+                <Star
+                  key={i}
+                  size={14}
+                  className="text-yellow-400 fill-yellow-400"
+                />
               ))}
             </div>
             <p className="text-sm text-gray-700 italic mb-2 leading-relaxed">
               "I've tried everything. This is the first app that's minimal and
-              has everything I need. I actually use it every day. Within 30
-              days I consistently started working out. Journaling has also
-              helped see what I do on my best days. The app is very simple,
-              clean and does not spam me with notifications."
+              has everything I need. I actually use it every day. Within 30 days
+              I consistently started working out. Journaling has also helped see
+              what I do on my best days. The app is very simple, clean and does
+              not spam me with notifications."
             </p>
             <p className="text-xs font-semibold text-gray-900">
               — Mags, Software Engineer
