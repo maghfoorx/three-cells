@@ -13,6 +13,7 @@ import { useNavigate } from "react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { api } from "@packages/backend/convex/_generated/api";
 import { YearlyReviewCard } from "./YearlyReviewCard";
+import { ConnectedYearlyReviewCard } from "./ConnectedYearlyReviewCard";
 
 interface MonthData {
   monthName: string;
@@ -22,8 +23,9 @@ interface MonthData {
 
 export default function CalendarViewPage() {
   const allThreeCellEntries = useQuery(api.threeCells.allThreeCellEntries);
+  const currentYear = new Date().getFullYear();
   const overallViewOfYear = useQuery(api.threeCells.overallViewOfYear, {
-    year: "2025",
+    year: currentYear.toString(),
   });
 
   const scoreMap = useMemo(() => {
@@ -114,18 +116,32 @@ export default function CalendarViewPage() {
       <div className="flex-1 relative">
         <div className="flex-1 absolute h-full w-full overflow-y-auto">
           <div className="">
-            <YearlyReviewCard year="2025" scoreCounts={overallView} />
+            <YearlyReviewCard year={currentYear.toString()} scoreCounts={overallView} />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-6 pt-2" dir="rtl">
-            {loadedMonths.map((month) => (
-              <div key={month.id} dir="ltr" className="h-full">
-                <MonthCard
-                  monthName={month.monthName}
-                  days={month.days}
-                  scoreMap={scoreMap}
-                />
-              </div>
-            ))}
+            {loadedMonths.map((month) => {
+              const isDecember = month.monthName.startsWith("December");
+              const monthDate = month.days[0]; // First day of the month
+              const year = monthDate.getFullYear();
+              const isCurrentYear = year === currentYear;
+
+              return (
+                <div key={month.id} className="contents">
+                  {isDecember && !isCurrentYear && (
+                    <div className="" dir="ltr">
+                      <ConnectedYearlyReviewCard year={year.toString()} />
+                    </div>
+                  )}
+                  <div dir="ltr" className="h-full">
+                    <MonthCard
+                      monthName={month.monthName}
+                      days={month.days}
+                      scoreMap={scoreMap}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
           <div ref={observerTarget} className="h-10 w-full" />
         </div>
