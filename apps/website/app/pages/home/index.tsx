@@ -284,9 +284,7 @@ const TestimonialsSection = () => {
             everything I need to build my dream life. I actually use it every
             day."
           </p>
-          <p className="font-semibold text-gray-900">
-            Ahmed, Software Engineer
-          </p>
+          <p className="font-semibold text-gray-900">Jake, Software Engineer</p>
         </div>
 
         <div className="border-l-4 border-black pl-6 sm:pl-8">
