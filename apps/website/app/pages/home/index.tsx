@@ -2,6 +2,7 @@ import { Suspense, lazy } from "react";
 import { Globe2Icon, Star, StarHalf } from "lucide-react";
 import { AppStoreButton, WebButton } from "./components/CTAButtons";
 import AppLogoIcon from "~/components/AppLogoIcon";
+import YearlyReviewDemoSection from "./components/YearlyReviewDemoSection";
 
 const AppScreenshotsCarousel = lazy(
   () => import("./components/AppScreenShotsCarousel"),
@@ -16,6 +17,7 @@ export default function Home() {
   return (
     <main className="bg-white">
       <HeroSection />
+      <YearlyReviewDemoSection />
       <Suspense fallback={<div className="h-96" />}>
         <FeaturesBentoGrid />
       </Suspense>

@@ -29,7 +29,8 @@ export function YearlyReviewCard({ year, scoreCounts }: YearlyReviewCardProps) {
                             <div className="flex-1 h-6 bg-muted/30 rounded-sm overflow-hidden relative">
                                 <motion.div
                                     initial={{ width: 0 }}
-                                    animate={{ width: `${barWidth}%` }}
+                                    whileInView={{ width: `${barWidth}%` }}
+                                    viewport={{ once: true }}
                                     transition={{ duration: 0.5, ease: "easeOut" }}
                                     className="h-full rounded-sm absolute top-0 left-0"
                                     style={{ backgroundColor: SCORE_COLORS[score.toString()] }}
