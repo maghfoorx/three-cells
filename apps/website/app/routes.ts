@@ -46,6 +46,7 @@ export default [
 
   // web redirect for hackernews
   route("/web", "pages/web/index.tsx"),
+  route("/web1", "pages/web/web1.tsx"),
 
   // blog psots
 
