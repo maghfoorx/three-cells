@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import color from "color";
 import { SCORE_COLORS } from "@/utils/types";
 import { YearlyReviewCard } from "./YearlyReviewCard";
+import ConnectedYearlyReviewCardMobile from "./ConnectedYearlyReviewCardMobile";
 
 const MONTH_CARD_HEIGHT = 320;
 
@@ -69,6 +70,8 @@ export default function CalendarView({
           monthName={item.monthName}
           days={item.days}
           scoreMap={scoreMap}
+          currentYear={currentYear}
+          year={item.days[0].getFullYear()}
         />
       )}
       onEndReached={onEndReached}
@@ -85,9 +88,50 @@ type MonthCardProps = {
   monthName: string;
   days: Date[];
   scoreMap: Map<string, number>;
+  year: number;
+  currentYear: number;
 };
 
-const MonthCard = ({ monthName, days, scoreMap }: MonthCardProps) => {
+const MonthCard = ({
+  monthName,
+  days,
+  scoreMap,
+  year,
+  currentYear,
+}: MonthCardProps) => {
+  const isDecember = monthName.startsWith("December");
+  const isCurrentYear = year === currentYear;
+  if (isDecember && !isCurrentYear) {
+    return (
+      <>
+        <View className="">
+          <ConnectedYearlyReviewCardMobile year={year.toString()} />
+        </View>
+        <View
+          className="bg-white rounded-md shadow-sm mb-4 mx-4"
+          style={{
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.05,
+            shadowRadius: 2,
+            elevation: 1,
+          }}
+        >
+          {/* Month Header */}
+          <View className="px-4 py-4 border-b border-gray-100">
+            <Text className="text-xs font-semibold text-gray-900 uppercase">
+              {monthName}
+            </Text>
+          </View>
+
+          {/* Calendar Grid */}
+          <View className="p-4">
+            <MonthGrid days={days} scoreMap={scoreMap} />
+          </View>
+        </View>
+      </>
+    );
+  }
   return (
     <View
       className="bg-white rounded-md shadow-sm mb-4 mx-4"
@@ -189,8 +233,9 @@ function MonthGrid({
                 key={cell.key}
                 disabled={isFuture}
                 onPress={() => handleDateClicked(cell.day)}
-                className={`flex-1 h-12 justify-center items-center mx-0.5 rounded-md ${isToday && !bgColor ? "bg-blue-50 border border-blue-200" : ""
-                  } ${isFuture ? "opacity-30" : ""}`}
+                className={`flex-1 h-12 justify-center items-center mx-0.5 rounded-md ${
+                  isToday && !bgColor ? "bg-blue-50 border border-blue-200" : ""
+                } ${isFuture ? "opacity-30" : ""}`}
                 style={{
                   backgroundColor:
                     bgColor || (isToday ? "#EFF6FF" : "transparent"),
@@ -198,16 +243,20 @@ function MonthGrid({
                 activeOpacity={0.7}
               >
                 <Text
-                  className={`text-sm font-medium ${isToday && !bgColor ? "text-blue-700" : ""
-                    }`}
+                  className={`text-sm font-medium ${
+                    isToday && !bgColor ? "text-blue-700" : ""
+                  }`}
                   style={{
-                    color: score !== undefined ? "white" : bgColor
-                      ? color(bgColor).isLight()
-                        ? "#374151"
-                        : "white"
-                      : isToday
-                        ? "#1D4ED8"
-                        : "#374151",
+                    color:
+                      score !== undefined
+                        ? "white"
+                        : bgColor
+                          ? color(bgColor).isLight()
+                            ? "#374151"
+                            : "white"
+                          : isToday
+                            ? "#1D4ED8"
+                            : "#374151",
                   }}
                 >
                   {cell.day.getDate()}
