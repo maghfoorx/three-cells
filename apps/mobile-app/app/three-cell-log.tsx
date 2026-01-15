@@ -75,7 +75,7 @@ function ThreeCellEntryCard({
   // I will use "MMM d" for current year as it's cleaner for mobile, 
   // or stick to what user likely wants ("update how the card looks... as well"). 
   // The user approved "EEEE d MMM" on website. I will try to match website logic from Step 71.
-  const dateFormat = isCurrentYear ? "EEEE d MMM" : "MMM d, yyyy";
+  const dateFormat = isCurrentYear ? "EEEE MMM d" : "EEEE MMM d, yyyy";
 
   return (
     <MotiView
