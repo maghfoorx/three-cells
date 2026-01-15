@@ -63,6 +63,34 @@ export const paginatedThreeCellEntries = query({
   },
 });
 
+export const paginatedThreeCellEntriesWithSummary = query({
+  args: {
+    paginationOpts: v.object({
+      numItems: v.number(),
+      cursor: v.union(v.string(), v.null()),
+      id: v.number(),
+    }),
+  },
+  handler: async (ctx, { paginationOpts }) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) {
+      // Return empty page if not authenticated
+      return {
+        page: [],
+        isDone: true,
+        continueCursor: "",
+      };
+    }
+
+    return await ctx.db
+      .query("three_cells")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .filter((q) => q.neq(q.field("summary"), ""))
+      .order("desc") // orders by _creationTime
+      .paginate(paginationOpts);
+  },
+});
+
 export const submitThreeCellEntry = mutation({
   args: {
     input: v.object({

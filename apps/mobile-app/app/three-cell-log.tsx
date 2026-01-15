@@ -25,6 +25,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 type SortOption = "latest" | "score";
 
+
 function HighlightedText({
   text,
   highlight,
@@ -33,7 +34,9 @@ function HighlightedText({
   highlight: string;
 }) {
   if (!highlight.trim()) {
-    return <Text className="text-sm text-gray-700 mt-2 leading-5">{text}</Text>;
+    return (
+      <Text className="text-sm text-gray-700 mt-2 leading-5">{text}</Text>
+    );
   }
 
   const parts = text.split(new RegExp(`(${highlight})`, "gi"));
@@ -50,6 +53,57 @@ function HighlightedText({
         ),
       )}
     </Text>
+  );
+}
+
+function ThreeCellEntryCard({
+  item,
+  onPress,
+  highlight = "",
+}: {
+  item: DataModel["three_cells"]["document"];
+  onPress: (dateFor: string) => void;
+  highlight?: string;
+}) {
+  const baseColor = SCORE_COLORS[item.score.toString()] ?? "#ffffff";
+  const bg = color(baseColor).fade(0.7).rgb().string();
+
+  const entryDate = new Date(item.dateFor);
+  const isCurrentYear = entryDate.getFullYear() === new Date().getFullYear();
+  // Using the requested format: EEEE d MMM if current year, else MMM d, yyyy
+  // Wait, the website code actually used "EEEE d MMM" in Step 71.
+  // I will use "MMM d" for current year as it's cleaner for mobile, 
+  // or stick to what user likely wants ("update how the card looks... as well"). 
+  // The user approved "EEEE d MMM" on website. I will try to match website logic from Step 71.
+  const dateFormat = isCurrentYear ? "EEEE d MMM" : "MMM d, yyyy";
+
+  return (
+    <MotiView
+      from={{ opacity: 0, translateY: 20 }}
+      animate={{ opacity: 1, translateY: 0 }}
+      transition={{ type: "timing", duration: 300 }}
+    >
+      <Pressable
+        onPress={() => onPress(item.dateFor)}
+        className="rounded-md p-4 mb-4 shadow-sm"
+        style={{ backgroundColor: bg }}
+      >
+        <View className="mb-2">
+          <HighlightedText text={item.summary} highlight={highlight} />
+        </View>
+
+        <View className="h-[1px] bg-black/5 mb-2 w-full" />
+
+        <View className="flex-row justify-between items-center">
+          <Text className="text-xs text-gray-500">
+            {format(entryDate, dateFormat)}
+          </Text>
+          <Text className="text-xs text-gray-500 text-right">
+            Score: {item.score}
+          </Text>
+        </View>
+      </Pressable>
+    </MotiView>
   );
 }
 
@@ -86,7 +140,7 @@ function ThreeCellLogView() {
     status,
     loadMore,
   } = usePaginatedQuery(
-    api.threeCells.paginatedThreeCellEntries,
+    api.threeCells.paginatedThreeCellEntriesWithSummary,
     {},
     { initialNumItems: 20 },
   );
@@ -213,35 +267,12 @@ function ThreeCellLogView() {
                 keyboardDismissMode="on-drag"
                 ListFooterComponent={<View className="h-8" />}
                 renderItem={({ item }) => {
-                  const baseColor =
-                    SCORE_COLORS[item.score.toString()] ?? "#ffffff";
-                  const bg = color(baseColor).fade(0.7).rgb().string();
-
                   return (
-                    <MotiView
-                      from={{ opacity: 0, translateY: 20 }}
-                      animate={{ opacity: 1, translateY: 0 }}
-                      transition={{ type: "timing", duration: 300 }}
-                    >
-                      <Pressable
-                        onPress={() => handleEntryPress(item.dateFor)}
-                        className="rounded-md p-4 mb-4 shadow-sm"
-                        style={{ backgroundColor: bg }}
-                      >
-                        <View className="flex-row justify-between items-center">
-                          <Text className="text-sm font-medium text-gray-900">
-                            {format(new Date(item.dateFor), "MMM dd, yyyy")}
-                          </Text>
-                          <Text className="text-xs text-gray-500">
-                            ({item.score})
-                          </Text>
-                        </View>
-                        <HighlightedText
-                          text={item.summary}
-                          highlight={debouncedSearchText}
-                        />
-                      </Pressable>
-                    </MotiView>
+                    <ThreeCellEntryCard
+                      item={item}
+                      onPress={handleEntryPress}
+                      highlight={debouncedSearchText}
+                    />
                   );
                 }}
               />
@@ -273,34 +304,8 @@ function ThreeCellLogView() {
                 </View>
               }
               renderItem={({ item }) => {
-                const baseColor =
-                  SCORE_COLORS[item.score.toString()] ?? "#ffffff";
-                const bg = color(baseColor).fade(0.7).rgb().string();
-
                 return (
-                  <MotiView
-                    from={{ opacity: 0, translateY: 20 }}
-                    animate={{ opacity: 1, translateY: 0 }}
-                    transition={{ type: "timing", duration: 300 }}
-                  >
-                    <Pressable
-                      onPress={() => handleEntryPress(item.dateFor)}
-                      className="rounded-md p-4 mb-4 shadow-sm"
-                      style={{ backgroundColor: bg }}
-                    >
-                      <View className="flex-row justify-between items-center">
-                        <Text className="text-sm font-medium text-gray-900">
-                          {format(new Date(item.dateFor), "MMM dd, yyyy")}
-                        </Text>
-                        <Text className="text-xs text-gray-500">
-                          ({item.score})
-                        </Text>
-                      </View>
-                      <Text className="text-sm text-gray-700 mt-2 leading-5">
-                        {item.summary}
-                      </Text>
-                    </Pressable>
-                  </MotiView>
+                  <ThreeCellEntryCard item={item} onPress={handleEntryPress} />
                 );
               }}
             />
