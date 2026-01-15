@@ -11,6 +11,8 @@ import {
   TextInput,
   ActivityIndicator,
   FlatList,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { useQuery, usePaginatedQuery } from "convex/react";
 import { format } from "date-fns";
@@ -134,71 +136,142 @@ function ThreeCellLogView() {
   const isSearching = searchText.length > 0;
 
   return (
-    <View className="flex-1 px-6">
-      {/* Search Input */}
-      <View className="mb-4">
-        <View className="flex-row items-center bg-gray-100 rounded-full px-4 py-3">
-          <MagnifyingGlassIcon size={20} color="#9CA3AF" />
-          <TextInput
-            className="flex-1 ml-3 text-base text-gray-900"
-            placeholder="Search your journal..."
-            value={searchText}
-            onChangeText={setSearchText}
-            placeholderTextColor="#9CA3AF"
-          />
-          {searchText.length > 0 && (
-            <Pressable onPress={() => setSearchText("")}>
-              <View className="bg-gray-300 rounded-full p-1">
-                <XMarkIcon size={12} color="#FFFFFF" />
-              </View>
-            </Pressable>
-          )}
-        </View>
-      </View>
-
-      {/* Sort Buttons Row (Only show when not searching) */}
-      {!isSearching && (
-        <View className="flex-row justify-between items-center mb-4">
-          <View className="relative h-8 rounded-md bg-gray-100 flex-row">
-            {sortOptions.map((option) => (
-              <Pressable
-                key={option}
-                onPress={() => handleSortChange(option)}
-                className="w-20 h-8 items-center justify-center bg-gray-200"
-              >
-                <Text
-                  className={clsx("text-xs", {
-                    "font-bold": sortBy === option,
-                  })}
-                >
-                  {sortLabels[option]}
-                </Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View className="flex-1 px-6">
+        {/* Search Input */}
+        <View className="mb-4">
+          <View className="flex-row items-center bg-gray-100 rounded-full px-4 py-3">
+            <MagnifyingGlassIcon size={20} color="#9CA3AF" />
+            <TextInput
+              className="flex-1 ml-3 text-base text-gray-900"
+              placeholder="Search your journal..."
+              value={searchText}
+              onChangeText={setSearchText}
+              placeholderTextColor="#9CA3AF"
+              textAlignVertical="center"
+              style={{
+                fontSize: 14,
+                margin: 0,
+                paddingVertical: 0, // Explicitly remove vertical padding
+                height: 40, // Ensure enough height for the text
+                includeFontPadding: false, // Android specific fix
+              }}
+            />
+            {searchText.length > 0 && (
+              <Pressable onPress={() => setSearchText("")}>
+                <View className="bg-gray-300 rounded-full p-1">
+                  <XMarkIcon size={12} color="#FFFFFF" />
+                </View>
               </Pressable>
-            ))}
+            )}
           </View>
         </View>
-      )}
 
-      {/* Content Area */}
-      {isSearching ? (
-        // Search Results State
-        <View className="flex-1">
-          {!searchResults || searchText !== debouncedSearchText ? (
-            <View className="items-center mt-12">
-              <ActivityIndicator size="small" color="#6B7280" />
+        {/* Sort Buttons Row (Only show when not searching) */}
+        {!isSearching && (
+          <View className="flex-row justify-between items-center mb-4">
+            <View className="relative h-8 rounded-md bg-gray-100 flex-row">
+              {sortOptions.map((option) => (
+                <Pressable
+                  key={option}
+                  onPress={() => handleSortChange(option)}
+                  className="w-20 h-8 items-center justify-center bg-gray-200"
+                >
+                  <Text
+                    className={clsx("text-xs", {
+                      "font-bold": sortBy === option,
+                    })}
+                  >
+                    {sortLabels[option]}
+                  </Text>
+                </Pressable>
+              ))}
             </View>
-          ) : searchResults.length === 0 ? (
-            <View className="items-center opacity-50 mt-12">
-              <Text className="text-gray-400 mt-4 text-center">
-                No entries found matching "{debouncedSearchText}"
-              </Text>
-            </View>
-          ) : (
+          </View>
+        )}
+
+        {/* Content Area */}
+        {isSearching ? (
+          // Search Results State
+          <View className="flex-1">
+            {!searchResults || searchText !== debouncedSearchText ? (
+              <View className="items-center mt-12">
+                <ActivityIndicator size="small" color="#6B7280" />
+              </View>
+            ) : searchResults.length === 0 ? (
+              <View className="items-center opacity-50 mt-12">
+                <Text className="text-gray-400 mt-4 text-center">
+                  No entries found matching "{debouncedSearchText}"
+                </Text>
+              </View>
+            ) : (
+              <FlatList
+                data={searchResults}
+                keyExtractor={(item) => item._id}
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+                keyboardDismissMode="on-drag"
+                ListFooterComponent={<View className="h-8" />}
+                renderItem={({ item }) => {
+                  const baseColor =
+                    SCORE_COLORS[item.score.toString()] ?? "#ffffff";
+                  const bg = color(baseColor).fade(0.7).rgb().string();
+
+                  return (
+                    <MotiView
+                      from={{ opacity: 0, translateY: 20 }}
+                      animate={{ opacity: 1, translateY: 0 }}
+                      transition={{ type: "timing", duration: 300 }}
+                    >
+                      <Pressable
+                        onPress={() => handleEntryPress(item.dateFor)}
+                        className="rounded-md p-4 mb-4 shadow-sm"
+                        style={{ backgroundColor: bg }}
+                      >
+                        <View className="flex-row justify-between items-center">
+                          <Text className="text-sm font-medium text-gray-900">
+                            {format(new Date(item.dateFor), "MMM dd, yyyy")}
+                          </Text>
+                          <Text className="text-xs text-gray-500">
+                            ({item.score})
+                          </Text>
+                        </View>
+                        <HighlightedText
+                          text={item.summary}
+                          highlight={debouncedSearchText}
+                        />
+                      </Pressable>
+                    </MotiView>
+                  );
+                }}
+              />
+            )}
+          </View>
+        ) : (
+          // Standard Log View with Pagination
+          <View className="flex-1">
             <FlatList
-              data={searchResults}
+              data={sortedLogs}
               keyExtractor={(item) => item._id}
               showsVerticalScrollIndicator={false}
-              ListFooterComponent={<View className="h-8" />}
+              keyboardShouldPersistTaps="handled"
+              keyboardDismissMode="on-drag"
+              onEndReached={() => {
+                if (status === "CanLoadMore") {
+                  loadMore(20);
+                }
+              }}
+              onEndReachedThreshold={0.5}
+              ListFooterComponent={
+                <View className="h-20 items-center justify-center">
+                  {status === "LoadingMore" && (
+                    <ActivityIndicator size="small" color="#6B7280" />
+                  )}
+                  {status === "Exhausted" && sortedLogs.length > 0 && (
+                    <Text className="text-xs text-gray-400">No more entries</Text>
+                  )}
+                </View>
+              }
               renderItem={({ item }) => {
                 const baseColor =
                   SCORE_COLORS[item.score.toString()] ?? "#ffffff";
@@ -223,74 +296,17 @@ function ThreeCellLogView() {
                           ({item.score})
                         </Text>
                       </View>
-                      <HighlightedText
-                        text={item.summary}
-                        highlight={debouncedSearchText}
-                      />
+                      <Text className="text-sm text-gray-700 mt-2 leading-5">
+                        {item.summary}
+                      </Text>
                     </Pressable>
                   </MotiView>
                 );
               }}
             />
-          )}
-        </View>
-      ) : (
-        // Standard Log View with Pagination
-        <View className="flex-1">
-          <FlatList
-            data={sortedLogs}
-            keyExtractor={(item) => item._id}
-            showsVerticalScrollIndicator={false}
-            onEndReached={() => {
-              if (status === "CanLoadMore") {
-                loadMore(20);
-              }
-            }}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={
-              <View className="h-20 items-center justify-center">
-                {status === "LoadingMore" && (
-                  <ActivityIndicator size="small" color="#6B7280" />
-                )}
-                {status === "Exhausted" && sortedLogs.length > 0 && (
-                  <Text className="text-xs text-gray-400">No more entries</Text>
-                )}
-              </View>
-            }
-            renderItem={({ item }) => {
-              const baseColor =
-                SCORE_COLORS[item.score.toString()] ?? "#ffffff";
-              const bg = color(baseColor).fade(0.7).rgb().string();
-
-              return (
-                <MotiView
-                  from={{ opacity: 0, translateY: 20 }}
-                  animate={{ opacity: 1, translateY: 0 }}
-                  transition={{ type: "timing", duration: 300 }}
-                >
-                  <Pressable
-                    onPress={() => handleEntryPress(item.dateFor)}
-                    className="rounded-md p-4 mb-4 shadow-sm"
-                    style={{ backgroundColor: bg }}
-                  >
-                    <View className="flex-row justify-between items-center">
-                      <Text className="text-sm font-medium text-gray-900">
-                        {format(new Date(item.dateFor), "MMM dd, yyyy")}
-                      </Text>
-                      <Text className="text-xs text-gray-500">
-                        ({item.score})
-                      </Text>
-                    </View>
-                    <Text className="text-sm text-gray-700 mt-2 leading-5">
-                      {item.summary}
-                    </Text>
-                  </Pressable>
-                </MotiView>
-              );
-            }}
-          />
-        </View>
-      )}
-    </View>
+          </View>
+        )}
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
