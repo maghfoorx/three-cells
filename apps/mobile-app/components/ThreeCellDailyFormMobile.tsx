@@ -25,7 +25,7 @@ import { z } from "zod";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { addDays, format, isAfter, parse, subDays } from "date-fns";
+import { addDays, format, isAfter, parse, subDays, isSameYear } from "date-fns";
 import { router } from "expo-router";
 import { SCORE_COLORS } from "@/utils/types";
 import DailyHighlights from "./pages/track/DailyHighlights";
@@ -299,7 +299,7 @@ export default function ThreeCellDailyForm({ date }: { date: string }) {
   }, [formValues.score, saveEntry, initialValues]);
 
   const bgColor = color(SCORE_COLORS[watch("score").toString()] ?? "#ffffff")
-    .fade(0.8)
+    .fade(0.6)
     .rgb()
     .string();
 
@@ -371,14 +371,6 @@ export default function ThreeCellDailyForm({ date }: { date: string }) {
             </Pressable>
           </View>
         </View>
-        <View className="px-6 py-4">
-          <Text className="text-2xl text-center font-bold text-gray-900">
-            {format(visualDateObj, "EEEE")}
-          </Text>
-          <Text className="text-base text-center text-gray-500 mt-1">
-            {format(visualDateObj, "MMMM do, yyyy")}
-          </Text>
-        </View>
 
         <ScrollView
           ref={scrollViewRef}
@@ -390,11 +382,24 @@ export default function ThreeCellDailyForm({ date }: { date: string }) {
           }}
           keyboardShouldPersistTaps="handled"
         >
+          <View className="px-6 py-2 mt-2 items-center">
+            <Text className="text-2xl font-bold text-gray-900 tracking-tight">
+              {format(visualDateObj, "EEEE")}
+            </Text>
+            <Text className="text-base font-medium mt-0.5 uppercase tracking-wide">
+              {format(
+                visualDateObj,
+                isSameYear(visualDateObj, new Date())
+                  ? "MMMM do"
+                  : "MMMM do, yyyy",
+              )}
+            </Text>
+          </View>
           <DailyHighlights dateString={date} />
 
           {/* Mood Selection */}
           <View className="mt-8">
-            <Text className="font-semibold text-gray-900 mb-4">
+            <Text className="font-semibold text-gray-900 mb-2">
               How was your day?
             </Text>
             <Controller
@@ -461,8 +466,8 @@ export default function ThreeCellDailyForm({ date }: { date: string }) {
           </View>
 
           {/* Daily Summary */}
-          <View className="mt-12">
-            <Text className="font-semibold text-gray-900 mb-4">
+          <View className="mt-8">
+            <Text className="font-semibold text-gray-900 mb-2">
               Daily reflection
             </Text>
             <Controller
@@ -475,7 +480,7 @@ export default function ThreeCellDailyForm({ date }: { date: string }) {
                     activeOpacity={0.7}
                   >
                     <View
-                      className="bg-white/90 rounded-md border border-gray-100 min-h-48"
+                      className="bg-white/90 rounded-md border border-gray-100 min-h-full h-full"
                       style={{
                         shadowColor: "#000",
                         shadowOffset: { width: 0, height: 2 },
