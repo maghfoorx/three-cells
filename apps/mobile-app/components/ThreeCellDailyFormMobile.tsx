@@ -7,6 +7,7 @@ import {
 } from "react-native-heroicons/outline";
 
 import color from "color";
+import { LinearGradient } from "expo-linear-gradient";
 import {
   View,
   TextInput,
@@ -92,14 +93,14 @@ function FullScreenTextEditor({
   onChangeText,
   onClose,
   onSave,
-  bgColor,
+  gradientColors,
 }: {
   visible: boolean;
   value: string;
   onChangeText: (text: string) => void;
   onClose: () => void;
   onSave: (text: string) => void;
-  bgColor: string;
+  gradientColors: readonly [string, string, ...string[]];
 }) {
   const [localText, setLocalText] = useState(value);
 
@@ -114,8 +115,11 @@ function FullScreenTextEditor({
       animationType="slide"
       presentationStyle="fullScreen"
     >
-      <View
-        style={{ flex: 1, backgroundColor: bgColor, paddingTop: insets.top }}
+      <LinearGradient
+        colors={gradientColors}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{ flex: 1, paddingTop: insets.top }}
       >
         <View className="px-6 py-4 flex-row justify-between items-center border-b border-gray-200/30">
           <TouchableOpacity
@@ -167,7 +171,7 @@ function FullScreenTextEditor({
             />
           </View>
         </KeyboardAvoidingView>
-      </View>
+      </LinearGradient>
     </Modal>
   );
 }
@@ -222,15 +226,15 @@ export default function ThreeCellDailyForm({ date }: { date: string }) {
   useEffect(() => {
     const newValues = data
       ? {
-          summary: data.summary,
-          score: data.score,
-          date_for: data.dateFor,
-        }
+        summary: data.summary,
+        score: data.score,
+        date_for: data.dateFor,
+      }
       : {
-          summary: "",
-          score: 0,
-          date_for: date,
-        };
+        summary: "",
+        score: 0,
+        date_for: date,
+      };
 
     // Only reset if the data actually changed to prevent unnecessary re-renders
     if (
@@ -298,266 +302,271 @@ export default function ThreeCellDailyForm({ date }: { date: string }) {
     };
   }, [formValues.score, saveEntry, initialValues]);
 
-  const bgColor = color(SCORE_COLORS[watch("score").toString()] ?? "#ffffff")
-    .fade(0.6)
-    .rgb()
-    .string();
+  const baseColor = color(SCORE_COLORS[watch("score").toString()] ?? "#ffffff");
+  const gradientColors = [
+    baseColor.fade(0.5).rgb().string(),
+    baseColor.fade(0.85).rgb().string(),
+  ] as const;
 
   if (data === undefined) {
     return <LoadingScreen pictureName="tracking-page-loading.png" />;
   }
 
   return (
-    <SafeAreaView
-      className="flex-1"
-      style={{
-        backgroundColor: bgColor,
-      }}
-      edges={["top"]}
+    <LinearGradient
+      colors={gradientColors}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
+      style={{ flex: 1 }}
     >
-      <KeyboardAvoidingView
+      <SafeAreaView
         className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        edges={["top"]}
       >
-        {/* Header */}
-        <View className="px-6 py-4 flex flex-row justify-between items-center">
-          <View className="flex flex-row rounded-r-full rounded-l-full bg-white/80">
-            <Pressable
-              onPress={() => router.navigate(`/track/${previousDay}`)}
-              className="w-12 h-12 items-center justify-center"
-            >
-              <ChevronLeftIcon size={20} color="#6B7280" />
-            </Pressable>
-            <View className="my-2 border-[0.5px] border-gray-600"></View>
-            <Pressable
-              onPress={() => router.navigate(`/track/${nextDay}`)}
-              className={"w-12 h-12 items-center justify-center"}
-              disabled={isNextDayInFuture}
-            >
-              <ChevronRightIcon
-                size={20}
-                color={isNextDayInFuture ? "#E5E7EB" : "#6B7280"}
-              />
-            </Pressable>
-            {!isToday && (
-              <>
-                <View className="my-2 border-[0.5px] border-gray-600"></View>
-                <Pressable
-                  onPress={navigateToToday}
-                  className="h-12 px-3 items-center justify-center"
-                >
-                  <Text className="text-xs font-semibold text-gray-600">
-                    Today
-                  </Text>
-                </Pressable>
-              </>
-            )}
-          </View>
-
-          <View className="flex flex-row rounded-r-full rounded-l-full bg-white/80">
-            <Pressable
-              onPress={() => router.navigate("/three-cell-log")}
-              className="w-12 h-12 items-center justify-center"
-            >
-              <Square3Stack3DIcon size={20} color="#6B7280" />
-            </Pressable>
-            <View className="my-2 border-[0.5px] border-gray-600"></View>
-            <Pressable
-              onPress={() => router.navigate("/yearly-view")}
-              className="w-12 h-12 items-center justify-center"
-            >
-              <CalendarIcon size={20} color="#6B7280" />
-            </Pressable>
-          </View>
-        </View>
-
-        <ScrollView
-          ref={scrollViewRef}
-          showsVerticalScrollIndicator={false}
+        <KeyboardAvoidingView
           className="flex-1"
-          contentContainerStyle={{
-            paddingHorizontal: 24,
-            paddingBottom: 32,
-          }}
-          keyboardShouldPersistTaps="handled"
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
         >
-          <View className="px-6 py-2 mt-2 items-center">
-            <Text className="text-2xl font-bold text-gray-900 tracking-tight">
-              {format(visualDateObj, "EEEE")}
-            </Text>
-            <Text className="text-base font-medium mt-0.5 uppercase tracking-wide">
-              {format(
-                visualDateObj,
-                isSameYear(visualDateObj, new Date())
-                  ? "MMMM do"
-                  : "MMMM do, yyyy",
-              )}
-            </Text>
-          </View>
-          <DailyHighlights dateString={date} />
-
-          {/* Mood Selection */}
-          <View className="mt-8">
-            <Text className="font-semibold text-gray-900 mb-2">
-              How was your day?
-            </Text>
-            <Controller
-              control={control}
-              name="score"
-              render={({ field }) => (
-                <View className="flex-row justify-between gap-3">
-                  {MOOD_OPTIONS.map((mood) => {
-                    const isSelected = field?.value === mood?.value;
-
-                    return (
-                      <View
-                        key={mood.value}
-                        className="flex flex-col items-center"
-                      >
-                        <TouchableNativeFeedback
-                          disabled={isSaving}
-                          onPress={() => {
-                            if (isSaving) return;
-                            field.onChange(mood.value);
-                          }}
-                        >
-                          <View
-                            className="flex items-center justify-center rounded-md"
-                            style={{
-                              backgroundColor: isSelected
-                                ? mood.color
-                                : "#FAFAFA",
-                              shadowOffset: {
-                                width: 0,
-                                height: isSelected ? 4 : 2,
-                              },
-                              shadowOpacity: isSelected ? 0.2 : 0.05,
-                              shadowRadius: isSelected ? 8 : 4,
-                              elevation: isSelected ? 6 : 2,
-                              minWidth: 60,
-                              minHeight: 60,
-                              height: 60,
-                            }}
-                          >
-                            <Image
-                              source={mood.icon}
-                              style={{ width: 50, height: 50 }}
-                              placeholder={{ blurhash: mood.blurHash }}
-                              transition={200}
-                              placeholderContentFit="contain"
-                            />
-                          </View>
-                        </TouchableNativeFeedback>
-
-                        <Text
-                          className={`mt-0.5 text-xs text-center font-semibold leading-tight`}
-                          numberOfLines={1}
-                          adjustsFontSizeToFit
-                        >
-                          {mood.label}
-                        </Text>
-                      </View>
-                    );
-                  })}
-                </View>
-              )}
-            />
-          </View>
-
-          {/* Daily Summary */}
-          <View className="mt-8">
-            <Text className="font-semibold text-gray-900 mb-2">
-              Daily reflection
-            </Text>
-            <Controller
-              control={control}
-              name="summary"
-              render={({ field }) => (
-                <View>
-                  <TouchableOpacity
-                    onPress={handleOpenEditor}
-                    activeOpacity={0.7}
+          {/* Header */}
+          <View className="px-6 py-4 flex flex-row justify-between items-center">
+            <View className="flex flex-row rounded-r-full rounded-l-full bg-white/80">
+              <Pressable
+                onPress={() => router.navigate(`/track/${previousDay}`)}
+                className="w-12 h-12 items-center justify-center"
+              >
+                <ChevronLeftIcon size={20} color="#6B7280" />
+              </Pressable>
+              <View className="my-2 border-[0.5px] border-gray-600"></View>
+              <Pressable
+                onPress={() => router.navigate(`/track/${nextDay}`)}
+                className={"w-12 h-12 items-center justify-center"}
+                disabled={isNextDayInFuture}
+              >
+                <ChevronRightIcon
+                  size={20}
+                  color={isNextDayInFuture ? "#E5E7EB" : "#6B7280"}
+                />
+              </Pressable>
+              {!isToday && (
+                <>
+                  <View className="my-2 border-[0.5px] border-gray-600"></View>
+                  <Pressable
+                    onPress={navigateToToday}
+                    className="h-12 px-3 items-center justify-center"
                   >
-                    <View
-                      className="bg-white/90 rounded-md border border-gray-100 min-h-full h-full"
-                      style={{
-                        shadowColor: "#000",
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.05,
-                        shadowRadius: 8,
-                        elevation: 2,
-                      }}
-                    >
-                      <View className="p-6">
-                        {field.value ? (
-                          <Text
-                            className="text-base text-gray-800 leading-6"
-                            style={{
-                              fontFamily: "System",
-                            }}
-                          >
-                            {field.value}
-                          </Text>
-                        ) : (
-                          <Text
-                            className="text-base text-gray-400 leading-6"
-                            style={{
-                              fontFamily: "System",
-                            }}
-                          >
-                            What happened today? Any wins, challenges, or
-                            insights?
-                          </Text>
-                        )}
-                      </View>
-
-                      {/* Tap to edit indicator */}
-                      <View className="absolute top-3 right-3 bg-blue-100 px-2 py-1 rounded-full">
-                        <Text className="text-blue-600 text-xs font-medium">
-                          Tap to edit
-                        </Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-
-                  {errors.summary && (
-                    <Text className="text-red-500 text-sm mt-3 ml-2">
-                      {errors.summary.message}
+                    <Text className="text-xs font-semibold text-gray-600">
+                      Today
                     </Text>
-                  )}
-
-                  {/* Full-screen text editor */}
-                  <FullScreenTextEditor
-                    visible={showFullScreenEditor}
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    onSave={async (text: string) => {
-                      const updatedValues = {
-                        ...formValues,
-                        summary: text,
-                      };
-                      await saveEntry(updatedValues);
-                    }}
-                    onClose={() => {
-                      setShowFullScreenEditor(false);
-                    }}
-                    bgColor={bgColor}
-                  />
-                </View>
+                  </Pressable>
+                </>
               )}
-            />
+            </View>
+
+            <View className="flex flex-row rounded-r-full rounded-l-full bg-white/80">
+              <Pressable
+                onPress={() => router.navigate("/three-cell-log")}
+                className="w-12 h-12 items-center justify-center"
+              >
+                <Square3Stack3DIcon size={20} color="#6B7280" />
+              </Pressable>
+              <View className="my-2 border-[0.5px] border-gray-600"></View>
+              <Pressable
+                onPress={() => router.navigate("/yearly-view")}
+                className="w-12 h-12 items-center justify-center"
+              >
+                <CalendarIcon size={20} color="#6B7280" />
+              </Pressable>
+            </View>
           </View>
 
-          {/* Auto-save indicator */}
-          {(isSubmitting || isSaving) && (
-            <View className="flex-row items-center justify-center gap-2 mt-6 py-3">
-              <ActivityIndicator size="small" color="#6B7280" />
-              <Text className="text-gray-600 text-sm">Saving...</Text>
+          <ScrollView
+            ref={scrollViewRef}
+            showsVerticalScrollIndicator={false}
+            className="flex-1"
+            contentContainerStyle={{
+              paddingHorizontal: 24,
+              paddingBottom: 32,
+            }}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View className="px-6 py-2 mt-2 items-center">
+              <Text className="text-2xl font-bold text-gray-900 tracking-tight">
+                {format(visualDateObj, "EEEE")}
+              </Text>
+              <Text className="text-base font-medium mt-0.5 uppercase tracking-wide">
+                {format(
+                  visualDateObj,
+                  isSameYear(visualDateObj, new Date())
+                    ? "MMMM do"
+                    : "MMMM do, yyyy",
+                )}
+              </Text>
             </View>
-          )}
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+            <DailyHighlights dateString={date} />
+
+            {/* Mood Selection */}
+            <View className="mt-8">
+              <Text className="font-semibold text-gray-900 mb-2">
+                How was your day?
+              </Text>
+              <Controller
+                control={control}
+                name="score"
+                render={({ field }) => (
+                  <View className="flex-row justify-between gap-3">
+                    {MOOD_OPTIONS.map((mood) => {
+                      const isSelected = field?.value === mood?.value;
+
+                      return (
+                        <View
+                          key={mood.value}
+                          className="flex flex-col items-center"
+                        >
+                          <TouchableNativeFeedback
+                            disabled={isSaving}
+                            onPress={() => {
+                              if (isSaving) return;
+                              field.onChange(mood.value);
+                            }}
+                          >
+                            <View
+                              className="flex items-center justify-center rounded-md"
+                              style={{
+                                backgroundColor: isSelected
+                                  ? mood.color
+                                  : "#FAFAFA",
+                                shadowOffset: {
+                                  width: 0,
+                                  height: isSelected ? 4 : 2,
+                                },
+                                shadowOpacity: isSelected ? 0.2 : 0.05,
+                                shadowRadius: isSelected ? 8 : 4,
+                                elevation: isSelected ? 6 : 2,
+                                minWidth: 60,
+                                minHeight: 60,
+                                height: 60,
+                              }}
+                            >
+                              <Image
+                                source={mood.icon}
+                                style={{ width: 50, height: 50 }}
+                                placeholder={{ blurhash: mood.blurHash }}
+                                transition={200}
+                                placeholderContentFit="contain"
+                              />
+                            </View>
+                          </TouchableNativeFeedback>
+
+                          <Text
+                            className={`mt-0.5 text-xs text-center font-semibold leading-tight`}
+                            numberOfLines={1}
+                            adjustsFontSizeToFit
+                          >
+                            {mood.label}
+                          </Text>
+                        </View>
+                      );
+                    })}
+                  </View>
+                )}
+              />
+            </View>
+
+            {/* Daily Summary */}
+            <View className="mt-8">
+              <Text className="font-semibold text-gray-900 mb-2">
+                Daily reflection
+              </Text>
+              <Controller
+                control={control}
+                name="summary"
+                render={({ field }) => (
+                  <View>
+                    <TouchableOpacity
+                      onPress={handleOpenEditor}
+                      activeOpacity={0.7}
+                    >
+                      <View
+                        className="bg-white/90 rounded-md border border-gray-100 min-h-full h-full"
+                        style={{
+                          shadowColor: "#000",
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.05,
+                          shadowRadius: 8,
+                          elevation: 2,
+                        }}
+                      >
+                        <View className="p-6">
+                          {field.value ? (
+                            <Text
+                              className="text-base text-gray-800 leading-6"
+                              style={{
+                                fontFamily: "System",
+                              }}
+                            >
+                              {field.value}
+                            </Text>
+                          ) : (
+                            <Text
+                              className="text-base text-gray-400 leading-6"
+                              style={{
+                                fontFamily: "System",
+                              }}
+                            >
+                              What happened today? Any wins, challenges, or
+                              insights?
+                            </Text>
+                          )}
+                        </View>
+
+                        {/* Tap to edit indicator */}
+                        <View className="absolute top-3 right-3 bg-blue-100 px-2 py-1 rounded-full">
+                          <Text className="text-blue-600 text-xs font-medium">
+                            Tap to edit
+                          </Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+
+                    {errors.summary && (
+                      <Text className="text-red-500 text-sm mt-3 ml-2">
+                        {errors.summary.message}
+                      </Text>
+                    )}
+
+                    {/* Full-screen text editor */}
+                    <FullScreenTextEditor
+                      visible={showFullScreenEditor}
+                      value={field.value}
+                      onChangeText={field.onChange}
+                      onSave={async (text: string) => {
+                        const updatedValues = {
+                          ...formValues,
+                          summary: text,
+                        };
+                        await saveEntry(updatedValues);
+                      }}
+                      onClose={() => {
+                        setShowFullScreenEditor(false);
+                      }}
+                      gradientColors={gradientColors}
+                    />
+                  </View>
+                )}
+              />
+            </View>
+
+            {/* Auto-save indicator */}
+            {(isSubmitting || isSaving) && (
+              <View className="flex-row items-center justify-center gap-2 mt-6 py-3">
+                <ActivityIndicator size="small" color="#6B7280" />
+                <Text className="text-gray-600 text-sm">Saving...</Text>
+              </View>
+            )}
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
