@@ -340,20 +340,20 @@ export default function ThreeCellDailyForm({ date }: { date: string }) {
                 color={isNextDayInFuture ? "#E5E7EB" : "#6B7280"}
               />
             </Pressable>
+            {!isToday && (
+              <>
+                <View className="my-2 border-[0.5px] border-gray-600"></View>
+                <Pressable
+                  onPress={navigateToToday}
+                  className="h-12 px-3 items-center justify-center"
+                >
+                  <Text className="text-xs font-semibold text-gray-600">
+                    Today
+                  </Text>
+                </Pressable>
+              </>
+            )}
           </View>
-
-          {!isToday && (
-            <View>
-              <Pressable
-                onPress={navigateToToday}
-                className="h-12 rounded-l-full rounded-r-full px-6 py-1 bg-white flex items-center justify-center"
-              >
-                <Text className="text-sm" style={{ color: "#6B7280" }}>
-                  Go to today
-                </Text>
-              </Pressable>
-            </View>
-          )}
 
           <View className="flex flex-row rounded-r-full rounded-l-full bg-white/80">
             <Pressable

@@ -54,7 +54,11 @@ const schema = defineSchema({
     updatedAt: v.number(),
   })
     .index("by_user", ["userId"])
-    .index("by_userId_date_for", ["userId", "dateFor"]),
+    .index("by_userId_date_for", ["userId", "dateFor"])
+    .searchIndex("search_summary", {
+      searchField: "summary",
+      filterFields: ["userId"],
+    }),
 
   userHabits: defineTable({
     userId: v.id("users"),

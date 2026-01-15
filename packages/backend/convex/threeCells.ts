@@ -36,6 +36,33 @@ export const allThreeCellEntries = query({
   },
 });
 
+export const paginatedThreeCellEntries = query({
+  args: {
+    paginationOpts: v.object({
+      numItems: v.number(),
+      cursor: v.union(v.string(), v.null()),
+      id: v.number(),
+    }),
+  },
+  handler: async (ctx, { paginationOpts }) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) {
+      // Return empty page if not authenticated
+      return {
+        page: [],
+        isDone: true,
+        continueCursor: "",
+      };
+    }
+
+    return await ctx.db
+      .query("three_cells")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .order("desc") // orders by _creationTime
+      .paginate(paginationOpts);
+  },
+});
+
 export const submitThreeCellEntry = mutation({
   args: {
     input: v.object({
@@ -105,5 +132,22 @@ export const overallViewOfYear = query({
     );
 
     return scoreMap;
+  },
+});
+
+export const searchEntries = query({
+  args: {
+    searchQuery: v.string(),
+  },
+  handler: async (ctx, { searchQuery }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+
+    return await ctx.db
+      .query("three_cells")
+      .withSearchIndex("search_summary", (q) =>
+        q.search("summary", searchQuery).eq("userId", userId),
+      )
+      .take(50);
   },
 });
