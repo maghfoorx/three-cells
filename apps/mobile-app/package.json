@@ -22,6 +22,7 @@
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
+    "@shopify/react-native-skia": "^2.4.14",
     "color": "^5.0.0",
     "convex": "^1.25.0",
     "d3": "^7.9.0",

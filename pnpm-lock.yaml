@@ -44,6 +44,9 @@ importers:
       '@react-navigation/native':
         specifier: ^7.1.6
         version: 7.1.14(react-native@0.81.4(@babel/core@7.27.7)(@types/react@19.1.15)(react@19.1.0))(react@19.1.0)
+      '@shopify/react-native-skia':
+        specifier: ^2.4.14
+        version: 2.4.14(react-native-reanimated@4.1.2(@babel/core@7.27.7)(react-native-worklets@0.5.1(@babel/core@7.27.7)(react-native@0.81.4(@babel/core@7.27.7)(@types/react@19.1.15)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.7)(@types/react@19.1.15)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.7)(@types/react@19.1.15)(react@19.1.0))(react@19.1.0)
       color:
         specifier: ^5.0.0
         version: 5.0.0
@@ -2862,6 +2865,19 @@ packages:
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
 
+  '@shopify/react-native-skia@2.4.14':
+    resolution: {integrity: sha512-zFxjAQbfrdOxoNJoaOCZQzZliuAWXjFkrNZv2PtofG2RAUPWIxWmk2J/oOROpTwXgkmh1JLvFp3uONccTXUthQ==}
+    hasBin: true
+    peerDependencies:
+      react: 19.1.0
+      react-native: '>=0.78'
+      react-native-reanimated: '>=3.19.1'
+    peerDependenciesMeta:
+      react-native:
+        optional: true
+      react-native-reanimated:
+        optional: true
+
   '@sinclair/typebox@0.27.8':
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
 
@@ -3353,6 +3369,9 @@ packages:
     peerDependencies:
       '@urql/core': ^5.0.0
 
+  '@webgpu/types@0.1.21':
+    resolution: {integrity: sha512-pUrWq3V5PiSGFLeLxoGqReTZmiiXwY3jRkIG5sLLKjyqNxrwm/04b4nw7LSmGWJcKk59XOM/YRTUwOzo4MMlow==}
+
   '@xmldom/xmldom@0.8.10':
     resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
     engines: {node: '>=10.0.0'}
@@ -3715,6 +3734,9 @@ packages:
 
   caniuse-lite@1.0.30001726:
     resolution: {integrity: sha512-VQAUIUzBiZ/UnlM28fSp2CRF3ivUn1BWEvxMcVTNwpw91Py1pGbPIyIKtd+tzct9C3ouceCVdGAXxZOpZAsgdw==}
+
+  canvaskit-wasm@0.40.0:
+    resolution: {integrity: sha512-Od2o+ZmoEw9PBdN/yCGvzfu0WVqlufBPEWNG452wY7E9aT8RBE+ChpZF526doOlg7zumO4iCS+RAeht4P0Gbpw==}
 
   capital-case@1.0.4:
     resolution: {integrity: sha512-ds37W8CytHgwnhGGTi88pcPyR15qoNkOpYwmMMfnWqqWgESapLqvDx6huFjQ5vqWSn2Z06173XNA7LtMOeUh1A==}
@@ -6838,6 +6860,12 @@ packages:
       react: 19.1.0
       react-dom: 19.1.0
 
+  react-reconciler@0.31.0:
+    resolution: {integrity: sha512-7Ob7Z+URmesIsIVRjnLoDGwBEG/tVitidU0nMsqX/eeJaLY89RISO/10ERe0MqmzuKUUB1rmY+h1itMbUHg9BQ==}
+    engines: {node: '>=0.10.0'}
+    peerDependencies:
+      react: 19.1.0
+
   react-redux@9.2.0:
     resolution: {integrity: sha512-ROY9fvHhwOD9ySfrF0wmvu//bKCQ6AeZZq1nJNtbDC+kk5DuSuNX/n6YWYF/SYy7bSba4D4FSz8DJeKY/S/r+g==}
     peerDependencies:
@@ -7130,6 +7158,9 @@ packages:
 
   sax@1.4.1:
     resolution: {integrity: sha512-+aWOz7yVScEGoKNd4PA10LZ8sk0A/z5+nXQG5giUO5rprX9jgYsTdov9qCchZiPIZezbZH+jRut8nPodFAX4Jg==}
+
+  scheduler@0.25.0:
+    resolution: {integrity: sha512-xFVuu11jh+xcO7JOAGJNOXld8/TcEHK/4CituBUeUb5hqxJLj9YuemAEuvm9gQ/+pgXYfbQuqAkiYu+u7YEsNA==}
 
   scheduler@0.26.0:
     resolution: {integrity: sha512-NlHwttCI/l5gCPR3D1nNXtWABUmBwvZpEQiD4IXSbIDq8BzLIK/7Ir5gTFSGZDUu37K5cMNp0hFtzO38sC7gWA==}
@@ -10932,6 +10963,15 @@ snapshots:
 
   '@rtsao/scc@1.1.0': {}
 
+  '@shopify/react-native-skia@2.4.14(react-native-reanimated@4.1.2(@babel/core@7.27.7)(react-native-worklets@0.5.1(@babel/core@7.27.7)(react-native@0.81.4(@babel/core@7.27.7)(@types/react@19.1.15)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.7)(@types/react@19.1.15)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.7)(@types/react@19.1.15)(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      canvaskit-wasm: 0.40.0
+      react: 19.1.0
+      react-reconciler: 0.31.0(react@19.1.0)
+    optionalDependencies:
+      react-native: 0.81.4(@babel/core@7.27.7)(@types/react@19.1.15)(react@19.1.0)
+      react-native-reanimated: 4.1.2(@babel/core@7.27.7)(react-native-worklets@0.5.1(@babel/core@7.27.7)(react-native@0.81.4(@babel/core@7.27.7)(@types/react@19.1.15)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.7)(@types/react@19.1.15)(react@19.1.0))(react@19.1.0)
+
   '@sinclair/typebox@0.27.8': {}
 
   '@sinonjs/commons@3.0.1':
@@ -11437,6 +11477,8 @@ snapshots:
       '@urql/core': 5.1.2(graphql@16.11.0)
       wonka: 6.3.5
 
+  '@webgpu/types@0.1.21': {}
+
   '@xmldom/xmldom@0.8.10': {}
 
   abbrev@2.0.0: {}
@@ -11895,6 +11937,10 @@ snapshots:
   camelize@1.0.1: {}
 
   caniuse-lite@1.0.30001726: {}
+
+  canvaskit-wasm@0.40.0:
+    dependencies:
+      '@webgpu/types': 0.1.21
 
   capital-case@1.0.4:
     dependencies:
@@ -15709,6 +15755,11 @@ snapshots:
       react-fast-compare: 3.2.2
       warning: 4.0.3
 
+  react-reconciler@0.31.0(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      scheduler: 0.25.0
+
   react-redux@9.2.0(@types/react@19.0.14)(react@19.1.0)(redux@5.0.1):
     dependencies:
       '@types/use-sync-external-store': 0.0.6
@@ -16126,6 +16177,8 @@ snapshots:
   safer-buffer@2.1.2: {}
 
   sax@1.4.1: {}
+
+  scheduler@0.25.0: {}
 
   scheduler@0.26.0: {}
 
