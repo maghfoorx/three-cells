@@ -55,9 +55,14 @@ export default function SingleHabitPage() {
       <SafeAreaView className="flex-1 bg-white">
         <View className="py-4 flex-grow">
           <View className="px-4 pt-2 flex flex-row items-center justify-between">
-            <Pressable onPress={() => { }} disabled>
-              <Feather name="settings" size={20} color="#374151" />
-            </Pressable>
+            <View className="flex-row items-center gap-4">
+              <Pressable onPress={() => { }} disabled>
+                <Feather name="settings" size={20} color="#374151" />
+              </Pressable>
+              <Pressable onPress={() => { }} disabled>
+                <ShareIcon size={20} color="#374151" />
+              </Pressable>
+            </View>
 
             <Text className="text-lg font-bold text-gray-800">Habit</Text>
             <Pressable onPress={() => router.back()}>
@@ -77,9 +82,14 @@ export default function SingleHabitPage() {
       <SafeAreaView className="flex-1 bg-white">
         <View className="p-4 flex-grow">
           <View className="px-4 pt-2 flex flex-row items-center justify-between">
-            <Pressable onPress={() => { }} disabled>
-              <Feather name="settings" size={20} color="#374151" />
-            </Pressable>
+            <View className="flex-row items-center gap-4">
+              <Pressable onPress={() => { }} disabled>
+                <Feather name="settings" size={20} color="#374151" />
+              </Pressable>
+              <Pressable onPress={() => { }} disabled>
+                <ShareIcon size={20} color="#374151" />
+              </Pressable>
+            </View>
 
             <Text className="text-lg font-bold text-gray-800">Habit</Text>
             <Pressable onPress={() => router.back()}>
