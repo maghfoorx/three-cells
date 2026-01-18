@@ -182,7 +182,7 @@ export const ShareableHabitStats = forwardRef<any, ShareableHabitStatsProps>(
 
                     {/* Title */}
                     <Text
-                        x={PADDING}
+                        x={PADDING + 8}
                         y={PADDING + 28}
                         text={cleanName}
                         font={titleFont}
