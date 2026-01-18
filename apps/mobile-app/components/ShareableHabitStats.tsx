@@ -9,6 +9,7 @@ import {
     matchFont,
     RoundedRect,
     Group,
+    Path,
 } from "@shopify/react-native-skia";
 import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
@@ -80,7 +81,7 @@ export const ShareableHabitStats = forwardRef<any, ShareableHabitStatsProps>(
 
         const labelFont = matchFont({
             fontFamily: "System",
-            fontWeight: "normal",
+            fontWeight: "bold",
             fontSize: 11,
         });
 
@@ -164,9 +165,9 @@ export const ShareableHabitStats = forwardRef<any, ShareableHabitStatsProps>(
 
         // Colors
         const baseColor = habit.colour;
-        const darkColor = Color(baseColor).darken(0.3).hex();
+        const darkColor = Color(baseColor).darken(0.4).hex(); // Slightly darker for better text contrast
         const white = "#FFFFFF";
-        const whiteAlpha = "rgba(255, 255, 255, 0.3)";
+        const whiteAlpha = "rgba(255, 255, 255, 0.2)"; // Reduced opacity for better contrast with filled cells
 
         return (
             <View style={{ width, height, overflow: 'hidden', borderRadius: 20 }}>
@@ -236,7 +237,14 @@ export const ShareableHabitStats = forwardRef<any, ShareableHabitStatsProps>(
                     <Text
                         x={PADDING + 8}
                         y={PADDING + 160}
-                        text={`${heatmapMetrics.rangeStr} • ${heatmapMetrics.consistency}%`}
+                        text={`${heatmapMetrics.rangeStr}`}
+                        font={sectionFont}
+                        color={white}
+                    />
+                    <Text
+                        x={width - PADDING - 8 - (sectionFont?.getTextWidth(`${heatmapMetrics.consistency}%`) ?? 0)}
+                        y={PADDING + 160}
+                        text={`${heatmapMetrics.consistency}%`}
                         font={sectionFont}
                         color={white}
                     />
@@ -284,15 +292,27 @@ export const ShareableHabitStats = forwardRef<any, ShareableHabitStatsProps>(
                             }
 
                             return (
-                                <RoundedRect
-                                    key={i}
-                                    x={x}
-                                    y={y}
-                                    width={CELL_SIZE}
-                                    height={CELL_SIZE}
-                                    r={6}
-                                    color={day.hasSubmission ? white : whiteAlpha}
-                                />
+                                <Group key={i}>
+                                    <RoundedRect
+                                        x={x}
+                                        y={y}
+                                        width={CELL_SIZE}
+                                        height={CELL_SIZE}
+                                        r={6}
+                                        color={day.hasSubmission ? white : whiteAlpha}
+                                    />
+                                    {day.hasSubmission && (
+                                        <Path
+                                            path={`M${x + 8} ${y + 16} L${x + 11} ${y + 19} L${x + 20} ${y + 10}`}
+                                            color={baseColor}
+                                            style="stroke"
+                                            strokeWidth={2.5}
+                                            strokeCap="round"
+                                            strokeJoin="round"
+                                            opacity={0.8}
+                                        />
+                                    )}
+                                </Group>
                             );
                         })}
                     </Group>
