@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import React, { useRef, useState } from "react";
 import SubmissionsCalendarHeatmapMobile from "@/components/SubmissionsHeatmapMobile";
+import { ShareableHabitStats } from "@/components/ShareableHabitStats";
 import { Feather } from "@expo/vector-icons";
 import PerformanceGraph from "@/components/PerformanceGraph";
 import StreaksView from "@/components/StreaksView";
@@ -153,15 +154,15 @@ export default function SingleHabitPage() {
               Share Progress
             </Text>
 
-            {/* <View className="overflow-hidden rounded-xl shadow-sm">
-              <ShareableHabitHeatmap
+            <View className="overflow-hidden rounded-xl shadow-sm">
+              <ShareableHabitStats
                 ref={skiaRef}
                 habit={singleHabit.habit}
                 allSubmissions={singleHabit.allSubmissions ?? []}
                 width={300}
-                height={200}
+                height={420}
               />
-            </View> */}
+            </View>
 
             <View className="flex-row gap-3 mt-2">
               <Pressable
