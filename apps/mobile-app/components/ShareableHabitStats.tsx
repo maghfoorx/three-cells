@@ -219,7 +219,7 @@ export const ShareableHabitStats = forwardRef<any, ShareableHabitStatsProps>(
                         <Text
                             x={width / 2 + 16}
                             y={PADDING + 80}
-                            text="TOTAL ENTRIES"
+                            text="TOTAL DAYS"
                             font={labelFont}
                             color={white}
                         />
