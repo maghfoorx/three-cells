@@ -96,6 +96,12 @@ export const ShareableHabitStats = forwardRef<any, ShareableHabitStatsProps>(
             fontSize: 11,
         });
 
+        const footerFont = matchFont({
+            fontFamily: "System",
+            fontWeight: "bold",
+            fontSize: 10,
+        });
+
         // Process Data
         const stats = useMemo(() => {
             if (!streakData) return { best: 0, current: 0, total: 0 };
@@ -152,7 +158,7 @@ export const ShareableHabitStats = forwardRef<any, ShareableHabitStatsProps>(
         // Weekday labels
         const weekDays = ["M", "T", "W", "T", "F", "S", "S"];
 
-        if (!titleFont || !subtitleFont || !labelFont || !sectionFont || !weekdayFont) {
+        if (!titleFont || !subtitleFont || !labelFont || !sectionFont || !weekdayFont || !footerFont) {
             return null;
         }
 
@@ -303,6 +309,15 @@ export const ShareableHabitStats = forwardRef<any, ShareableHabitStatsProps>(
                             />
                         </Rect>
                     </Group>
+
+                    {/* Footer */}
+                    <Text
+                        x={width / 2 - 40} // Approximate centering
+                        y={height - 12}
+                        text="THREE CELLS APP"
+                        font={footerFont}
+                        color={whiteAlpha}
+                    />
                 </Canvas>
             </View>
         );
