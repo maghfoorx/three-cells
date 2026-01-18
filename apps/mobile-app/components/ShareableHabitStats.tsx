@@ -14,7 +14,7 @@ import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { DataModel } from "@packages/backend/convex/_generated/dataModel";
 import Color from "color";
-import { subDays, format } from "date-fns";
+import { subDays, format, startOfWeek, addDays, isAfter, startOfDay } from "date-fns";
 import {
     useSharedValue,
     withRepeat,
@@ -62,11 +62,14 @@ export const ShareableHabitStats = forwardRef<any, ShareableHabitStatsProps>(
             return [{ translateX: shimmer.value * width }];
         });
 
+        const cleanName = useMemo(() => stripEmojis(habit.name), [habit.name]);
+        const titleFontSize = cleanName.length > 20 ? 20 : cleanName.length > 12 ? 24 : 28;
+
         // Typography
         const titleFont = matchFont({
             fontFamily: "System",
             fontWeight: "bold",
-            fontSize: 28,
+            fontSize: titleFontSize,
         });
 
         const subtitleFont = matchFont({
@@ -78,37 +81,78 @@ export const ShareableHabitStats = forwardRef<any, ShareableHabitStatsProps>(
         const labelFont = matchFont({
             fontFamily: "System",
             fontWeight: "normal",
-            fontSize: 14,
+            fontSize: 11,
+        });
+
+        const sectionFont = matchFont({
+            fontFamily: "System",
+            fontWeight: "bold",
+            fontSize: 12,
+        });
+
+        const weekdayFont = matchFont({
+            fontFamily: "System",
+            fontWeight: "bold",
+            fontSize: 11,
         });
 
         // Process Data
         const stats = useMemo(() => {
-            if (!streakData) return { best: 0, current: 0 };
+            if (!streakData) return { best: 0, current: 0, total: 0 };
             const best = Math.max(...streakData.topStreaks.map(s => s.length), 0);
-            return { best, current: streakData.currentStreak };
-        }, [streakData]);
+            return {
+                best,
+                current: streakData.currentStreak,
+                total: allSubmissions.length
+            };
+        }, [streakData, allSubmissions]);
 
-        const heatmapData = useMemo(() => {
+        const heatmapMetrics = useMemo(() => {
             const days = [];
-            const today = new Date();
-            // Show last 35 days (5 weeks)
-            for (let i = 34; i >= 0; i--) {
-                const date = subDays(today, i);
+            const today = startOfDay(new Date());
+
+            // Align to weeks (Monday start)
+            // We want 5 rows (35 days), ending with the current week
+            // So start is 4 weeks ago's Monday
+            const startDate = startOfWeek(subDays(today, 28), { weekStartsOn: 1 });
+
+            let successfulDays = 0;
+            let totalPastDays = 0;
+
+            for (let i = 0; i < 35; i++) {
+                const date = addDays(startDate, i);
                 const dateStr = format(date, "yyyy-MM-dd");
+                const isFuture = isAfter(date, today);
+
                 const hasSubmission = allSubmissions.some(s => s.dateFor === dateStr);
-                days.push({ date, hasSubmission });
+
+                if (!isFuture) {
+                    totalPastDays++;
+                    if (hasSubmission) successfulDays++;
+                }
+
+                days.push({ date, hasSubmission, isFuture });
             }
-            return days;
+
+            const consistency = totalPastDays > 0 ? Math.round((successfulDays / totalPastDays) * 100) : 0;
+
+            // Date range string
+            const rangeStr = `${format(startDate, "MMM d").toUpperCase()} - ${format(subDays(days[34].date, days[34].isFuture ? 0 : 0), "MMM d").toUpperCase()}`;
+
+            return { days, consistency, rangeStr };
         }, [allSubmissions]);
 
         // Calculate Grid Layout
+        // Add extra space for weekday headers
+        const HEADER_HEIGHT = 15;
         const gridWidth = (COLS * CELL_SIZE) + ((COLS - 1) * GRID_GAP);
         const gridStartX = (width - gridWidth) / 2;
-        const gridStartY = PADDING + 175; // Adjust Y based on content above
+        const gridStartY = PADDING + 175 + HEADER_HEIGHT;
 
-        const cleanName = useMemo(() => stripEmojis(habit.name), [habit.name]);
+        // Weekday labels
+        const weekDays = ["M", "T", "W", "T", "F", "S", "S"];
 
-        if (!titleFont || !subtitleFont || !labelFont) {
+        if (!titleFont || !subtitleFont || !labelFont || !sectionFont || !weekdayFont) {
             return null;
         }
 
@@ -154,7 +198,7 @@ export const ShareableHabitStats = forwardRef<any, ShareableHabitStatsProps>(
                         <Text
                             x={PADDING + 16}
                             y={PADDING + 80}
-                            text="Best Streak"
+                            text="BEST STREAK"
                             font={labelFont}
                             color={white}
                         />
@@ -169,14 +213,14 @@ export const ShareableHabitStats = forwardRef<any, ShareableHabitStatsProps>(
                         <Text
                             x={width / 2 + 16}
                             y={PADDING + 80}
-                            text="Current Streak"
+                            text="TOTAL ENTRIES"
                             font={labelFont}
                             color={white}
                         />
                         <Text
                             x={width / 2 + 16}
                             y={PADDING + 105}
-                            text={`${stats.current} Days`}
+                            text={`${stats.total}`}
                             font={subtitleFont}
                             color={white}
                         />
@@ -184,19 +228,54 @@ export const ShareableHabitStats = forwardRef<any, ShareableHabitStatsProps>(
 
                     {/* Monthly Performance Heatmap */}
                     <Text
-                        x={PADDING}
+                        x={PADDING + 8}
                         y={PADDING + 160}
-                        text="Last 30 Days"
-                        font={subtitleFont}
+                        text={`${heatmapMetrics.rangeStr} • ${heatmapMetrics.consistency}%`}
+                        font={sectionFont}
                         color={white}
                     />
 
+                    {/* Weekday Headers */}
                     <Group>
-                        {heatmapData.map((day, i) => {
+                        {weekDays.map((day, i) => {
+                            const x = gridStartX + i * (CELL_SIZE + GRID_GAP) + (CELL_SIZE / 2) - 4; // Center roughly
+                            const y = PADDING + 160 + 20; // Below header
+                            return (
+                                <Text
+                                    key={i}
+                                    x={x}
+                                    y={y}
+                                    text={day}
+                                    font={weekdayFont}
+                                    color={white}
+                                    opacity={0.8}
+                                />
+                            );
+                        })}
+                    </Group>
+
+                    <Group>
+                        {heatmapMetrics.days.map((day, i) => {
                             const row = Math.floor(i / COLS);
                             const col = i % COLS;
                             const x = gridStartX + col * (CELL_SIZE + GRID_GAP);
                             const y = gridStartY + row * (CELL_SIZE + GRID_GAP);
+
+                            // Visuals for future days
+                            if (day.isFuture) {
+                                return (
+                                    <RoundedRect
+                                        key={i}
+                                        x={x}
+                                        y={y}
+                                        width={CELL_SIZE}
+                                        height={CELL_SIZE}
+                                        r={6}
+                                        color={whiteAlpha}
+                                        opacity={0.15} // Very subtle for future
+                                    />
+                                );
+                            }
 
                             return (
                                 <RoundedRect
