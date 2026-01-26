@@ -8,7 +8,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { format, isAfter } from "date-fns";
+import { format, isAfter, isSameDay } from "date-fns";
 import {
   useBulkManageHabitSubmissions,
   useCalendarSquareToast,
@@ -313,19 +313,22 @@ export default function SubmissionsCalendarHeatmap({
                                 ...(isInBulkSelectedDates
                                   ? {}
                                   : {
-                                      background: "#F5F5F5",
-                                    }),
+                                    background: "#F5F5F5",
+                                  }),
                               }}
-                              title={`${formatDate(date, "MMM d, yyyy")} - ${
-                                submissions.length
-                              } submission${
-                                submissions.length !== 1 ? "s" : ""
-                              }`}
+                              title={`${formatDate(date, "MMM d, yyyy")} - ${submissions.length
+                                } submission${submissions.length !== 1 ? "s" : ""
+                                }`}
                             >
                               <span>{format(date, "d")}</span>
                             </div>
                           );
                         }
+
+                        const isStartDate =
+                          habit &&
+                          habit._creationTime &&
+                          isSameDay(date, new Date(habit._creationTime));
 
                         return (
                           <div
@@ -340,12 +343,21 @@ export default function SubmissionsCalendarHeatmap({
                               ...(isInBulkSelectedDates
                                 ? {}
                                 : {
-                                    background: dateBoxColour,
-                                  }),
+                                  background: dateBoxColour,
+                                }),
+                              ...(isStartDate
+                                ? {
+                                  borderColor: darkenHex(
+                                    habit?.colour ?? "#000000",
+                                    60,
+                                  ),
+                                  borderWidth: "2px",
+                                }
+                                : {}),
                             }}
-                            title={`${formatDate(date, "MMM d, yyyy")} - ${
-                              submissions.length
-                            } submission${submissions.length !== 1 ? "s" : ""}`}
+                            title={`${formatDate(date, "MMM d, yyyy")} - ${submissions.length
+                              } submission${submissions.length !== 1 ? "s" : ""
+                              }${isStartDate ? " (Start Date)" : ""}`}
                             onClick={() => {
                               toggleDate(date);
                             }}
@@ -507,3 +519,30 @@ export function calculateMonthLabels(
 
   return labels;
 }
+
+// Helper to darken hex color
+const darkenHex = (hex: string, amount: number = 40): string => {
+  let color = hex.replace("#", "");
+  if (color.length === 3)
+    color = color
+      .split("")
+      .map((c) => c + c)
+      .join("");
+
+  const num = parseInt(color, 16);
+  let r = (num >> 16) - amount;
+  let g = ((num >> 8) & 0x00ff) - amount;
+  let b = (num & 0x0000ff) - amount;
+
+  return (
+    "#" +
+    (
+      0x1000000 +
+      (r > 0 ? r : 0) * 0x10000 +
+      (g > 0 ? g : 0) * 0x100 +
+      (b > 0 ? b : 0)
+    )
+      .toString(16)
+      .slice(1)
+  );
+};
