@@ -12,23 +12,31 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { useNavigate, useParams } from "react-router";
-import { parse, format } from "date-fns";
+import { parse, format, addDays, subDays } from "date-fns";
 import { SCORE_COLORS, SCORE_OPTIONS } from "~/types";
 import { Card } from "~/components/ui/card";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
-import { Info, LoaderCircle } from "lucide-react";
+import {
+  Info,
+  LoaderCircle,
+  ChevronLeft,
+  ChevronRight,
+  Check,
+  Disc,
+} from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { Calendar } from "~/components/ui/calendar";
-import { useEffect } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Skeleton } from "~/components/ui/skeleton";
 import { api } from "@packages/backend/convex/_generated/api";
+import { useMemo } from "react";
 
 // Add validation schema
 const formSchema = z.object({
@@ -64,7 +72,34 @@ const FIELD_EXPLANATIONS = {
       </p>
     </div>
   ),
+
 };
+
+const RANDOM_PROMPTS = [
+  "What made you smile today?",
+  "What was the highlight of your day?",
+  "What did you learn today?",
+  "What are you grateful for right now?",
+  "What challenged you today?",
+  "Describe your day in three words.",
+  "What's one thing you want to remember from today?",
+];
+
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
 
 export default function ThreeCellDailyForm() {
   const params = useParams();
@@ -75,6 +110,11 @@ export default function ThreeCellDailyForm() {
     date: dateFor,
   });
 
+  const navigate = useNavigate();
+  const [saveStatus, setSaveStatus] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -84,41 +124,96 @@ export default function ThreeCellDailyForm() {
     },
   });
 
-  useEffect(() => {
-    if (data != null) {
-      const threeCellForDate = {
-        summary: data.summary,
-        score: data.score,
-        date_for: data.dateFor,
-      };
+  const placeholder = useMemo(
+    () => RANDOM_PROMPTS[Math.floor(Math.random() * RANDOM_PROMPTS.length)],
+    [dateFor],
+  );
 
-      form.reset({
-        ...threeCellForDate,
-      });
-    } else {
-      form.reset({
-        date_for: dateFor,
-        summary: "",
-        score: 0,
-      });
+  const lastLoadedDateRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    // Determine if we need to load data for this date
+    // We only load if:
+    // 1. We have data (it's not loading)
+    // 2. AND we haven't loaded this specific date yet
+    if (data !== undefined && lastLoadedDateRef.current !== dateFor) {
+      if (data != null) {
+        const threeCellForDate = {
+          summary: data.summary,
+          score: data.score,
+          date_for: data.dateFor,
+        };
+        form.reset(threeCellForDate);
+      } else {
+        // No data exists for this date yet
+        form.reset({
+          date_for: dateFor,
+          summary: "",
+          score: 0,
+        });
+      }
+      // Mark this date as loaded so we don't reset again when data updates (e.g. from auto-save)
+      lastLoadedDateRef.current = dateFor;
     }
-  }, [data]);
+  }, [data, dateFor, form]);
 
   const submitThreeCellEntry = useMutation(api.threeCells.submitThreeCellEntry);
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      const input = {
-        summary: values.summary,
-        score: values.score,
-        date_for: format(values.date_for, "yyyy-MM-dd"),
-      };
+  const onSubmit = useCallback(
+    async (values: z.infer<typeof formSchema>) => {
+      try {
+        setSaveStatus("saving");
+        const input = {
+          summary: values.summary,
+          score: values.score,
+          date_for: format(values.date_for, "yyyy-MM-dd"),
+        };
 
-      await submitThreeCellEntry({ input });
-    } catch (error) {
-      console.error("Submission failed:", error);
+        await submitThreeCellEntry({ input });
+        setSaveStatus("saved");
+
+        // Reset saved status after a delay
+        setTimeout(() => setSaveStatus("idle"), 2000);
+      } catch (error) {
+        console.error("Submission failed:", error);
+        setSaveStatus("error");
+      }
+    },
+    [submitThreeCellEntry],
+  );
+
+  // Auto-save logic
+  const watchedValues = form.watch();
+  const debouncedValues = useDebounce(watchedValues, 500);
+  const previousValuesRef = useRef(watchedValues);
+
+  useEffect(() => {
+    // Check if values have actually changed using simple equality or shallow compare
+    // We mainly care if summary or score changed
+    const hasChanged =
+      debouncedValues.summary !== previousValuesRef.current.summary ||
+      debouncedValues.score !== previousValuesRef.current.score;
+
+    if (hasChanged && form.formState.isValid && form.formState.isDirty) {
+      onSubmit(debouncedValues);
+      previousValuesRef.current = debouncedValues;
     }
-  }
+  }, [debouncedValues, onSubmit, form.formState.isValid, form.formState.isDirty]);
+
+  // Navigation handlers
+  const handlePreviousDay = () => {
+    const prevDate = subDays(parsedDate, 1);
+    navigate(`/track/${format(prevDate, "yyyy-MM-dd")}`);
+  };
+
+  const handleNextDay = () => {
+    const nextDate = addDays(parsedDate, 1);
+    if (nextDate <= new Date()) {
+      navigate(`/track/${format(nextDate, "yyyy-MM-dd")}`);
+    }
+  };
+
+  const isNextDisabled = addDays(parsedDate, 1) > new Date();
 
   const cardColor = color(
     SCORE_COLORS[form.watch("score").toString()] ?? "#ffffff",
@@ -130,11 +225,38 @@ export default function ThreeCellDailyForm() {
   return (
     <Card className="max-w-[400px] p-6" style={{ backgroundColor: cardColor }}>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
           <div className="flex flex-col gap-2">
-            <div className="flex flex-row gap-2">
-              <Label className="text-xl font-semibold">Entry</Label>
-              <CalendarComponent initialDate={parsedDate} />
+            <div className="flex flex-row gap-2 items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 hover:bg-black/10"
+                  onClick={handlePreviousDay}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+
+                <CalendarComponent initialDate={parsedDate} />
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 hover:bg-black/10"
+                  onClick={handleNextDay}
+                  disabled={isNextDisabled}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Status Indicator */}
+              <div className="flex items-center gap-2">
+                {saveStatus === "error" && (
+                  <span className="text-red-500 text-xs">Error saving</span>
+                )}
+              </div>
             </div>
 
             <FormField
@@ -193,8 +315,8 @@ export default function ThreeCellDailyForm() {
                     ) : (
                       <Textarea
                         {...field}
-                        placeholder="Describe your day..."
-                        className="min-h-[128px]"
+                        placeholder={placeholder}
+                        className="min-h-[128px] bg-white/50 border-0 focus-visible:ring-1 focus-visible:ring-black/20 resize-none"
                       />
                     )}
                   </FormControl>
@@ -204,12 +326,6 @@ export default function ThreeCellDailyForm() {
             />
           </div>
 
-          <Button type="submit" className="mt-4 w-full">
-            {form.formState.isSubmitting ? (
-              <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
-            ) : null}
-            Save Entry
-          </Button>
         </form>
       </Form>
     </Card>
@@ -278,7 +394,12 @@ const CalendarComponent = ({ initialDate }: { initialDate: Date }) => {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" size={"sm"} className="text-xs">
-          {format(initialDate, "dd MMM")}
+          {format(
+            initialDate,
+            initialDate.getFullYear() === today.getFullYear()
+              ? "EEEE dd MMM"
+              : "EEEE dd MMM yyyy",
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent>

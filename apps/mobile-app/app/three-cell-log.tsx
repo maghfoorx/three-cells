@@ -15,7 +15,7 @@ import {
   Keyboard,
 } from "react-native";
 import { useQuery, usePaginatedQuery } from "convex/react";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import color from "color";
 import { api } from "@packages/backend/convex/_generated/api";
 import type { DataModel } from "@packages/backend/convex/_generated/dataModel";
@@ -68,7 +68,7 @@ function ThreeCellEntryCard({
   const baseColor = SCORE_COLORS[item.score.toString()] ?? "#ffffff";
   const bg = color(baseColor).fade(0.7).rgb().string();
 
-  const entryDate = new Date(item.dateFor);
+  const entryDate = parse(item.dateFor, "yyyy-MM-dd", new Date());
   const isCurrentYear = entryDate.getFullYear() === new Date().getFullYear();
   // Using the requested format: EEEE d MMM if current year, else MMM d, yyyy
   // Wait, the website code actually used "EEEE d MMM" in Step 71.
@@ -178,7 +178,8 @@ function ThreeCellLogView() {
         // Already sorted by latest via backend, but re-sorting is fine for safety if modified client-side
         return logs.sort(
           (a, b) =>
-            new Date(b.dateFor).getTime() - new Date(a.dateFor).getTime(),
+            parse(b.dateFor, "yyyy-MM-dd", new Date()).getTime() -
+            parse(a.dateFor, "yyyy-MM-dd", new Date()).getTime(),
         );
     }
   }, [allThreeCellEntries, sortBy]);

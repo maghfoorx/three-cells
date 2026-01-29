@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { parse } from "date-fns";
 import {
   View,
   Text,
@@ -14,7 +15,7 @@ import * as d3 from "d3";
 import color from "color";
 import * as Haptics from "expo-haptics";
 
-const AnimatedPath = Animated.createAnimatedComponent(Path);
+const AnimatedPath = Animated.createAnimatedComponent(Path as any);
 
 interface PerformanceGraphProps {
   habitId: DataModel["userHabits"]["document"]["_id"];
@@ -155,7 +156,11 @@ export default function PerformanceGraph({
     // Convert timestamps back to Date objects for D3
     const dataWithDates = currentData.map((d) => ({
       ...d,
-      date: new Date(d.date),
+      date: parse(
+        new Date(d.date).toISOString().split("T")[0],
+        "yyyy-MM-dd",
+        new Date(),
+      ),
     }));
 
     const xScale = d3

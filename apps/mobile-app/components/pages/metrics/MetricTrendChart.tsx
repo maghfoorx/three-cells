@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import * as Haptics from "expo-haptics"; // add this at the top
-import { format } from "date-fns"; // helpful for date formatting
+import { format, parse } from "date-fns"; // helpful for date formatting
 import {
   View,
   Text,
@@ -17,7 +17,7 @@ import * as d3 from "d3";
 import color from "color";
 import { formatValueByIncrement } from "@/utils/numbers";
 
-const AnimatedPath = Animated.createAnimatedComponent(Path);
+const AnimatedPath = Animated.createAnimatedComponent(Path as any);
 
 interface MetricTrendChartProps {
   metricId: DataModel["userMetrics"]["document"]["_id"];
@@ -53,7 +53,16 @@ export default function MetricTrendChart({
     const entry = trendData[selectedDotIndex];
     return {
       value: formatValueByIncrement(entry.value, metric.increment),
-      date: entry.label ?? format(new Date(entry.date), "MMM d"),
+      date:
+        entry.label ??
+        format(
+          parse(
+            new Date(entry.date).toISOString().split("T")[0],
+            "yyyy-MM-dd",
+            new Date(),
+          ),
+          "MMM d",
+        ),
       unit: metric.unit,
     };
   };
@@ -139,7 +148,11 @@ export default function MetricTrendChart({
     // Convert timestamps back to Date objects for D3
     const dataWithDates = trendData.map((d) => ({
       ...d,
-      date: new Date(d.date),
+      date: parse(
+        new Date(d.date).toISOString().split("T")[0],
+        "yyyy-MM-dd",
+        new Date(),
+      ),
     }));
 
     const xScale = d3

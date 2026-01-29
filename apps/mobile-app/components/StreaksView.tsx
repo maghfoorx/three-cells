@@ -6,9 +6,9 @@ import { DataModel } from "@packages/backend/convex/_generated/dataModel";
 import Svg, { Rect, Text as SvgText, G } from "react-native-svg";
 import * as d3 from "d3";
 import color from "color";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 
-const AnimatedRect = Animated.createAnimatedComponent(Rect);
+const AnimatedRect = Animated.createAnimatedComponent(Rect as any);
 
 interface StreaksComponentProps {
   habitId: DataModel["userHabits"]["document"]["_id"];
@@ -131,8 +131,23 @@ export default function StreaksView({
                 textAnchor="start"
                 alignmentBaseline="middle"
               >
-                {format(new Date(streak.startDate), "MMM d")} -{" "}
-                {format(new Date(streak.endDate), "MMM d")}
+                {format(
+                  parse(
+                    new Date(streak.startDate).toISOString().split("T")[0],
+                    "yyyy-MM-dd",
+                    new Date(),
+                  ),
+                  "MMM d",
+                )}{" "}
+                -{" "}
+                {format(
+                  parse(
+                    new Date(streak.endDate).toISOString().split("T")[0],
+                    "yyyy-MM-dd",
+                    new Date(),
+                  ),
+                  "MMM d",
+                )}
                 {isCurrentStreak && " (current)"}
               </SvgText>
             </G>

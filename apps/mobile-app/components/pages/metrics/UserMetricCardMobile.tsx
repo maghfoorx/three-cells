@@ -14,11 +14,11 @@ import * as d3 from "d3";
 import color from "color";
 import * as Haptics from "expo-haptics";
 import { Link, router } from "expo-router";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import type { DataModel } from "@packages/backend/convex/_generated/dataModel";
 import { formatValueByIncrement } from "@/utils/numbers";
 
-const AnimatedPath = Animated.createAnimatedComponent(Path);
+const AnimatedPath = Animated.createAnimatedComponent(Path as any);
 
 type MetricSubmission = {
   dateFor: string;
@@ -46,11 +46,13 @@ export function UserMetricCardMobile({
     if (!submissions || submissions.length === 0) return [];
 
     const sorted = [...submissions].sort(
-      (a, b) => new Date(a.dateFor).getTime() - new Date(b.dateFor).getTime(),
+      (a, b) =>
+        parse(a.dateFor, "yyyy-MM-dd", new Date()).getTime() -
+        parse(b.dateFor, "yyyy-MM-dd", new Date()).getTime(),
     );
 
     return sorted.slice(-7).map((entry) => ({
-      date: new Date(entry.dateFor),
+      date: parse(entry.dateFor, "yyyy-MM-dd", new Date()),
       value: entry.value,
       dateFor: entry.dateFor,
     }));
