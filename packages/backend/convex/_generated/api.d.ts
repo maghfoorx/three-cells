@@ -8,12 +8,14 @@
  * @module
  */
 
+import type * as analytics from "../analytics.js";
 import type * as auth from "../auth.js";
 import type * as crons from "../crons.js";
 import type * as gitSha from "../gitSha.js";
 import type * as habits from "../habits.js";
 import type * as http from "../http.js";
 import type * as internal_payments from "../internal/payments.js";
+import type * as internal_users from "../internal/users.js";
 import type * as migrations from "../migrations.js";
 import type * as revenuecat from "../revenuecat.js";
 import type * as stripe from "../stripe.js";
@@ -39,12 +41,14 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  analytics: typeof analytics;
   auth: typeof auth;
   crons: typeof crons;
   gitSha: typeof gitSha;
   habits: typeof habits;
   http: typeof http;
   "internal/payments": typeof internal_payments;
+  "internal/users": typeof internal_users;
   migrations: typeof migrations;
   revenuecat: typeof revenuecat;
   stripe: typeof stripe;

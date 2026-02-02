@@ -3,6 +3,7 @@ import { internalAction, mutation } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { internal } from "./_generated/api";
 import { type Id } from "./_generated/dataModel";
+import { sendPurchaseEvent } from "./analytics";
 
 type ProductIdentifier =
   | "com.threecells.weekly"
@@ -39,6 +40,30 @@ export const fulfillRevenueCat = internalAction({
               expiresAt: event.expiration_at_ms as number | null,
             },
           );
+
+          // Find user for analytics
+          const userEmail = await ctx.runQuery(
+            internal.internal.users.getUserEmail,
+            {
+              userId,
+            },
+          );
+
+          // Send to Google Analytics
+          const priceInPurchasedCurrency = event.price_in_purchased_currency;
+          const currency = event.currency;
+          const transactionId = event.transaction_id;
+          console.log(event, "TEST_EVENTTTT");
+          await sendPurchaseEvent({
+            user_id: userId,
+            email: userEmail ?? undefined,
+            items: [
+              {
+                item_id: productId,
+                item_name: productId,
+              },
+            ],
+          });
           break;
 
         case "EXPIRED":
@@ -77,6 +102,25 @@ export const fulfillRevenueCat = internalAction({
                 expiresAt: null,
               },
             );
+
+            // Find user for analytics
+            const userEmail = await ctx.runQuery(
+              internal.internal.users.getUserEmail,
+              {
+                userId,
+              },
+            );
+
+            await sendPurchaseEvent({
+              user_id: userId,
+              email: userEmail ?? undefined,
+              items: [
+                {
+                  item_id: productId,
+                  item_name: productId,
+                },
+              ],
+            });
           } else {
             console.log("Unhandled non-renewing product:", productId);
           }

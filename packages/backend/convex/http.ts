@@ -34,7 +34,6 @@ http.route({
   method: "POST",
   handler: httpAction(async (ctx, request) => {
     const authHeader = request.headers.get("authorization") || "";
-    console.log(process.env.REVENUE_CAT_WEBHOOK_SECRET, "SECRET_HAHA");
     if (authHeader !== process.env.REVENUE_CAT_WEBHOOK_SECRET) {
       return new Response("Unauthorized yo", { status: 401 });
     }
