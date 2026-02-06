@@ -22,7 +22,15 @@ export const fulfillRevenueCat = internalAction({
 
       const event = _payload.event;
       const productId = event.product_id as ProductIdentifier;
-      const userId = event?.app_user_id as Id<"users">;
+      let userId = event?.app_user_id;
+
+      if (!userId && event.type === "TRANSFER" && event.transferred_to) {
+        userId = event.transferred_to.find(
+          (id: string) => !id.startsWith("$RCAnonymousID"),
+        );
+      }
+
+      userId = userId as Id<"users">;
 
       console.log(event.type, productId, userId, "REVENUE_CAT_EVENT");
 
@@ -124,6 +132,10 @@ export const fulfillRevenueCat = internalAction({
           } else {
             console.log("Unhandled non-renewing product:", productId);
           }
+          break;
+
+        case "TRANSFER":
+          console.log("RevenueCat TRANSFER event", { userId, productId });
           break;
 
         default:
