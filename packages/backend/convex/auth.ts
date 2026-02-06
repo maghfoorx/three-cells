@@ -64,6 +64,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
       }
 
       if (args.provider.id === "apple" && !args.profile.email) {
+        console.error("NO_EMAIL_RECEIVED", args)
         throw new ConvexError(
           "Could not retrieve email. Please go to iOS Settings > Apple ID > Apps using Apple ID > Three Cells -> Stop Using Apple ID, then try logging in again.",
         );
