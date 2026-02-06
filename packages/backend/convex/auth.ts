@@ -63,6 +63,12 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
         }
       }
 
+      if (args.provider.id === "apple" && !args.profile.email) {
+        throw new ConvexError(
+          "Could not retrieve email. Please go to iOS Settings > Apple ID > Apps using Apple ID > Three Cells -> Stop Using Apple ID, then try logging in again.",
+        );
+      }
+
       // No existing user found, create a new one
       const userId = await ctx.db.insert("users", {
         email: args.profile.email,
